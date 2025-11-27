@@ -416,6 +416,7 @@ footer {
     font-size: 2.5rem;
     margin-bottom: 0;
 }
+
 /* Category Filters */
 .category-btn {
     padding: 10px 20px;
@@ -441,7 +442,11 @@ footer {
     border-color: var(--primary-color);
 }
 
-/* Left-aligned Section Title Underline */
+/* Left-aligned Section Title */
+.section-title.text-left {
+    display: inline-block;
+}
+
 .section-title.text-left::after {
     left: 0;
     transform: none;
