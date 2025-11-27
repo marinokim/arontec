@@ -50,7 +50,7 @@ function MyPage({ user }) {
                             {quotes.map(quote => (
                                 <tr key={quote.id}>
                                     <td>{quote.quote_number}</td>
-                                    <td>{quote.total_amount?.toLocaleString()}원</td>
+                                    <td>{parseInt(quote.total_amount).toLocaleString()}원</td>
                                     <td>{quote.delivery_date && new Date(quote.delivery_date).toLocaleDateString()}</td>
                                     <td>
                                         <span className={`badge badge-${quote.status}`}>
