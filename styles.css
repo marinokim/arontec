@@ -440,3 +440,9 @@ footer {
     color: white;
     border-color: var(--primary-color);
 }
+
+/* Left-aligned Section Title Underline */
+.section-title.text-left::after {
+    left: 0;
+    transform: none;
+}
