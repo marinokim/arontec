@@ -138,7 +138,7 @@ function MyPage({ user }) {
                             </div>
                         </div>
 
-                        <div id="quote-detail-content" style={{ padding: '1rem', background: 'white' }}>
+                        <div id="quote-detail-content" style={{ padding: '2rem', background: 'white', minHeight: '1000px', display: 'flex', flexDirection: 'column' }}>
                             <div style={{ marginBottom: '2rem', borderBottom: '2px solid #333', paddingBottom: '1rem' }}>
                                 <h1 style={{ textAlign: 'center', marginBottom: '3rem', fontSize: '2.5rem', letterSpacing: '0.5rem', fontWeight: 'bold' }}>견 적 서</h1>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '2rem' }}>
@@ -256,7 +256,7 @@ function MyPage({ user }) {
                                 </div>
                             )}
 
-                            <div style={{ marginTop: '4rem', textAlign: 'center', color: '#666', fontSize: '0.9rem' }}>
+                            <div style={{ marginTop: 'auto', textAlign: 'center', color: '#666', fontSize: '0.9rem', paddingTop: '3rem' }}>
                                 <p style={{ marginBottom: '1rem' }}>본 견적서는 아론텍코리아 SCM 시스템에서 발급되었습니다.</p>
                                 <h2 style={{ color: '#0056b3', letterSpacing: '2px' }}>ARONTEC</h2>
                             </div>
