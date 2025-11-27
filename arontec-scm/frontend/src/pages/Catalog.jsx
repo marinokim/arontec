@@ -15,7 +15,7 @@ function Catalog() {
     }, [selectedCategory, search])
 
     const fetchCategories = async () => {
-        const res = await fetch(API_BASE_URL + '/api/products/categories')
+        const res = await fetch(API_BASE_URL + '/api/products/categories', { credentials: 'include' })
         const data = await res.json()
         setCategories(data.categories)
     }
@@ -25,7 +25,7 @@ function Catalog() {
         if (selectedCategory) params.append('category', selectedCategory)
         if (search) params.append('search', search)
 
-        const res = await fetch(API_BASE_URL + `/api/products?${params}`)
+        const res = await fetch(API_BASE_URL + `/api/products?${params}`, { credentials: 'include' })
         const data = await res.json()
         setProducts(data.products)
     }
@@ -35,6 +35,7 @@ function Catalog() {
             const res = await fetch(API_BASE_URL + '/api/cart', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
                 body: JSON.stringify({ productId, quantity: 1 })
             })
 

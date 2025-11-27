@@ -16,7 +16,7 @@ function AdminDashboard() {
 
     const fetchStats = async () => {
         try {
-            const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/admin/stats')
+            const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/admin/stats', { credentials: 'include' })
             if (res.ok) {
                 const data = await res.json()
                 setStats(data)
@@ -29,7 +29,7 @@ function AdminDashboard() {
     }
 
     const handleLogout = async () => {
-        await fetch((import.meta.env.VITE_API_URL || '') + '/api/auth/logout', { method: 'POST' })
+        await fetch((import.meta.env.VITE_API_URL || '') + '/api/auth/logout', { method: 'POST', credentials: 'include' })
         window.location.href = '/login'
     }
 

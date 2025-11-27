@@ -8,7 +8,7 @@ function Members() {
     }, [])
 
     const fetchMembers = async () => {
-        const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/admin/members')
+        const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/admin/members', { credentials: 'include' })
         const data = await res.json()
         setMembers(data.members)
     }
@@ -17,7 +17,8 @@ function Members() {
         await fetch((import.meta.env.VITE_API_URL || '') + `/api/admin/members/${id}/approval`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ isApproved })
+            credentials: 'include',
+            body: JSON.stringify({ approved: isApproved })
         })
         fetchMembers()
     }

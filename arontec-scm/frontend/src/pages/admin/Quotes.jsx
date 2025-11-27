@@ -8,7 +8,7 @@ function AdminQuotes() {
     }, [])
 
     const fetchQuotes = async () => {
-        const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/admin/quotes')
+        const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/admin/quotes', { credentials: 'include' })
         const data = await res.json()
         setQuotes(data.quotes)
     }
@@ -17,6 +17,7 @@ function AdminQuotes() {
         await fetch((import.meta.env.VITE_API_URL || '') + `/api/admin/quotes/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify({ status })
         })
         fetchQuotes()

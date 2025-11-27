@@ -27,13 +27,13 @@ function AdminProducts() {
     }, [])
 
     const fetchProducts = async () => {
-        const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/products')
+        const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/products', { credentials: 'include' })
         const data = await res.json()
         setProducts(data.products)
     }
 
     const fetchCategories = async () => {
-        const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/products/categories')
+        const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/products/categories', { credentials: 'include' })
         const data = await res.json()
         setCategories(data.categories)
     }
@@ -48,6 +48,7 @@ function AdminProducts() {
             const res = await fetch(url, {
                 method,
                 headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
                 body: JSON.stringify(formData)
             })
 
@@ -71,7 +72,7 @@ function AdminProducts() {
         if (!confirm('정말 삭제하시겠습니까?')) return
 
         try {
-            const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/products/${id}`, { method: 'DELETE' })
+            const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/products/${id}`, { method: 'DELETE', credentials: 'include' })
             if (res.ok) {
                 fetchProducts()
             } else {

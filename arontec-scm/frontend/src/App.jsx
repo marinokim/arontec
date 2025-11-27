@@ -21,7 +21,7 @@ function App() {
         // Check if user is logged in
         const checkAuth = async () => {
             try {
-                const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/auth/me')
+                const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/auth/me', { credentials: 'include' })
                 if (res.ok) {
                     const data = await res.json()
                     setUser(data.user)

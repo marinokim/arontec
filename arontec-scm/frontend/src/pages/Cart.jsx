@@ -10,7 +10,7 @@ function Cart() {
     }, [])
 
     const fetchCart = async () => {
-        const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/cart')
+        const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/cart', { credentials: 'include' })
         const data = await res.json()
         setCart(data.cart)
     }
@@ -21,6 +21,7 @@ function Cart() {
         await fetch((import.meta.env.VITE_API_URL || '') + `/api/cart/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify({ quantity })
         })
 
@@ -30,7 +31,7 @@ function Cart() {
     const removeItem = async (id) => {
         if (!confirm('삭제하시겠습니까?')) return
 
-        await fetch((import.meta.env.VITE_API_URL || '') + `/api/cart/${id}`, { method: 'DELETE' })
+        await fetch((import.meta.env.VITE_API_URL || '') + `/api/cart/${id}`, { method: 'DELETE', credentials: 'include' })
         fetchCart()
     }
 

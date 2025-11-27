@@ -12,7 +12,7 @@ function Dashboard({ user }) {
 
     const fetchDashboard = async () => {
         try {
-            const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/dashboard')
+            const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/dashboard', { credentials: 'include' })
             const data = await res.json()
             setData(data)
         } catch (error) {
@@ -23,7 +23,7 @@ function Dashboard({ user }) {
     }
 
     const handleLogout = async () => {
-        await fetch((import.meta.env.VITE_API_URL || '') + '/api/auth/logout', { method: 'POST' })
+        await fetch((import.meta.env.VITE_API_URL || '') + '/api/auth/logout', { method: 'POST', credentials: 'include' })
         window.location.reload()
     }
 

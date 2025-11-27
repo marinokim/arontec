@@ -10,7 +10,7 @@ function MyPage({ user }) {
     }, [])
 
     const fetchQuotes = async () => {
-        const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/quotes')
+        const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/quotes', { credentials: 'include' })
         const data = await res.json()
         setQuotes(data.quotes)
     }
