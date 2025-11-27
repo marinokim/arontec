@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Try to fetch from SCM API
-            const res = await fetch('http://localhost:5001/api/products');
+            const res = await fetch('http://192.168.0.7:5001/api/products');
             if (res.ok) {
                 const data = await res.json();
                 // Map SCM data to Homepage format
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchProductDetail(id) {
         try {
-            const res = await fetch(`http://localhost:5001/api/products/${id}`);
+            const res = await fetch(`http://192.168.0.7:5001/api/products/${id}`);
             if (res.ok) {
                 const data = await res.json();
                 renderProductDetail(data.product);
