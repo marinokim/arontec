@@ -140,10 +140,32 @@ function MyPage({ user }) {
 
                         <div id="quote-detail-content" style={{ padding: '1rem', background: 'white' }}>
                             <div style={{ marginBottom: '2rem', borderBottom: '2px solid #333', paddingBottom: '1rem' }}>
-                                <h1 style={{ textAlign: 'center', marginBottom: '3rem', fontSize: '2.5rem', letterSpacing: '0.5rem' }}>견 적 서</h1>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '2rem' }}>
-                                    <div style={{ flex: 1 }}>
-                                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
+                                <h1 style={{ textAlign: 'center', marginBottom: '3rem', fontSize: '2.5rem', letterSpacing: '0.5rem', fontWeight: 'bold' }}>견 적 서</h1>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '2rem' }}>
+                                    {/* Left: Supplier Info */}
+                                    <div style={{ flex: 1, border: '1px solid #ddd', padding: '1.5rem', borderRadius: '4px', background: '#f9f9f9' }}>
+                                        <h4 style={{ margin: '0 0 1rem 0', borderBottom: '1px solid #eee', paddingBottom: '0.5rem', fontSize: '1.1rem' }}>공급받는 자</h4>
+                                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.95rem' }}>
+                                            <tbody>
+                                                <tr>
+                                                    <td style={{ padding: '6px 0', width: '70px', color: '#555', fontWeight: 'bold' }}>회사명</td>
+                                                    <td>: {user?.companyName}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style={{ padding: '6px 0', color: '#555', fontWeight: 'bold' }}>담당자</td>
+                                                    <td>: {user?.contactPerson}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style={{ padding: '6px 0', color: '#555', fontWeight: 'bold' }}>이메일</td>
+                                                    <td>: {user?.email}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    {/* Right: Quote Info & Status */}
+                                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+                                        <table style={{ borderCollapse: 'collapse', fontSize: '0.9rem', marginBottom: '2rem', textAlign: 'right' }}>
                                             <tbody>
                                                 <tr>
                                                     <td style={{ padding: '4px 0', width: '80px', color: '#666' }}>견적번호</td>
@@ -159,56 +181,42 @@ function MyPage({ user }) {
                                                 </tr>
                                             </tbody>
                                         </table>
-                                    </div>
-                                    <div style={{ flex: 1, border: '1px solid #ddd', padding: '1rem', borderRadius: '4px', background: '#f9f9f9' }}>
-                                        <h4 style={{ margin: '0 0 0.5rem 0', borderBottom: '1px solid #eee', paddingBottom: '0.5rem' }}>공급받는 자</h4>
-                                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
-                                            <tbody>
-                                                <tr>
-                                                    <td style={{ padding: '4px 0', width: '60px', color: '#666' }}>회사명</td>
-                                                    <td>: {user?.companyName}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td style={{ padding: '4px 0', color: '#666' }}>담당자</td>
-                                                    <td>: {user?.contactPerson}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td style={{ padding: '4px 0', color: '#666' }}>이메일</td>
-                                                    <td>: {user?.email}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                <div style={{ marginTop: '2rem', textAlign: 'right', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '2rem' }}>
-                                    <div style={{
-                                        padding: '0.5rem 1rem',
-                                        borderRadius: '4px',
-                                        background: selectedQuote.quote.status === 'approved' ? '#e6f4ea' : selectedQuote.quote.status === 'shipped' ? '#e3f2fd' : '#fff3e0',
-                                        color: selectedQuote.quote.status === 'approved' ? '#1e7e34' : selectedQuote.quote.status === 'shipped' ? '#0d47a1' : '#e65100',
-                                        fontWeight: 'bold',
-                                        border: `1px solid ${selectedQuote.quote.status === 'approved' ? '#1e7e34' : selectedQuote.quote.status === 'shipped' ? '#0d47a1' : '#e65100'}`
-                                    }}>
-                                        {selectedQuote.quote.status === 'pending' ? '승인 대기중' : selectedQuote.quote.status === 'approved' ? '승인 완료' : selectedQuote.quote.status === 'shipped' ? '배송중' : '반려됨'}
-                                    </div>
-                                    <div style={{ textAlign: 'right' }}>
-                                        <p><strong>상태:</strong> {selectedQuote.quote.status === 'pending' ? '대기중' : selectedQuote.quote.status === 'approved' ? '승인' : selectedQuote.quote.status === 'shipped' ? '배송중' : '거절'}</p>
-                                        {selectedQuote.quote.status === 'shipped' && (
-                                            <p style={{ color: '#007bff' }}>
-                                                <strong>배송정보:</strong> {selectedQuote.quote.carrier} {selectedQuote.quote.tracking_number}
-                                            </p>
-                                        )}
-                                        <p><strong>총 금액:</strong> <span style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{parseInt(selectedQuote.quote.total_amount).toLocaleString()}원</span></p>
+
+                                        <div style={{ textAlign: 'right' }}>
+                                            <div style={{ marginBottom: '1rem' }}>
+                                                <span style={{ fontSize: '0.9rem', fontWeight: 'bold', marginRight: '0.5rem' }}>상태:</span>
+                                                <span style={{
+                                                    display: 'inline-block',
+                                                    padding: '0.4rem 1.2rem',
+                                                    borderRadius: '4px',
+                                                    background: selectedQuote.quote.status === 'approved' ? '#e6f4ea' : selectedQuote.quote.status === 'shipped' ? '#e3f2fd' : '#fff3e0',
+                                                    color: selectedQuote.quote.status === 'approved' ? '#1e7e34' : selectedQuote.quote.status === 'shipped' ? '#0d47a1' : '#e65100',
+                                                    fontWeight: 'bold',
+                                                    border: `1px solid ${selectedQuote.quote.status === 'approved' ? '#1e7e34' : selectedQuote.quote.status === 'shipped' ? '#0d47a1' : '#e65100'}`
+                                                }}>
+                                                    {selectedQuote.quote.status === 'pending' ? '승인 대기중' : selectedQuote.quote.status === 'approved' ? '승인 완료' : selectedQuote.quote.status === 'shipped' ? '배송중' : '반려됨'}
+                                                </span>
+                                            </div>
+                                            {selectedQuote.quote.status === 'shipped' && (
+                                                <div style={{ marginBottom: '1rem', fontSize: '0.9rem', color: '#007bff' }}>
+                                                    <strong>배송정보:</strong> {selectedQuote.quote.carrier} {selectedQuote.quote.tracking_number}
+                                                </div>
+                                            )}
+                                            <div>
+                                                <span style={{ fontSize: '1rem', fontWeight: 'bold', marginRight: '1rem' }}>총 금액:</span>
+                                                <span style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#333' }}>{parseInt(selectedQuote.quote.total_amount).toLocaleString()}원</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             <table className="table" style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '2rem', fontSize: '0.9rem' }}>
                                 <colgroup>
-                                    <col style={{ width: '20%' }} />
-                                    <col style={{ width: '30%' }} />
                                     <col style={{ width: '15%' }} />
+                                    <col style={{ width: '40%' }} />
                                     <col style={{ width: '15%' }} />
+                                    <col style={{ width: '10%' }} />
                                     <col style={{ width: '20%' }} />
                                 </colgroup>
                                 <thead>
@@ -233,7 +241,7 @@ function MyPage({ user }) {
                                 </tbody>
                                 <tfoot>
                                     <tr style={{ background: '#f8f9fa', borderTop: '2px solid #333' }}>
-                                        <td colSpan="4" style={{ padding: '15px', textAlign: 'center', fontWeight: 'bold' }}>합 계</td>
+                                        <td colSpan="4" style={{ padding: '15px', textAlign: 'center', fontWeight: 'bold' }}>합 계 (VAT포함)</td>
                                         <td style={{ padding: '15px', textAlign: 'right', fontWeight: 'bold', fontSize: '1.1rem' }}>
                                             {parseInt(selectedQuote.quote.total_amount).toLocaleString()}원
                                         </td>
@@ -248,8 +256,9 @@ function MyPage({ user }) {
                                 </div>
                             )}
 
-                            <div style={{ marginTop: '3rem', textAlign: 'center', color: '#666', fontSize: '0.9rem' }}>
-                                <p>본 견적서는 아론텍코리아 SCM 시스템에서 발급되었습니다.</p>
+                            <div style={{ marginTop: '4rem', textAlign: 'center', color: '#666', fontSize: '0.9rem' }}>
+                                <p style={{ marginBottom: '1rem' }}>본 견적서는 아론텍코리아 SCM 시스템에서 발급되었습니다.</p>
+                                <h2 style={{ color: '#0056b3', letterSpacing: '2px' }}>ARONTEC</h2>
                             </div>
                         </div>
 
