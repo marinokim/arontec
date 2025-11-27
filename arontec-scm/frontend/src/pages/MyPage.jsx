@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import html2canvas from 'html2canvas'
+import jsPDF from 'jspdf'
 
 function MyPage({ user }) {
     const [selectedQuote, setSelectedQuote] = useState(null)
@@ -17,6 +19,25 @@ function MyPage({ user }) {
             }
         } catch (error) {
             console.error('Error fetching quote detail:', error)
+        }
+    }
+
+    const handleDownloadPDF = async () => {
+        const input = document.getElementById('quote-detail-content')
+        if (!input) return
+
+        try {
+            const canvas = await html2canvas(input, { scale: 2 })
+            const imgData = canvas.toDataURL('image/png')
+            const pdf = new jsPDF('p', 'mm', 'a4')
+            const pdfWidth = pdf.internal.pageSize.getWidth()
+            const pdfHeight = (canvas.height * pdfWidth) / canvas.width
+
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight)
+            pdf.save(`quote_${selectedQuote.quote.quote_number}.pdf`)
+        } catch (error) {
+            console.error('PDF generation error:', error)
+            alert('PDF 다운로드 중 오류가 발생했습니다.')
         }
     }
 
@@ -91,53 +112,66 @@ function MyPage({ user }) {
                     }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                             <h2>견적서 상세 ({selectedQuote.quote.quote_number})</h2>
-                            <button onClick={() => setIsModalOpen(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>&times;</button>
-                        </div>
-
-                        <div style={{ marginBottom: '2rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                            <div>
-                                <p><strong>요청일:</strong> {new Date(selectedQuote.quote.created_at).toLocaleDateString()}</p>
-                                <p><strong>납기일:</strong> {selectedQuote.quote.delivery_date ? new Date(selectedQuote.quote.delivery_date).toLocaleDateString() : '-'}</p>
-                            </div>
-                            <div>
-                                <p><strong>상태:</strong> <span className={`badge badge-${selectedQuote.quote.status}`}>
-                                    {selectedQuote.quote.status === 'pending' ? '대기중' : selectedQuote.quote.status === 'approved' ? '승인' : '거절'}
-                                </span></p>
-                                <p><strong>총 금액:</strong> <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#0056b3' }}>{parseInt(selectedQuote.quote.total_amount).toLocaleString()}원</span></p>
+                            <div style={{ display: 'flex', gap: '1rem' }}>
+                                <button onClick={handleDownloadPDF} className="btn btn-primary" style={{ fontSize: '0.9rem', padding: '0.5rem 1rem' }}>
+                                    PDF 다운로드
+                                </button>
+                                <button onClick={() => setIsModalOpen(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>&times;</button>
                             </div>
                         </div>
 
-                        <table className="table" style={{ width: '100%', borderCollapse: 'collapse' }}>
-                            <thead>
-                                <tr style={{ background: '#f8f9fa', borderBottom: '2px solid #dee2e6' }}>
-                                    <th style={{ padding: '0.75rem', textAlign: 'left' }}>브랜드</th>
-                                    <th style={{ padding: '0.75rem', textAlign: 'left' }}>모델명</th>
-                                    <th style={{ padding: '0.75rem', textAlign: 'right' }}>단가</th>
-                                    <th style={{ padding: '0.75rem', textAlign: 'center' }}>수량</th>
-                                    <th style={{ padding: '0.75rem', textAlign: 'right' }}>합계</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {selectedQuote.items.map((item, index) => (
-                                    <tr key={index} style={{ borderBottom: '1px solid #dee2e6' }}>
-                                        <td style={{ padding: '0.75rem' }}>{item.brand}</td>
-                                        <td style={{ padding: '0.75rem' }}>{item.model_name}</td>
-                                        <td style={{ padding: '0.75rem', textAlign: 'right' }}>{parseInt(item.unit_price).toLocaleString()}원</td>
-                                        <td style={{ padding: '0.75rem', textAlign: 'center' }}>{item.quantity}</td>
-                                        <td style={{ padding: '0.75rem', textAlign: 'right' }}>{parseInt(item.subtotal).toLocaleString()}원</td>
+                        <div id="quote-detail-content" style={{ padding: '1rem', background: 'white' }}>
+                            <div style={{ marginBottom: '2rem', borderBottom: '2px solid #333', paddingBottom: '1rem' }}>
+                                <h1 style={{ textAlign: 'center', marginBottom: '2rem' }}>견 적 서</h1>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                                    <div>
+                                        <p><strong>견적번호:</strong> {selectedQuote.quote.quote_number}</p>
+                                        <p><strong>요청일:</strong> {new Date(selectedQuote.quote.created_at).toLocaleDateString()}</p>
+                                        <p><strong>납기일:</strong> {selectedQuote.quote.delivery_date ? new Date(selectedQuote.quote.delivery_date).toLocaleDateString() : '-'}</p>
+                                    </div>
+                                    <div style={{ textAlign: 'right' }}>
+                                        <p><strong>상태:</strong> {selectedQuote.quote.status === 'pending' ? '대기중' : selectedQuote.quote.status === 'approved' ? '승인' : '거절'}</p>
+                                        <p><strong>총 금액:</strong> <span style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{parseInt(selectedQuote.quote.total_amount).toLocaleString()}원</span></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <table className="table" style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '2rem' }}>
+                                <thead>
+                                    <tr style={{ background: '#f8f9fa', borderBottom: '1px solid #dee2e6' }}>
+                                        <th style={{ padding: '0.75rem', textAlign: 'left', borderBottom: '1px solid #dee2e6' }}>브랜드</th>
+                                        <th style={{ padding: '0.75rem', textAlign: 'left', borderBottom: '1px solid #dee2e6' }}>모델명</th>
+                                        <th style={{ padding: '0.75rem', textAlign: 'right', borderBottom: '1px solid #dee2e6' }}>단가</th>
+                                        <th style={{ padding: '0.75rem', textAlign: 'center', borderBottom: '1px solid #dee2e6' }}>수량</th>
+                                        <th style={{ padding: '0.75rem', textAlign: 'right', borderBottom: '1px solid #dee2e6' }}>합계</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {selectedQuote.items.map((item, index) => (
+                                        <tr key={index} style={{ borderBottom: '1px solid #dee2e6' }}>
+                                            <td style={{ padding: '0.75rem' }}>{item.brand}</td>
+                                            <td style={{ padding: '0.75rem' }}>{item.model_name}</td>
+                                            <td style={{ padding: '0.75rem', textAlign: 'right' }}>{parseInt(item.unit_price).toLocaleString()}원</td>
+                                            <td style={{ padding: '0.75rem', textAlign: 'center' }}>{item.quantity}</td>
+                                            <td style={{ padding: '0.75rem', textAlign: 'right' }}>{parseInt(item.subtotal).toLocaleString()}원</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
 
-                        {selectedQuote.quote.notes && (
-                            <div style={{ marginTop: '2rem', padding: '1rem', background: '#f8f9fa', borderRadius: '4px' }}>
-                                <strong>요청 사항:</strong>
-                                <p style={{ marginTop: '0.5rem', whiteSpace: 'pre-wrap' }}>{selectedQuote.quote.notes}</p>
+                            {selectedQuote.quote.notes && (
+                                <div style={{ marginTop: '2rem', padding: '1rem', background: '#f8f9fa', borderRadius: '4px' }}>
+                                    <strong>요청 사항:</strong>
+                                    <p style={{ marginTop: '0.5rem', whiteSpace: 'pre-wrap' }}>{selectedQuote.quote.notes}</p>
+                                </div>
+                            )}
+
+                            <div style={{ marginTop: '3rem', textAlign: 'center', color: '#666', fontSize: '0.9rem' }}>
+                                <p>본 견적서는 아론텍코리아 SCM 시스템에서 발급되었습니다.</p>
                             </div>
-                        )}
+                        </div>
 
-                        <div style={{ marginTop: '2rem', textAlign: 'right' }}>
+                        <div style={{ marginTop: '1rem', textAlign: 'right' }}>
                             <button onClick={() => setIsModalOpen(false)} className="btn btn-secondary">닫기</button>
                         </div>
                     </div>

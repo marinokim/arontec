@@ -49,10 +49,10 @@ function App() {
 
                     {/* Protected Routes - B2B Partner */}
                     <Route path="/dashboard" element={user ? <Dashboard user={user} /> : <Navigate to="/login" />} />
-                    <Route path="/catalog" element={user ? <Catalog /> : <Navigate to="/login" />} />
-                    <Route path="/product/:id" element={user ? <ProductDetail /> : <Navigate to="/login" />} />
-                    <Route path="/cart" element={user ? <Cart /> : <Navigate to="/login" />} />
-                    <Route path="/quote-request" element={user ? <QuoteRequest /> : <Navigate to="/login" />} />
+                    <Route path="/catalog" element={user ? <Catalog user={user} /> : <Navigate to="/login" />} />
+                    <Route path="/product/:id" element={user ? <ProductDetail user={user} /> : <Navigate to="/login" />} />
+                    <Route path="/cart" element={user ? <Cart user={user} /> : <Navigate to="/login" />} />
+                    <Route path="/quote-request" element={user ? <QuoteRequest user={user} /> : <Navigate to="/login" />} />
                     <Route path="/mypage" element={user ? <MyPage user={user} /> : <Navigate to="/login" />} />
 
                     {/* Protected Routes - Admin Only */}

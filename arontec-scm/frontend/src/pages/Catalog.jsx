@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './Catalog.css'
 
-function Catalog() {
+function Catalog({ user }) {
     const [products, setProducts] = useState([])
     const [categories, setCategories] = useState([])
     const [selectedCategory, setSelectedCategory] = useState('')
@@ -78,7 +78,7 @@ function Catalog() {
 
             <div className="products-grid">
                 {products.map(product => (
-                    <ProductCard key={product.id} product={product} onAddToCart={addToCart} navigate={navigate} />
+                    <ProductCard key={product.id} product={product} onAddToCart={addToCart} navigate={navigate} user={user} />
                 ))}
             </div>
 
@@ -89,7 +89,7 @@ function Catalog() {
     )
 }
 
-function ProductCard({ product, onAddToCart, navigate }) {
+function ProductCard({ product, onAddToCart, navigate, user }) {
     const [quantity, setQuantity] = useState(1)
 
     return (
@@ -121,7 +121,8 @@ function ProductCard({ product, onAddToCart, navigate }) {
                 <button
                     className="btn btn-primary"
                     onClick={() => onAddToCart(product.id, quantity)}
-                    style={{ flex: 1 }}
+                    style={{ flex: 1, display: user?.isAdmin ? 'none' : 'block' }}
+                    disabled={user?.isAdmin}
                 >
                     담기
                 </button>

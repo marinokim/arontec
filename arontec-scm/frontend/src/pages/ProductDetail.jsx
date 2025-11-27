@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import './Catalog.css' // Reuse catalog styles or create new ones
 
-function ProductDetail() {
+function ProductDetail({ user }) {
     const { id } = useParams()
     const navigate = useNavigate()
     const [product, setProduct] = useState(null)

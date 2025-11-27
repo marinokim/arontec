@@ -1,24 +1,30 @@
+```javascript
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-function Cart() {
-    const [cart, setCart] = useState([])
+function Cart({ user }) {
+    const [cartItems, setCartItems] = useState([])
     const navigate = useNavigate()
 
     useEffect(() => {
+        if (user?.isAdmin) {
+            alert('관리자는 장바구니를 이용할 수 없습니다.')
+            navigate('/dashboard')
+            return
+        }
         fetchCart()
-    }, [])
+    }, [user])
 
     const fetchCart = async () => {
         const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/cart', { credentials: 'include' })
         const data = await res.json()
-        setCart(data.cart)
+        setCartItems(data.cart)
     }
 
     const updateQuantity = async (id, quantity) => {
         if (quantity < 1) return
 
-        await fetch((import.meta.env.VITE_API_URL || '') + `/api/cart/${id}`, {
+        await fetch((import.meta.env.VITE_API_URL || '') + `/ api / cart / ${ id } `, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
@@ -31,7 +37,7 @@ function Cart() {
     const removeItem = async (id) => {
         if (!confirm('삭제하시겠습니까?')) return
 
-        await fetch((import.meta.env.VITE_API_URL || '') + `/api/cart/${id}`, { method: 'DELETE', credentials: 'include' })
+        await fetch((import.meta.env.VITE_API_URL || '') + `/ api / cart / ${ id } `, { method: 'DELETE', credentials: 'include' })
         fetchCart()
     }
 
