@@ -105,7 +105,6 @@ router.get('/:id', requireApproved, async (req, res) => {
         console.error('Get quote details error:', error)
         res.status(500).json({ error: 'Failed to get quote details' })
     }
-}
 })
 
 // Update shipping info (Admin only)
