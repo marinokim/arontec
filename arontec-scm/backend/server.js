@@ -12,6 +12,7 @@ import adminRoutes from './routes/admin.js'
 dotenv.config()
 
 const app = express()
+app.set('trust proxy', 1) // Trust first proxy (Render/Heroku)
 const PORT = process.env.PORT || 5000
 
 // Middleware

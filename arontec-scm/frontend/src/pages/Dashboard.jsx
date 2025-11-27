@@ -13,8 +13,15 @@ function Dashboard({ user }) {
     const fetchDashboard = async () => {
         try {
             const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/dashboard', { credentials: 'include' })
-            const data = await res.json()
-            setData(data)
+            if (res.ok) {
+                const data = await res.json()
+                setData(data)
+            } else {
+                // If session expired or invalid, redirect to login
+                if (res.status === 401) {
+                    window.location.href = '/login'
+                }
+            }
         } catch (error) {
             console.error('Failed to fetch dashboard:', error)
         } finally {
