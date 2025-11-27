@@ -84,7 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">${product.brand}</h3>
                 <h4 style="font-size: 1.1rem; margin-bottom: 0.5rem;">${product.model}</h4>
                 <p style="color: #666; margin-bottom: 1rem;">${product.description}</p>
-                <div style="font-weight: bold; color: var(--secondary-color);">₩${product.price.toLocaleString()}</div>
             </div>
         `}).join('');
     }
