@@ -41,7 +41,8 @@ function AdminProducts() {
     const handleSubmit = async (e) => {
         e.preventDefault()
 
-        const url = editingProduct ? `/api/products/${editingProduct.id}` : '/api/products'
+        const baseUrl = import.meta.env.VITE_API_URL || ''
+        const url = editingProduct ? `${baseUrl}/api/products/${editingProduct.id}` : `${baseUrl}/api/products`
         const method = editingProduct ? 'PUT' : 'POST'
 
         try {
