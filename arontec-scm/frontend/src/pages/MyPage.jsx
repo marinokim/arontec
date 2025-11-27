@@ -134,41 +134,100 @@ function MyPage({ user }) {
 
                         <div id="quote-detail-content" style={{ padding: '1rem', background: 'white' }}>
                             <div style={{ marginBottom: '2rem', borderBottom: '2px solid #333', paddingBottom: '1rem' }}>
-                                <h1 style={{ textAlign: 'center', marginBottom: '2rem' }}>견 적 서</h1>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
-                                    <div>
-                                        <p><strong>견적번호:</strong> {selectedQuote.quote.quote_number}</p>
-                                        <p><strong>요청일:</strong> {new Date(selectedQuote.quote.created_at).toLocaleDateString()}</p>
-                                        <p><strong>납기일:</strong> {selectedQuote.quote.delivery_date ? new Date(selectedQuote.quote.delivery_date).toLocaleDateString() : '-'}</p>
+                                <h1 style={{ textAlign: 'center', marginBottom: '3rem', fontSize: '2.5rem', letterSpacing: '0.5rem' }}>견 적 서</h1>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '2rem' }}>
+                                    <div style={{ flex: 1 }}>
+                                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
+                                            <tbody>
+                                                <tr>
+                                                    <td style={{ padding: '4px 0', width: '80px', color: '#666' }}>견적번호</td>
+                                                    <td>: {selectedQuote.quote.quote_number}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style={{ padding: '4px 0', color: '#666' }}>요청일자</td>
+                                                    <td>: {new Date(selectedQuote.quote.created_at).toLocaleDateString()}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style={{ padding: '4px 0', color: '#666' }}>납기일자</td>
+                                                    <td>: {selectedQuote.quote.delivery_date ? new Date(selectedQuote.quote.delivery_date).toLocaleDateString() : '-'}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
-                                    <div style={{ textAlign: 'right' }}>
-                                        <p><strong>상태:</strong> {selectedQuote.quote.status === 'pending' ? '대기중' : selectedQuote.quote.status === 'approved' ? '승인' : '거절'}</p>
-                                        <p><strong>총 금액:</strong> <span style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{parseInt(selectedQuote.quote.total_amount).toLocaleString()}원</span></p>
+                                    <div style={{ flex: 1, border: '1px solid #ddd', padding: '1rem', borderRadius: '4px', background: '#f9f9f9' }}>
+                                        <h4 style={{ margin: '0 0 0.5rem 0', borderBottom: '1px solid #eee', paddingBottom: '0.5rem' }}>공급받는 자</h4>
+                                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
+                                            <tbody>
+                                                <tr>
+                                                    <td style={{ padding: '4px 0', width: '60px', color: '#666' }}>회사명</td>
+                                                    <td>: {user?.companyName}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style={{ padding: '4px 0', color: '#666' }}>담당자</td>
+                                                    <td>: {user?.contactPerson}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style={{ padding: '4px 0', color: '#666' }}>이메일</td>
+                                                    <td>: {user?.email}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div style={{ marginTop: '2rem', textAlign: 'right', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '2rem' }}>
+                                    <div style={{
+                                        padding: '0.5rem 1rem',
+                                        borderRadius: '4px',
+                                        background: selectedQuote.quote.status === 'approved' ? '#e6f4ea' : '#fff3e0',
+                                        color: selectedQuote.quote.status === 'approved' ? '#1e7e34' : '#e65100',
+                                        fontWeight: 'bold',
+                                        border: `1px solid ${selectedQuote.quote.status === 'approved' ? '#1e7e34' : '#e65100'}`
+                                    }}>
+                                        {selectedQuote.quote.status === 'pending' ? '승인 대기중' : selectedQuote.quote.status === 'approved' ? '승인 완료' : '반려됨'}
+                                    </div>
+                                    <div>
+                                        <span style={{ fontSize: '0.9rem', color: '#666', marginRight: '1rem' }}>총 견적금액</span>
+                                        <span style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#333' }}>{parseInt(selectedQuote.quote.total_amount).toLocaleString()}원</span>
                                     </div>
                                 </div>
                             </div>
 
-                            <table className="table" style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '2rem' }}>
+                            <table className="table" style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '2rem', fontSize: '0.9rem' }}>
+                                <colgroup>
+                                    <col style={{ width: '20%' }} />
+                                    <col style={{ width: '30%' }} />
+                                    <col style={{ width: '15%' }} />
+                                    <col style={{ width: '15%' }} />
+                                    <col style={{ width: '20%' }} />
+                                </colgroup>
                                 <thead>
-                                    <tr style={{ background: '#f8f9fa', borderBottom: '1px solid #dee2e6' }}>
-                                        <th style={{ padding: '0.75rem', textAlign: 'left', borderBottom: '1px solid #dee2e6' }}>브랜드</th>
-                                        <th style={{ padding: '0.75rem', textAlign: 'left', borderBottom: '1px solid #dee2e6' }}>모델명</th>
-                                        <th style={{ padding: '0.75rem', textAlign: 'right', borderBottom: '1px solid #dee2e6' }}>단가</th>
-                                        <th style={{ padding: '0.75rem', textAlign: 'center', borderBottom: '1px solid #dee2e6' }}>수량</th>
-                                        <th style={{ padding: '0.75rem', textAlign: 'right', borderBottom: '1px solid #dee2e6' }}>합계</th>
+                                    <tr style={{ background: '#f1f3f5', borderTop: '2px solid #333', borderBottom: '1px solid #dee2e6' }}>
+                                        <th style={{ padding: '10px', textAlign: 'left' }}>브랜드</th>
+                                        <th style={{ padding: '10px', textAlign: 'left' }}>모델명</th>
+                                        <th style={{ padding: '10px', textAlign: 'right' }}>단가</th>
+                                        <th style={{ padding: '10px', textAlign: 'center' }}>수량</th>
+                                        <th style={{ padding: '10px', textAlign: 'right' }}>합계</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {selectedQuote.items.map((item, index) => (
-                                        <tr key={index} style={{ borderBottom: '1px solid #dee2e6' }}>
-                                            <td style={{ padding: '0.75rem' }}>{item.brand}</td>
-                                            <td style={{ padding: '0.75rem' }}>{item.model_name}</td>
-                                            <td style={{ padding: '0.75rem', textAlign: 'right' }}>{parseInt(item.unit_price).toLocaleString()}원</td>
-                                            <td style={{ padding: '0.75rem', textAlign: 'center' }}>{item.quantity}</td>
-                                            <td style={{ padding: '0.75rem', textAlign: 'right' }}>{parseInt(item.subtotal).toLocaleString()}원</td>
+                                        <tr key={index} style={{ borderBottom: '1px solid #eee' }}>
+                                            <td style={{ padding: '10px' }}>{item.brand}</td>
+                                            <td style={{ padding: '10px' }}>{item.model_name}</td>
+                                            <td style={{ padding: '10px', textAlign: 'right' }}>{parseInt(item.unit_price).toLocaleString()}</td>
+                                            <td style={{ padding: '10px', textAlign: 'center' }}>{item.quantity}</td>
+                                            <td style={{ padding: '10px', textAlign: 'right' }}>{parseInt(item.subtotal).toLocaleString()}</td>
                                         </tr>
                                     ))}
                                 </tbody>
+                                <tfoot>
+                                    <tr style={{ background: '#f8f9fa', borderTop: '2px solid #333' }}>
+                                        <td colSpan="4" style={{ padding: '15px', textAlign: 'center', fontWeight: 'bold' }}>합 계</td>
+                                        <td style={{ padding: '15px', textAlign: 'right', fontWeight: 'bold', fontSize: '1.1rem' }}>
+                                            {parseInt(selectedQuote.quote.total_amount).toLocaleString()}원
+                                        </td>
+                                    </tr>
+                                </tfoot>
                             </table>
 
                             {selectedQuote.quote.notes && (
