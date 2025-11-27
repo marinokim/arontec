@@ -76,7 +76,7 @@ function ProductDetail() {
                             <h1 style={{ fontSize: '2rem', marginBottom: '10px' }}>{product.model_name}</h1>
                             <h3 style={{ color: '#666', marginBottom: '20px' }}>{product.brand}</h3>
                             <h2 style={{ color: '#007bff', marginBottom: '20px' }}>
-                                {parseInt(product.b2b_price).toLocaleString()}원
+                                <p className="product-price">{parseInt(product.b2b_price).toLocaleString()}원</p>
                             </h2>
                             <p style={{ fontSize: '1.1rem', lineHeight: '1.6', color: '#555', marginBottom: '30px' }}>
                                 {product.description}

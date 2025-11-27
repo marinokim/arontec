@@ -92,7 +92,7 @@ function Dashboard({ user }) {
                                     {data.recentQuotes.map(quote => (
                                         <tr key={quote.id}>
                                             <td>{quote.quote_number}</td>
-                                            <td>{quote.total_amount?.toLocaleString()}원</td>
+                                            <td>{parseInt(quote.total_amount).toLocaleString()}원</td>
                                             <td>
                                                 <span className={`badge badge-${quote.status}`}>
                                                     {quote.status === 'pending' ? '대기중' : quote.status === 'approved' ? '승인' : '거절'}

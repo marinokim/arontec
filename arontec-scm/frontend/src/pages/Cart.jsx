@@ -35,7 +35,7 @@ function Cart() {
         fetchCart()
     }
 
-    const total = cart.reduce((sum, item) => sum + (item.b2b_price * item.quantity), 0)
+    const total = cart.reduce((sum, item) => sum + (parseInt(item.b2b_price) * item.quantity), 0)
 
     return (
         <div className="catalog-page">
@@ -71,7 +71,7 @@ function Cart() {
                                             <strong>{item.brand}</strong><br />
                                             {item.model_name}
                                         </td>
-                                        <td>{Number(item.b2b_price).toLocaleString()}원</td>
+                                        <td>{parseInt(item.b2b_price).toLocaleString()}원</td>
                                         <td>
                                             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                                                 <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="btn btn-secondary">-</button>
@@ -79,7 +79,7 @@ function Cart() {
                                                 <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="btn btn-secondary">+</button>
                                             </div>
                                         </td>
-                                        <td>{(item.b2b_price * item.quantity).toLocaleString()}원</td>
+                                        <td>{(parseInt(item.b2b_price) * item.quantity).toLocaleString()}원</td>
                                         <td>
                                             <button onClick={() => removeItem(item.id)} className="btn btn-secondary">삭제</button>
                                         </td>

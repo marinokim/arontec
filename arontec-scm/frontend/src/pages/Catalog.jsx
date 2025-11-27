@@ -108,7 +108,7 @@ function ProductCard({ product, onAddToCart, navigate }) {
             <div className="product-info">
                 <h3>{product.brand}</h3>
                 <p className="model">{product.model_name}</p>
-                <p className="price">{Number(product.b2b_price).toLocaleString()}원</p>
+                <p className="price">{parseInt(product.b2b_price).toLocaleString()}원</p>
             </div>
             <div className="product-actions" onClick={e => e.stopPropagation()} style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem' }}>
                 <input
