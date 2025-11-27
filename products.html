@@ -48,6 +48,21 @@
     <!-- Products Grid -->
     <section class="section">
         <div class="container">
+            <!-- Category Filter Section -->
+            <div style="margin-bottom: 40px;">
+                <h2 class="section-title" style="text-align: left;">제품 카테고리</h2>
+                <p style="margin-bottom: 2rem;">원하시는 카테고리를 선택하여 제품을 확인하세요.</p>
+
+                <div class="category-filters" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="category-btn active" data-category="All">All</button>
+                    <button class="category-btn" data-category="Audio">Audio</button>
+                    <button class="category-btn" data-category="Mobile">Mobile</button>
+                    <button class="category-btn" data-category="Beauty">Beauty</button>
+                    <button class="category-btn" data-category="Fashion">Fashion</button>
+                    <button class="category-btn" data-category="Other">Other</button>
+                </div>
+            </div>
+
             <div class="product-grid" id="product-grid">
                 <!-- Products will be loaded dynamically via script.js -->
             </div>

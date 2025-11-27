@@ -11,8 +11,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Render Products if on products page
     const productGrid = document.getElementById('product-grid');
-    if (productGrid && typeof products !== 'undefined') {
-        productGrid.innerHTML = products.map(product => `
+    const categoryBtns = document.querySelectorAll('.category-btn');
+
+    function renderProducts(category = 'All') {
+        if (!productGrid || typeof products === 'undefined') return;
+
+        const filteredProducts = category === 'All'
+            ? products
+            : products.filter(p => p.category === category);
+
+        if (filteredProducts.length === 0) {
+            productGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 2rem;">해당 카테고리에 제품이 없습니다.</p>';
+            return;
+        }
+
+        productGrid.innerHTML = filteredProducts.map(product => `
             <div class="product-card">
                 <div class="product-icon" style="font-size: 3rem; margin-bottom: 1rem;">${product.image}</div>
                 <h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">${product.brand}</h3>
@@ -21,6 +34,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div style="font-weight: bold; color: var(--secondary-color);">₩${product.price.toLocaleString()}</div>
             </div>
         `).join('');
+    }
+
+    if (productGrid) {
+        renderProducts(); // Initial render
+
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked
+                btn.classList.add('active');
+
+                const category = btn.getAttribute('data-category');
+                renderProducts(category);
+            });
+        });
     }
 
     // Smooth Scroll for Anchor Links

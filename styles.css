@@ -416,3 +416,27 @@ footer {
     font-size: 2.5rem;
     margin-bottom: 0;
 }
+/* Category Filters */
+.category-btn {
+    padding: 10px 20px;
+    border: 1px solid var(--border-color);
+    background-color: white;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition-fast);
+    color: var(--text-color);
+    font-family: var(--font-body);
+}
+
+.category-btn:hover {
+    background-color: var(--bg-light);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.category-btn.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
