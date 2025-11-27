@@ -203,7 +203,7 @@ function MyPage({ user }) {
                                                 </div>
                                             )}
                                             <div>
-                                                <span style={{ fontSize: '1rem', fontWeight: 'bold', marginRight: '1rem' }}>총 금액:</span>
+                                                <span style={{ fontSize: '1.8rem', fontWeight: 'bold', marginRight: '1rem' }}>총 금액:</span>
                                                 <span style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#333' }}>{parseInt(selectedQuote.quote.total_amount).toLocaleString()}</span>
                                                 <span style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#333', marginLeft: '0.5rem' }}>원</span>
                                             </div>
