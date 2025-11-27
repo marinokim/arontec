@@ -11,8 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // API Configuration
     // const API_BASE_URL = 'http://localhost:5001'; // Localhost
-    const API_BASE_URL = 'http://192.168.0.7:5001'; // Local Network
-    // const API_BASE_URL = 'https://your-backend.onrender.com'; // Production
+    // const API_BASE_URL = 'http://192.168.0.7:5001'; // Local Network
+    const API_BASE_URL = 'https://arontec-backend.onrender.com'; // Production
 
     // Render Products
     const productGrid = document.getElementById('product-grid');
