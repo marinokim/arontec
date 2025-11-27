@@ -1,4 +1,4 @@
-```javascript
+
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -24,7 +24,7 @@ function Cart({ user }) {
     const updateQuantity = async (id, quantity) => {
         if (quantity < 1) return
 
-        await fetch((import.meta.env.VITE_API_URL || '') + `/ api / cart / ${ id } `, {
+        await fetch((import.meta.env.VITE_API_URL || '') + `/ api / cart / ${id} `, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
@@ -37,11 +37,11 @@ function Cart({ user }) {
     const removeItem = async (id) => {
         if (!confirm('삭제하시겠습니까?')) return
 
-        await fetch((import.meta.env.VITE_API_URL || '') + `/ api / cart / ${ id } `, { method: 'DELETE', credentials: 'include' })
+        await fetch((import.meta.env.VITE_API_URL || '') + `/ api / cart / ${id} `, { method: 'DELETE', credentials: 'include' })
         fetchCart()
     }
 
-    const total = cart.reduce((sum, item) => sum + (parseInt(item.b2b_price) * item.quantity), 0)
+    const total = cartItems.reduce((sum, item) => sum + (parseInt(item.b2b_price) * item.quantity), 0)
 
     return (
         <div className="catalog-page">
@@ -50,7 +50,7 @@ function Cart({ user }) {
                 <button onClick={() => navigate('/dashboard')} className="btn btn-secondary">← 대시보드</button>
             </div>
 
-            {cart.length === 0 ? (
+            {cartItems.length === 0 ? (
                 <div className="card" style={{ textAlign: 'center', padding: '3rem' }}>
                     <p>장바구니가 비어있습니다</p>
                     <button onClick={() => navigate('/catalog')} className="btn btn-primary" style={{ marginTop: '1rem' }}>
@@ -71,7 +71,7 @@ function Cart({ user }) {
                                 </tr>
                             </thead>
                             <tbody>
-                                {cart.map(item => (
+                                {cartItems.map(item => (
                                     <tr key={item.id}>
                                         <td>
                                             <strong>{item.brand}</strong><br />
