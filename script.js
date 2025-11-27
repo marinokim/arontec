@@ -120,35 +120,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderProductDetail(product) {
-        const isEmoji = !product.image_url.includes('/') && !product.image_url.includes('.');
-        const imageHtml = isEmoji
-            ? `<div style="font-size: 10rem; text-align: center; background: #f8f9fa; padding: 2rem; border-radius: 8px;">${product.image_url}</div>`
-            : `<img src="${product.image_url}" alt="${product.model_name}" style="width: 100%; max-width: 500px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">`;
+        // Normalize properties (API returns snake_case, static data returns camelCase)
+        const imageUrl = product.image_url || product.image;
+        const detailUrl = product.detail_url || product.detailUrl;
+        const modelName = product.model_name || product.model;
 
-        const detailImageHtml = product.detail_url
+        const isEmoji = !imageUrl.includes('/') && !imageUrl.includes('.');
+        const imageHtml = isEmoji
+            ? `<div style="font-size: 10rem; text-align: center; background: #f8f9fa; padding: 2rem; border-radius: 8px;">${imageUrl}</div>`
+            : `<img src="${imageUrl}" alt="${modelName}" style="width: 100%; max-width: 500px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">`;
+
+        const detailImageHtml = detailUrl
             ? `<div style="margin-top: 60px; border-top: 1px solid #eee; padding-top: 40px;">
                  <h3 style="font-size: 1.5rem; margin-bottom: 20px; border-left: 4px solid var(--primary-color); padding-left: 10px;">상세 정보</h3>
-                 <img src="${product.detail_url}" alt="Detailed Description" style="width: 100%; max-width: 1000px; display: block; margin: 0 auto;">
+                 <img src="${detailUrl}" alt="Detail" style="width: 100%; max-width: 800px; display: block; margin: 0 auto;">
                </div>`
             : '';
 
         detailContainer.innerHTML = `
-            <div style="display: flex; flex-wrap: wrap; gap: 40px; margin-bottom: 40px; justify-content: center;">
-                <div style="flex: 1; min-width: 300px; text-align: center;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;">
+                <div style="text-align: center;">
                     ${imageHtml}
                 </div>
-                <div style="flex: 1; min-width: 300px;">
-                    <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-                        <span style="background: var(--secondary-color); color: white; padding: 5px 10px; border-radius: 4px; font-size: 0.9rem;">${product.category_name || 'Product'}</span>
-                        <h1 style="font-size: 2rem; margin: 15px 0; color: #333;">${product.model_name}</h1>
-                        <h3 style="color: #666; margin-bottom: 20px; font-weight: 500;">${product.brand}</h3>
-                        <p style="font-size: 1.1rem; line-height: 1.6; color: #555; margin-bottom: 30px;">${product.description}</p>
-                        
-                        <div style="border-top: 1px solid #eee; padding-top: 20px;">
-                            <a href="contact.html" class="btn-nav" style="background-color: var(--primary-color); color: white; padding: 12px 30px; border-radius: 5px; text-decoration: none; display: inline-block;">
-                                견적 문의하기
-                            </a>
-                        </div>
+                <div style="padding: 20px;">
+                    <span style="background: #f0f0f0; padding: 5px 10px; border-radius: 20px; font-size: 0.9rem; color: #666;">${product.category_name || product.category}</span>
+                    <h2 style="font-size: 2rem; margin: 10px 0 20px; color: #333;">${product.brand}</h2>
+                    <h1 style="font-size: 1.5rem; margin-bottom: 20px; font-weight: normal; color: #555;">${modelName}</h1>
+                    <p style="font-size: 1.1rem; line-height: 1.6; color: #666; margin-bottom: 30px;">${product.description}</p>
+                    
+                    <div style="margin-top: 30px;">
+                        <button onclick="history.back()" style="padding: 12px 30px; background: #333; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem;">목록으로</button>
                     </div>
                 </div>
             </div>
