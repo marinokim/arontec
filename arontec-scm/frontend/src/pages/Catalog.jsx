@@ -30,13 +30,13 @@ function Catalog() {
         setProducts(data.products)
     }
 
-    const addToCart = async (productId) => {
+    const addToCart = async (productId, quantity) => {
         try {
             const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/cart', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
-                body: JSON.stringify({ productId, quantity: 1 })
+                body: JSON.stringify({ productId, quantity })
             })
 
             if (res.ok) {
@@ -78,41 +78,54 @@ function Catalog() {
 
             <div className="products-grid">
                 {products.map(product => (
-                    <div
-                        key={product.id}
-                        className="product-card"
-                        onClick={() => navigate(`/product/${product.id}`)}
-                        style={{ cursor: 'pointer' }}
-                    >
-                        <div className="product-image">
-                            {product.image_url ? (
-                                <img src={product.image_url} alt={product.model_name} />
-                            ) : (
-                                <div className="no-image">No Image</div>
-                            )}
-                        </div>
-                        <div className="product-info">
-                            <h3>{product.brand}</h3>
-                            <p className="model">{product.model_name}</p>
-                            <p className="price">{Number(product.b2b_price).toLocaleString()}원</p>
-                            {/* Removed stock quantity as per instruction */}
-                        </div>
-                        <button
-                            className="btn btn-primary"
-                            onClick={(e) => {
-                                e.stopPropagation(); // Prevent card click
-                                addToCart(product);
-                            }}
-                        >
-                            담기
-                        </button>
-                    </div>
+                    <ProductCard key={product.id} product={product} onAddToCart={addToCart} navigate={navigate} />
                 ))}
             </div>
 
             {products.length === 0 && (
                 <div className="no-products">조회된 상품이 없습니다</div>
             )}
+        </div>
+    )
+}
+
+function ProductCard({ product, onAddToCart, navigate }) {
+    const [quantity, setQuantity] = useState(1)
+
+    return (
+        <div
+            className="product-card"
+            onClick={() => navigate(`/product/${product.id}`)}
+            style={{ cursor: 'pointer' }}
+        >
+            <div className="product-image">
+                {product.image_url ? (
+                    <img src={product.image_url} alt={product.model_name} />
+                ) : (
+                    <div className="no-image">No Image</div>
+                )}
+            </div>
+            <div className="product-info">
+                <h3>{product.brand}</h3>
+                <p className="model">{product.model_name}</p>
+                <p className="price">{Number(product.b2b_price).toLocaleString()}원</p>
+            </div>
+            <div className="product-actions" onClick={e => e.stopPropagation()} style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem' }}>
+                <input
+                    type="number"
+                    min="1"
+                    value={quantity}
+                    onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                    style={{ width: '60px', padding: '0.5rem', border: '1px solid #ddd', borderRadius: '4px' }}
+                />
+                <button
+                    className="btn btn-primary"
+                    onClick={() => onAddToCart(product.id, quantity)}
+                    style={{ flex: 1 }}
+                >
+                    담기
+                </button>
+            </div>
         </div>
     )
 }
