@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
             : '';
 
         detailContainer.innerHTML = `
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;">
+            <div class="product-detail-wrapper">
                 <div style="text-align: center;">
                     ${imageHtml}
                 </div>
