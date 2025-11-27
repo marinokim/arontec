@@ -143,15 +143,15 @@ document.addEventListener('DOMContentLoaded', () => {
             : '';
 
         detailContainer.innerHTML = `
-            <div class="product-detail-wrapper">
+            <div class="product-detail-wrapper" style="max-width: 800px; margin: 0 auto;">
                 <div style="text-align: center;">
                     ${imageHtml}
                 </div>
-                <div style="padding: 20px;">
+                <div style="padding: 20px; text-align: center;">
                     <span style="background: #f0f0f0; padding: 5px 10px; border-radius: 20px; font-size: 0.9rem; color: #666;">${product.category_name || product.category}</span>
                     <h2 style="font-size: 2rem; margin: 10px 0 20px; color: #333;">${product.brand}</h2>
                     <h1 style="font-size: 1.5rem; margin-bottom: 20px; font-weight: normal; color: #555;">${modelName}</h1>
-                    <p style="font-size: 1.1rem; line-height: 1.6; color: #666; margin-bottom: 30px;">${product.description}</p>
+                    <p style="font-size: 1.1rem; line-height: 1.6; color: #666; margin-bottom: 30px; word-break: keep-all;">${product.description}</p>
                     
                     <div style="margin-top: 30px;">
                         <button onclick="history.back()" style="padding: 12px 30px; background: #333; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem;">목록으로</button>
