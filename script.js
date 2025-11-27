@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const isEmoji = !imageUrl.includes('/') && !imageUrl.includes('.');
         const imageHtml = isEmoji
             ? `<div style="font-size: 10rem; text-align: center; background: #f8f9fa; padding: 2rem; border-radius: 8px;">${imageUrl}</div>`
-            : `<img src="${imageUrl}" alt="${modelName}" style="width: 100%; max-width: 500px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">`;
+            : `<img src="${imageUrl}" alt="${modelName}" style="width: 100%; max-width: 500px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 0 auto;">`;
 
         const detailImageHtml = detailUrl
             ? `<div style="margin-top: 60px; border-top: 1px solid #eee; padding-top: 40px;">
