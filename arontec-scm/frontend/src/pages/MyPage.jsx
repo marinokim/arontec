@@ -93,8 +93,14 @@ function MyPage({ user }) {
                                     <td>{quote.delivery_date && new Date(quote.delivery_date).toLocaleDateString()}</td>
                                     <td>
                                         <span className={`badge badge-${quote.status}`}>
-                                            {quote.status === 'pending' ? '대기중' : quote.status === 'approved' ? '승인' : '거절'}
+                                            {quote.status === 'pending' ? '대기중' : quote.status === 'approved' ? '승인' : quote.status === 'shipped' ? '배송중' : '거절'}
                                         </span>
+                                        {quote.status === 'shipped' && (
+                                            <div style={{ fontSize: '0.8rem', marginTop: '0.5rem', color: '#666' }}>
+                                                {quote.carrier}<br />
+                                                {quote.tracking_number}
+                                            </div>
+                                        )}
                                     </td>
                                     <td>{new Date(quote.created_at).toLocaleDateString()}</td>
                                     <td>
@@ -178,16 +184,21 @@ function MyPage({ user }) {
                                     <div style={{
                                         padding: '0.5rem 1rem',
                                         borderRadius: '4px',
-                                        background: selectedQuote.quote.status === 'approved' ? '#e6f4ea' : '#fff3e0',
-                                        color: selectedQuote.quote.status === 'approved' ? '#1e7e34' : '#e65100',
+                                        background: selectedQuote.quote.status === 'approved' ? '#e6f4ea' : selectedQuote.quote.status === 'shipped' ? '#e3f2fd' : '#fff3e0',
+                                        color: selectedQuote.quote.status === 'approved' ? '#1e7e34' : selectedQuote.quote.status === 'shipped' ? '#0d47a1' : '#e65100',
                                         fontWeight: 'bold',
-                                        border: `1px solid ${selectedQuote.quote.status === 'approved' ? '#1e7e34' : '#e65100'}`
+                                        border: `1px solid ${selectedQuote.quote.status === 'approved' ? '#1e7e34' : selectedQuote.quote.status === 'shipped' ? '#0d47a1' : '#e65100'}`
                                     }}>
-                                        {selectedQuote.quote.status === 'pending' ? '승인 대기중' : selectedQuote.quote.status === 'approved' ? '승인 완료' : '반려됨'}
+                                        {selectedQuote.quote.status === 'pending' ? '승인 대기중' : selectedQuote.quote.status === 'approved' ? '승인 완료' : selectedQuote.quote.status === 'shipped' ? '배송중' : '반려됨'}
                                     </div>
-                                    <div>
-                                        <span style={{ fontSize: '0.9rem', color: '#666', marginRight: '1rem' }}>총 견적금액</span>
-                                        <span style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#333' }}>{parseInt(selectedQuote.quote.total_amount).toLocaleString()}원</span>
+                                    <div style={{ textAlign: 'right' }}>
+                                        <p><strong>상태:</strong> {selectedQuote.quote.status === 'pending' ? '대기중' : selectedQuote.quote.status === 'approved' ? '승인' : selectedQuote.quote.status === 'shipped' ? '배송중' : '거절'}</p>
+                                        {selectedQuote.quote.status === 'shipped' && (
+                                            <p style={{ color: '#007bff' }}>
+                                                <strong>배송정보:</strong> {selectedQuote.quote.carrier} {selectedQuote.quote.tracking_number}
+                                            </p>
+                                        )}
+                                        <p><strong>총 금액:</strong> <span style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{parseInt(selectedQuote.quote.total_amount).toLocaleString()}원</span></p>
                                     </div>
                                 </div>
                             </div>

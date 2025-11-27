@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 
 function AdminQuotes() {
     const [quotes, setQuotes] = useState([])
+    const [shippingModal, setShippingModal] = useState({ open: false, quoteId: null })
+    const [shippingInfo, setShippingInfo] = useState({ carrier: '', trackingNumber: '' })
 
     useEffect(() => {
         fetchQuotes()
@@ -21,6 +23,38 @@ function AdminQuotes() {
             body: JSON.stringify({ status })
         })
         fetchQuotes()
+    }
+
+    const openShippingModal = (quoteId) => {
+        setShippingModal({ open: true, quoteId })
+        setShippingInfo({ carrier: '', trackingNumber: '' })
+    }
+
+    const handleShippingUpdate = async () => {
+        if (!shippingInfo.carrier || !shippingInfo.trackingNumber) {
+            alert('택배사와 송장번호를 입력해주세요.')
+            return
+        }
+
+        try {
+            const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/quotes/${shippingModal.quoteId}/shipping`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(shippingInfo)
+            })
+
+            if (res.ok) {
+                alert('송장 정보가 등록되었습니다.')
+                setShippingModal({ open: false, quoteId: null })
+                fetchQuotes()
+            } else {
+                alert('송장 등록에 실패했습니다.')
+            }
+        } catch (error) {
+            console.error('Shipping update error:', error)
+            alert('오류가 발생했습니다.')
+        }
     }
 
     return (
@@ -48,7 +82,7 @@ function AdminQuotes() {
                                 <td>{parseInt(quote.total_amount).toLocaleString()}원</td>
                                 <td>
                                     <span className={`badge badge-${quote.status}`}>
-                                        {quote.status === 'pending' ? '대기중' : quote.status === 'approved' ? '승인' : '거절'}
+                                        {quote.status === 'pending' ? '대기중' : quote.status === 'approved' ? '승인' : quote.status === 'shipped' ? '배송중' : '거절'}
                                     </span>
                                 </td>
                                 <td>{new Date(quote.created_at).toLocaleDateString()}</td>
@@ -63,12 +97,58 @@ function AdminQuotes() {
                                             </button>
                                         </>
                                     )}
+                                    {quote.status === 'approved' && (
+                                        <button onClick={() => openShippingModal(quote.id)} className="btn btn-primary" style={{ fontSize: '0.8rem' }}>
+                                            송장 등록
+                                        </button>
+                                    )}
+                                    {quote.status === 'shipped' && (
+                                        <div style={{ fontSize: '0.8rem' }}>
+                                            <div>{quote.carrier}</div>
+                                            <div>{quote.tracking_number}</div>
+                                        </div>
+                                    )}
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
+
+            {shippingModal.open && (
+                <div className="modal-overlay" style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
+                }}>
+                    <div className="modal-content" style={{ background: 'white', padding: '2rem', borderRadius: '8px', width: '400px' }}>
+                        <h2>송장 등록</h2>
+                        <div style={{ margin: '1rem 0' }}>
+                            <label style={{ display: 'block', marginBottom: '0.5rem' }}>택배사</label>
+                            <input
+                                type="text"
+                                value={shippingInfo.carrier}
+                                onChange={e => setShippingInfo({ ...shippingInfo, carrier: e.target.value })}
+                                style={{ width: '100%', padding: '0.5rem' }}
+                                placeholder="예: CJ대한통운"
+                            />
+                        </div>
+                        <div style={{ margin: '1rem 0' }}>
+                            <label style={{ display: 'block', marginBottom: '0.5rem' }}>송장번호</label>
+                            <input
+                                type="text"
+                                value={shippingInfo.trackingNumber}
+                                onChange={e => setShippingInfo({ ...shippingInfo, trackingNumber: e.target.value })}
+                                style={{ width: '100%', padding: '0.5rem' }}
+                                placeholder="숫자만 입력"
+                            />
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '2rem' }}>
+                            <button onClick={() => setShippingModal({ open: false, quoteId: null })} className="btn btn-secondary">취소</button>
+                            <button onClick={handleShippingUpdate} className="btn btn-primary">등록</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

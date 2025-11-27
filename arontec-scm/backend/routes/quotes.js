@@ -1,6 +1,6 @@
 import express from 'express'
 import pool from '../config/database.js'
-import { requireApproved } from '../middleware/auth.js'
+import { requireApproved, requireAdmin } from '../middleware/auth.js'
 
 const router = express.Router()
 
@@ -105,6 +105,37 @@ router.get('/:id', requireApproved, async (req, res) => {
         console.error('Get quote details error:', error)
         res.status(500).json({ error: 'Failed to get quote details' })
     }
-})
+    // Update shipping info (Admin only)
+    router.put('/:id/shipping', requireAdmin, async (req, res) => {
+        const client = await pool.connect()
+        try {
+            const { carrier, trackingNumber } = req.body
 
-export default router
+            await client.query('BEGIN')
+
+            const result = await client.query(`
+            UPDATE quotes 
+            SET carrier = $1, 
+                tracking_number = $2, 
+                shipped_at = NOW(),
+                status = 'shipped'
+            WHERE id = $3
+            RETURNING *
+        `, [carrier, trackingNumber, req.params.id])
+
+            if (result.rows.length === 0) {
+                throw new Error('Quote not found')
+            }
+
+            await client.query('COMMIT')
+            res.json({ message: 'Shipping info updated', quote: result.rows[0] })
+        } catch (error) {
+            await client.query('ROLLBACK')
+            console.error('Update shipping error:', error)
+            res.status(500).json({ error: error.message })
+        } finally {
+            client.release()
+        }
+    })
+
+    export default router
