@@ -105,7 +105,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error('Product not found');
             }
         } catch (error) {
-            console.error('Error fetching product detail:', error);
+            console.warn('Error fetching product detail, trying static data:', error);
+            if (typeof products !== 'undefined') {
+                // products array from products_data.js
+                // Note: ID from URL is string, product.id might be number
+                const product = products.find(p => p.id == id);
+                if (product) {
+                    renderProductDetail(product);
+                    return;
+                }
+            }
             detailContainer.innerHTML = '<p style="text-align: center;">제품 정보를 불러올 수 없습니다.</p>';
         }
     }
