@@ -24,16 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await res.json();
                 // Map SCM data to Homepage format
                 fetchedProducts = data.products.map(p => {
-                    let category = 'Other';
-                    const catName = p.category_name;
-
-                    // Map Korean categories to English
-                    if (catName === '뷰티' || catName === 'Beauty') category = 'Beauty';
-                    else if (catName === '오디오' || catName === 'Audio') category = 'Audio';
-                    else if (catName === '모바일' || catName === 'Mobile') category = 'Mobile';
-                    else if (catName === '패션' || catName === 'Fashion') category = 'Fashion';
-                    else if (catName === '기타' || catName === 'Other') category = 'Other';
-                    else category = 'Other';
+                    // SCM now returns English category names (Audio, Mobile, Beauty, Food, Other)
+                    // We can use them directly, but keep a fallback just in case
+                    const category = p.category_name || 'Other';
 
                     return {
                         id: p.id,
@@ -62,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderFilteredProducts(category) {
         const filteredProducts = category === 'All'
             ? fetchedProducts
-            : fetchedProducts.filter(p => p.category === category || (category === 'Other' && !['Audio', 'Mobile', 'Beauty', 'Fashion'].includes(p.category)));
+            : fetchedProducts.filter(p => p.category === category || (category === 'Other' && !['Audio', 'Mobile', 'Beauty', 'Food'].includes(p.category)));
 
         if (filteredProducts.length === 0) {
             productGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 2rem;">해당 카테고리에 제품이 없습니다.</p>';
