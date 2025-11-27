@@ -9,6 +9,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // API Configuration
+    // const API_BASE_URL = 'http://localhost:5001'; // Localhost
+    const API_BASE_URL = 'http://192.168.0.7:5001'; // Local Network
+    // const API_BASE_URL = 'https://your-backend.onrender.com'; // Production
+
     // Render Products
     const productGrid = document.getElementById('product-grid');
     const categoryBtns = document.querySelectorAll('.category-btn');
@@ -19,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Try to fetch from SCM API
-            const res = await fetch('http://192.168.0.7:5001/api/products');
+            const res = await fetch(`${API_BASE_URL}/api/products`);
             if (res.ok) {
                 const data = await res.json();
                 // Map SCM data to Homepage format
@@ -97,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchProductDetail(id) {
         try {
-            const res = await fetch(`http://192.168.0.7:5001/api/products/${id}`);
+            const res = await fetch(`${API_BASE_URL}/api/products/${id}`);
             if (res.ok) {
                 const data = await res.json();
                 renderProductDetail(data.product);
