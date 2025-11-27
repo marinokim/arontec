@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
                    </div>`;
 
             return `
-            <div class="product-card" onclick="${product.detailUrl ? `window.open('${product.detailUrl}', '_blank')` : ''}" style="cursor: ${product.detailUrl ? 'pointer' : 'default'}">
+            <div class="product-card" onclick="${product.detailUrl ? `window.location.href='${product.detailUrl}'` : ''}" style="cursor: ${product.detailUrl ? 'pointer' : 'default'}">
                 ${imageHtml}
                 <h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">${product.brand}</h3>
                 <h4 style="font-size: 1.1rem; margin-bottom: 0.5rem;">${product.model}</h4>
