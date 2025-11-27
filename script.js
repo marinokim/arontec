@@ -23,15 +23,28 @@ document.addEventListener('DOMContentLoaded', () => {
             if (res.ok) {
                 const data = await res.json();
                 // Map SCM data to Homepage format
-                fetchedProducts = data.products.map(p => ({
-                    id: p.id,
-                    brand: p.brand,
-                    model: p.model_name,
-                    description: p.description,
-                    price: Number(p.b2b_price),
-                    category: p.category_name || 'Other', // Assuming join returns category_name
-                    image: p.image_url
-                }));
+                fetchedProducts = data.products.map(p => {
+                    let category = 'Other';
+                    const catName = p.category_name;
+
+                    // Map Korean categories to English
+                    if (catName === '뷰티' || catName === 'Beauty') category = 'Beauty';
+                    else if (catName === '오디오' || catName === 'Audio') category = 'Audio';
+                    else if (catName === '모바일' || catName === 'Mobile') category = 'Mobile';
+                    else if (catName === '패션' || catName === 'Fashion') category = 'Fashion';
+                    else if (catName === '기타' || catName === 'Other') category = 'Other';
+                    else category = 'Other';
+
+                    return {
+                        id: p.id,
+                        brand: p.brand,
+                        model: p.model_name,
+                        description: p.description,
+                        price: Number(p.b2b_price),
+                        category: category,
+                        image: p.image_url
+                    };
+                });
             } else {
                 throw new Error('API not available');
             }
