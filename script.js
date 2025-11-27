@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Try to fetch from SCM API
-            const res = await fetch('http://localhost:5000/api/products');
+            const res = await fetch('http://localhost:5001/api/products');
             if (res.ok) {
                 const data = await res.json();
                 // Map SCM data to Homepage format
