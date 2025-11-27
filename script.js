@@ -35,7 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         description: p.description,
                         price: Number(p.b2b_price),
                         category: category,
-                        image: p.image_url
+                        image: p.image_url,
+                        detailUrl: p.detail_url
                     };
                 });
             } else {
@@ -72,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
                    </div>`;
 
             return `
-            <div class="product-card">
+            <div class="product-card" onclick="${product.detailUrl ? `window.open('${product.detailUrl}', '_blank')` : ''}" style="cursor: ${product.detailUrl ? 'pointer' : 'default'}">
                 ${imageHtml}
                 <h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">${product.brand}</h3>
                 <h4 style="font-size: 1.1rem; margin-bottom: 0.5rem;">${product.model}</h4>
