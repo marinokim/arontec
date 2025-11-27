@@ -6,6 +6,7 @@ function AdminProducts() {
     const [categories, setCategories] = useState([])
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [editingProduct, setEditingProduct] = useState(null)
+    const [selectedCategory, setSelectedCategory] = useState('All')
 
     const initialFormState = {
         categoryId: '',
@@ -120,7 +121,19 @@ function AdminProducts() {
 
             <div className="dashboard-content container">
                 <div className="dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <h1>상품 관리</h1>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <h1>상품 관리</h1>
+                        <select
+                            value={selectedCategory}
+                            onChange={(e) => setSelectedCategory(e.target.value)}
+                            style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ddd' }}
+                        >
+                            <option value="All">전체 카테고리</option>
+                            {categories.map(cat => (
+                                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                            ))}
+                        </select>
+                    </div>
                     <button onClick={openAddModal} className="btn btn-primary">
                         + 신규 상품 등록
                     </button>
@@ -136,40 +149,44 @@ function AdminProducts() {
                                 <th style={{ minWidth: '100px' }}>카테고리</th>
                                 <th>가격</th>
                                 <th>재고</th>
+                                <th>등록일</th>
                                 <th>상태</th>
                                 <th>관리</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {products.map(product => (
-                                <tr key={product.id}>
-                                    <td>
-                                        {product.image_url ? (
-                                            <img src={product.image_url} alt={product.model_name} style={{ width: '50px', height: '50px', objectFit: 'contain' }} />
-                                        ) : (
-                                            <div style={{ width: '50px', height: '50px', background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>No Img</div>
-                                        )}
-                                    </td>
-                                    <td>{product.brand}</td>
-                                    <td>{product.model_name}</td>
-                                    <td>{product.category_name}</td>
-                                    <td>{parseInt(product.b2b_price).toLocaleString()}원</td>
-                                    <td>{product.stock_quantity}</td>
-                                    <td style={{ whiteSpace: 'nowrap' }}>
-                                        <span className={`badge ${product.is_available ? 'badge-success' : 'badge-danger'}`}>
-                                            {product.is_available ? '판매중' : '품절/중지'}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <button onClick={() => openEditModal(product)} className="btn btn-secondary" style={{ marginRight: '0.5rem', padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}>
-                                            수정
-                                        </button>
-                                        <button onClick={() => handleDelete(product.id)} className="btn btn-danger" style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem', background: '#dc3545', border: 'none', color: 'white', borderRadius: '4px' }}>
-                                            삭제
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
+                            {products
+                                .filter(p => selectedCategory === 'All' || p.category_id === parseInt(selectedCategory))
+                                .map(product => (
+                                    <tr key={product.id}>
+                                        <td>
+                                            {product.image_url ? (
+                                                <img src={product.image_url} alt={product.model_name} style={{ width: '50px', height: '50px', objectFit: 'contain' }} />
+                                            ) : (
+                                                <div style={{ width: '50px', height: '50px', background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>No Img</div>
+                                            )}
+                                        </td>
+                                        <td>{product.brand}</td>
+                                        <td>{product.model_name}</td>
+                                        <td>{product.category_name}</td>
+                                        <td>{parseInt(product.b2b_price).toLocaleString()}원</td>
+                                        <td>{product.stock_quantity}</td>
+                                        <td>{new Date(product.created_at).toLocaleDateString()}</td>
+                                        <td style={{ whiteSpace: 'nowrap' }}>
+                                            <span className={`badge ${product.is_available ? 'badge-success' : 'badge-danger'}`}>
+                                                {product.is_available ? '판매중' : '품절/중지'}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button onClick={() => openEditModal(product)} className="btn btn-secondary" style={{ marginRight: '0.5rem', padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}>
+                                                수정
+                                            </button>
+                                            <button onClick={() => handleDelete(product.id)} className="btn btn-danger" style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem', background: '#dc3545', border: 'none', color: 'white', borderRadius: '4px' }}>
+                                                삭제
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
                         </tbody>
                     </table>
                 </div>
