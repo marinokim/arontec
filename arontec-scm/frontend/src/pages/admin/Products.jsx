@@ -9,6 +9,15 @@ function AdminProducts() {
     const [selectedCategory, setSelectedCategory] = useState('All')
     const [showModal, setShowModal] = useState(false)
 
+    const categoryColors = {
+        'Audio': '#4e73df',   // Blue
+        'Living': '#1cc88a',  // Green
+        'Mobile': '#f6c23e',  // Yellow/Orange
+        'Food': '#e74a3b',    // Red
+        'Beauty': '#e83e8c',  // Pink
+        'Other': '#858796'    // Gray
+    }
+
     const initialFormState = {
         categoryId: '',
         brand: '',
@@ -222,7 +231,7 @@ function AdminProducts() {
                                         </td>
                                         <td>{product.brand}</td>
                                         <td>
-                                            <div style={{ fontSize: '0.8rem', color: '#666', marginBottom: '4px' }}>
+                                            <div style={{ fontSize: '0.8rem', color: categoryColors[product.category_name] || '#666', marginBottom: '4px', fontWeight: 'bold' }}>
                                                 {product.category_name}
                                             </div>
                                             <div style={{ fontWeight: '500' }}>
