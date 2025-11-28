@@ -43,6 +43,22 @@ function AdminProducts() {
         setCategories(data.categories)
     }
 
+    const formatPrice = (value) => {
+        if (!value) return ''
+        const number = value.toString().replace(/[^0-9]/g, '')
+        return number.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    }
+
+    const parsePrice = (value) => {
+        if (!value) return ''
+        return value.toString().replace(/,/g, '')
+    }
+
+    const handlePriceChange = (field, value) => {
+        const formatted = formatPrice(value)
+        setFormData({ ...formData, [field]: formatted })
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault()
 
@@ -51,11 +67,19 @@ function AdminProducts() {
         const method = editingProduct ? 'PUT' : 'POST'
 
         try {
+            const payload = {
+                ...formData,
+                consumerPrice: parsePrice(formData.consumerPrice),
+                supplyPrice: parsePrice(formData.supplyPrice),
+                b2bPrice: parsePrice(formData.b2bPrice),
+                shippingFee: parsePrice(formData.shippingFee)
+            }
+
             const res = await fetch(url, {
                 method,
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
-                body: JSON.stringify(formData)
+                body: JSON.stringify(payload)
             })
 
             if (res.ok) {
@@ -97,12 +121,12 @@ function AdminProducts() {
             modelName: product.model_name,
             description: product.description || '',
             imageUrl: product.image_url || '',
-            consumerPrice: product.consumer_price || '',
-            supplyPrice: product.supply_price || '',
-            b2bPrice: product.b2b_price,
+            consumerPrice: formatPrice(product.consumer_price || ''),
+            supplyPrice: formatPrice(product.supply_price || ''),
+            b2bPrice: formatPrice(product.b2b_price),
             stockQuantity: product.stock_quantity,
             quantityPerCarton: product.quantity_per_carton || '',
-            shippingFee: product.shipping_fee || '',
+            shippingFee: formatPrice(product.shipping_fee || ''),
             isAvailable: product.is_available,
             detailUrl: product.detail_url || ''
         })
@@ -254,27 +278,27 @@ function AdminProducts() {
                             <div className="form-group">
                                 <label>소비자가</label>
                                 <input
-                                    type="number"
+                                    type="text"
                                     value={formData.consumerPrice}
-                                    onChange={e => setFormData({ ...formData, consumerPrice: e.target.value })}
+                                    onChange={e => handlePriceChange('consumerPrice', e.target.value)}
                                 />
                             </div>
 
                             <div className="form-group">
                                 <label>공급가</label>
                                 <input
-                                    type="number"
+                                    type="text"
                                     value={formData.supplyPrice}
-                                    onChange={e => setFormData({ ...formData, supplyPrice: e.target.value })}
+                                    onChange={e => handlePriceChange('supplyPrice', e.target.value)}
                                 />
                             </div>
 
                             <div className="form-group">
                                 <label>실판매가 (B2B)</label>
                                 <input
-                                    type="number"
+                                    type="text"
                                     value={formData.b2bPrice}
-                                    onChange={e => setFormData({ ...formData, b2bPrice: e.target.value })}
+                                    onChange={e => handlePriceChange('b2bPrice', e.target.value)}
                                     required
                                 />
                             </div>
@@ -301,9 +325,9 @@ function AdminProducts() {
                             <div className="form-group">
                                 <label>배송비</label>
                                 <input
-                                    type="number"
+                                    type="text"
                                     value={formData.shippingFee}
-                                    onChange={e => setFormData({ ...formData, shippingFee: e.target.value })}
+                                    onChange={e => handlePriceChange('shippingFee', e.target.value)}
                                 />
                             </div>
 
