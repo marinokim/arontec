@@ -418,7 +418,7 @@ COPY public.quotes (id, user_id, quote_number, delivery_date, notes, status, tot
 --
 
 COPY public.users (id, email, password_hash, company_name, contact_person, phone, business_number, is_approved, is_admin, created_at, updated_at) FROM stdin;
-1	admin@arontec.com	$2a$10$jjzEdBwvOuBDw36Q8HrXGubcazICr1S37.5i8Dw/ciR85YG0gIIn.	아론텍코리아	관리자	032-123-4567	\N	t	t	2025-11-27 12:06:12.602414	2025-11-27 12:06:12.602414
+1	admin@arontec.com	$2a$10$jjzEdBwvOuBDw36Q8HrXGubcazICr1S37.5i8Dw/ciR85YG0gIIn.	아론텍코리아	관리자	031-947-4938	\N	t	t	2025-11-27 12:06:12.602414	2025-11-27 12:06:12.602414
 2	twovol@naver.com	$2a$10$M44mTJXZ7Q7icORQCcy9EeFKegTUy83QLkTKWa1KICgYpZRfDYcqu	(주)마인드케이	김두권	010-5248-0066	123-44-444444	t	f	2025-11-27 12:11:22.480236	2025-11-27 12:11:22.480236
 \.
 

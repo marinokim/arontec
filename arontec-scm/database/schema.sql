@@ -97,7 +97,7 @@ CREATE INDEX idx_quote_items_quote ON quote_items(quote_id);
 
 -- Insert Admin User (password: admin123)
 INSERT INTO users (email, password_hash, company_name, contact_person, phone, is_approved, is_admin)
-VALUES ('admin@arontec.com', '$2a$10$YourHashHere', '아론텍코리아', '관리자', '032-123-4567', TRUE, TRUE);
+VALUES ('admin@arontec.com', '$2a$10$YourHashHere', '아론텍코리아', '관리자', '031-947-4938', TRUE, TRUE);
 
 -- Insert Sample Categories
 INSERT INTO categories (name, slug, description) VALUES
