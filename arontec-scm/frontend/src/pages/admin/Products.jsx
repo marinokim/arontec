@@ -116,6 +116,7 @@ function AdminProducts() {
                 setEditingProduct(null)
                 setFormData(initialFormState)
                 fetchProducts()
+                fetchBrands()
             } else {
                 const data = await res.json()
                 alert(data.error || '오류가 발생했습니다')
