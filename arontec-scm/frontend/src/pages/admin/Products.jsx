@@ -176,6 +176,7 @@ function AdminProducts() {
                     <table className="table" style={{ fontSize: '0.85rem' }}>
                         <thead>
                             <tr>
+                                <th style={{ textAlign: 'center', width: '60px' }}>No.</th>
                                 <th>이미지</th>
                                 <th style={{ minWidth: '100px' }}>브랜드</th>
                                 <th>모델명</th>
@@ -195,6 +196,7 @@ function AdminProducts() {
                                 .filter(p => selectedCategory === 'All' || p.category_id === parseInt(selectedCategory))
                                 .map(product => (
                                     <tr key={product.id}>
+                                        <td style={{ textAlign: 'center' }}>{product.id}</td>
                                         <td>
                                             {product.image_url ? (
                                                 <img src={product.image_url} alt={product.model_name} style={{ width: '50px', height: '50px', objectFit: 'contain' }} />
