@@ -104,7 +104,9 @@ function AdminProducts() {
                 b2bPrice: parsePrice(formData.b2bPrice),
                 stockQuantity: parsePrice(formData.stockQuantity),
                 quantityPerCarton: formData.quantityPerCarton ? formData.quantityPerCarton : '0',
-                shippingFee: parsePrice(formData.shippingFee)
+                shippingFee: formData.shippingFee ? parsePrice(formData.shippingFee) : '0',
+                manufacturer: formData.manufacturer,
+                origin: formData.origin
             }
 
             const res = await fetch(url, {
