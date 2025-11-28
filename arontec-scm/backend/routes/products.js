@@ -52,17 +52,29 @@ router.put('/:id', requireAdmin, async (req, res) => {
 
 // Delete product (Admin only)
 router.delete('/:id', requireAdmin, async (req, res) => {
+    const client = await pool.connect()
     try {
-        const result = await pool.query('DELETE FROM products WHERE id = $1 RETURNING id', [req.params.id])
+        await client.query('BEGIN')
+
+        // Delete related quote items first (referential integrity)
+        await client.query('DELETE FROM quote_items WHERE product_id = $1', [req.params.id])
+
+        // Delete the product
+        const result = await client.query('DELETE FROM products WHERE id = $1 RETURNING id', [req.params.id])
 
         if (result.rows.length === 0) {
+            await client.query('ROLLBACK')
             return res.status(404).json({ error: 'Product not found' })
         }
 
+        await client.query('COMMIT')
         res.json({ message: 'Product deleted successfully' })
     } catch (error) {
+        await client.query('ROLLBACK')
         console.error('Delete product error:', error)
         res.status(500).json({ error: 'Failed to delete product' })
+    } finally {
+        client.release()
     }
 })
 
