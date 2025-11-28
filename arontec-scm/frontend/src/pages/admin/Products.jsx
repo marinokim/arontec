@@ -72,6 +72,7 @@ function AdminProducts() {
                 consumerPrice: parsePrice(formData.consumerPrice),
                 supplyPrice: parsePrice(formData.supplyPrice),
                 b2bPrice: parsePrice(formData.b2bPrice),
+                stockQuantity: parsePrice(formData.stockQuantity),
                 shippingFee: parsePrice(formData.shippingFee)
             }
 
@@ -124,7 +125,7 @@ function AdminProducts() {
             consumerPrice: formatPrice(product.consumer_price || ''),
             supplyPrice: formatPrice(product.supply_price || ''),
             b2bPrice: formatPrice(product.b2b_price),
-            stockQuantity: product.stock_quantity,
+            stockQuantity: formatPrice(product.stock_quantity),
             quantityPerCarton: product.quantity_per_carton || '',
             shippingFee: formatPrice(product.shipping_fee || ''),
             isAvailable: product.is_available,
@@ -206,7 +207,7 @@ function AdminProducts() {
                                         <td style={{ textAlign: 'right' }}>{product.consumer_price ? parseInt(product.consumer_price).toLocaleString() : '-'}</td>
                                         <td style={{ textAlign: 'right' }}>{product.supply_price ? parseInt(product.supply_price).toLocaleString() : '-'}</td>
                                         <td style={{ fontWeight: 'bold', color: '#007bff', textAlign: 'right' }}>{parseInt(product.b2b_price).toLocaleString()}</td>
-                                        <td style={{ textAlign: 'right' }}>{product.stock_quantity}</td>
+                                        <td style={{ textAlign: 'right' }}>{parseInt(product.stock_quantity).toLocaleString()}</td>
                                         <td style={{ textAlign: 'right' }}>{product.quantity_per_carton || '-'}</td>
                                         <td style={{ textAlign: 'right' }}>{product.shipping_fee ? parseInt(product.shipping_fee).toLocaleString() : '0'}</td>
                                         <td>{new Date(product.created_at).toLocaleDateString()}</td>
@@ -306,9 +307,9 @@ function AdminProducts() {
                             <div className="form-group">
                                 <label>재고 수량</label>
                                 <input
-                                    type="number"
+                                    type="text"
                                     value={formData.stockQuantity}
-                                    onChange={e => setFormData({ ...formData, stockQuantity: e.target.value })}
+                                    onChange={e => handlePriceChange('stockQuantity', e.target.value)}
                                     required
                                 />
                             </div>
