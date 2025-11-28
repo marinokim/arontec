@@ -177,7 +177,7 @@ function AdminProducts() {
                         <thead>
                             <tr>
                                 <th style={{ textAlign: 'center', width: '60px' }}>No.</th>
-                                <th>이미지</th>
+                                <th style={{ width: '100px', textAlign: 'center' }}>IMG</th>
                                 <th style={{ minWidth: '100px' }}>브랜드</th>
                                 <th>상품명</th>
                                 <th style={{ textAlign: 'right' }}>실판매가</th>
@@ -195,11 +195,11 @@ function AdminProducts() {
                                 .map(product => (
                                     <tr key={product.id}>
                                         <td style={{ textAlign: 'center' }}>{product.id}</td>
-                                        <td>
+                                        <td style={{ padding: 0, width: '100px' }}>
                                             {product.image_url ? (
-                                                <img src={product.image_url} alt={product.model_name} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '4px' }} />
+                                                <img src={product.image_url} alt={product.model_name} style={{ width: '100%', height: '100px', objectFit: 'cover', display: 'block' }} />
                                             ) : (
-                                                <div style={{ width: '80px', height: '80px', background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px', fontSize: '0.8rem' }}>No Img</div>
+                                                <div style={{ width: '100%', height: '100px', background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem' }}>No Img</div>
                                             )}
                                         </td>
                                         <td>{product.brand}</td>
