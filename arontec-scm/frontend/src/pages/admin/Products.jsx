@@ -177,10 +177,9 @@ function AdminProducts() {
                         <thead>
                             <tr>
                                 <th style={{ textAlign: 'center', width: '60px' }}>No.</th>
-                                <th style={{ minWidth: '80px' }}>카테고리</th>
                                 <th>이미지</th>
                                 <th style={{ minWidth: '100px' }}>브랜드</th>
-                                <th>모델명</th>
+                                <th>상품명</th>
                                 <th style={{ textAlign: 'right' }}>실판매가</th>
                                 <th style={{ textAlign: 'right' }}>공급가(소가/공급)</th>
                                 <th style={{ textAlign: 'right' }}>재고(재고/카톤)</th>
@@ -196,7 +195,6 @@ function AdminProducts() {
                                 .map(product => (
                                     <tr key={product.id}>
                                         <td style={{ textAlign: 'center' }}>{product.id}</td>
-                                        <td>{product.category_name}</td>
                                         <td>
                                             {product.image_url ? (
                                                 <img src={product.image_url} alt={product.model_name} style={{ width: '50px', height: '50px', objectFit: 'contain' }} />
@@ -205,7 +203,14 @@ function AdminProducts() {
                                             )}
                                         </td>
                                         <td>{product.brand}</td>
-                                        <td>{product.model_name}</td>
+                                        <td>
+                                            <div style={{ fontSize: '0.8rem', color: '#666', marginBottom: '4px' }}>
+                                                {product.category_name}
+                                            </div>
+                                            <div style={{ fontWeight: '500' }}>
+                                                {product.model_name}
+                                            </div>
+                                        </td>
                                         <td style={{ fontWeight: 'bold', color: '#007bff', textAlign: 'right', fontSize: '1.1rem' }}>
                                             {parseInt(product.b2b_price).toLocaleString()}
                                         </td>
