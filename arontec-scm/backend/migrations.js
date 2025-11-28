@@ -40,6 +40,16 @@ export const runMigrations = async () => {
                 END $$;
             `)
 
+            // Add is_tax_free column to products if missing
+            await client.query(`
+                DO $$ 
+                BEGIN 
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'products' AND column_name = 'is_tax_free') THEN 
+                        ALTER TABLE products ADD COLUMN is_tax_free BOOLEAN DEFAULT FALSE; 
+                    END IF; 
+                END $$;
+            `)
+
             await client.query('COMMIT')
             console.log('✅ Database migrations completed successfully')
         } catch (error) {

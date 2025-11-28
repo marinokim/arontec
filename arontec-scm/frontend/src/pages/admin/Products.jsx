@@ -37,6 +37,7 @@ function AdminProducts() {
         manufacturer: '',
         origin: '',
         isAvailable: true,
+        isTaxFree: false,
         detailUrl: ''
     }
 
@@ -140,7 +141,8 @@ function AdminProducts() {
                 quantityPerCarton: formData.quantityPerCarton ? formData.quantityPerCarton : '0',
                 shippingFee: formData.shippingFee ? parsePrice(formData.shippingFee) : '0',
                 manufacturer: formData.manufacturer,
-                origin: formData.origin
+                origin: formData.origin,
+                isTaxFree: formData.isTaxFree
             }
 
             const res = await fetch(url, {
@@ -202,6 +204,7 @@ function AdminProducts() {
             manufacturer: product.manufacturer || '',
             origin: product.origin || '',
             isAvailable: product.is_available,
+            isTaxFree: product.is_tax_free || false,
             detailUrl: product.detail_url || ''
         })
         setShowModal(true)
@@ -284,6 +287,7 @@ function AdminProducts() {
                                 <th style={{ minWidth: '100px' }}>브랜드</th>
                                 <th>상품명</th>
                                 <th style={{ textAlign: 'right' }}>실판매가</th>
+                                <th style={{ textAlign: 'center', width: '60px' }}>과세</th>
                                 <th style={{ textAlign: 'right', minWidth: '140px' }}>공급가(소가/공급)</th>
                                 <th style={{ textAlign: 'right', minWidth: '120px' }}>재고(재고/카톤)</th>
                                 <th style={{ textAlign: 'right' }}>배송비</th>
@@ -316,6 +320,11 @@ function AdminProducts() {
                                         </td>
                                         <td style={{ fontWeight: 'bold', color: '#007bff', textAlign: 'right', fontSize: '1.1rem' }}>
                                             {parseInt(product.b2b_price).toLocaleString()}
+                                        </td>
+                                        <td style={{ textAlign: 'center' }}>
+                                            <span className={`badge ${product.is_tax_free ? 'badge-info' : 'badge-secondary'}`} style={{ background: product.is_tax_free ? '#17a2b8' : '#6c757d' }}>
+                                                {product.is_tax_free ? '면세' : '과세'}
+                                            </span>
                                         </td>
                                         <td style={{ textAlign: 'right' }}>
                                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: '#666' }}>
@@ -544,6 +553,32 @@ function AdminProducts() {
                                     />
                                     <span>판매 가능 여부</span>
                                 </label>
+                            </div>
+
+                            <div className="form-group">
+                                <label>과세 여부</label>
+                                <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+                                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                                        <input
+                                            type="radio"
+                                            name="taxStatus"
+                                            checked={!formData.isTaxFree}
+                                            onChange={() => setFormData({ ...formData, isTaxFree: false })}
+                                            style={{ width: 'auto', margin: 0 }}
+                                        />
+                                        <span>과세</span>
+                                    </label>
+                                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                                        <input
+                                            type="radio"
+                                            name="taxStatus"
+                                            checked={formData.isTaxFree}
+                                            onChange={() => setFormData({ ...formData, isTaxFree: true })}
+                                            style={{ width: 'auto', margin: 0 }}
+                                        />
+                                        <span>면세</span>
+                                    </label>
+                                </div>
                             </div>
 
                             <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
