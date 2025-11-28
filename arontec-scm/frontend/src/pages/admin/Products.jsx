@@ -4,9 +4,10 @@ import { Link } from 'react-router-dom'
 function AdminProducts() {
     const [products, setProducts] = useState([])
     const [categories, setCategories] = useState([])
-    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [brands, setBrands] = useState([])
     const [editingProduct, setEditingProduct] = useState(null)
     const [selectedCategory, setSelectedCategory] = useState('All')
+    const [showModal, setShowModal] = useState(false)
 
     const initialFormState = {
         categoryId: '',
@@ -29,7 +30,18 @@ function AdminProducts() {
     useEffect(() => {
         fetchProducts()
         fetchCategories()
+        fetchBrands()
     }, [])
+
+    const fetchBrands = async () => {
+        try {
+            const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/products/brands', { credentials: 'include' })
+            const data = await res.json()
+            setBrands(data.brands)
+        } catch (error) {
+            console.error('Fetch brands error:', error)
+        }
+    }
 
     const fetchProducts = async () => {
         const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/products', { credentials: 'include' })
@@ -285,10 +297,17 @@ function AdminProducts() {
                                 <label>브랜드</label>
                                 <input
                                     type="text"
+                                    list="brand-list"
                                     value={formData.brand}
                                     onChange={e => setFormData({ ...formData, brand: e.target.value })}
                                     required
+                                    placeholder="브랜드를 선택하거나 직접 입력하세요"
                                 />
+                                <datalist id="brand-list">
+                                    {brands.map((brand, index) => (
+                                        <option key={index} value={brand} />
+                                    ))}
+                                </datalist>
                             </div>
 
                             <div className="form-group">

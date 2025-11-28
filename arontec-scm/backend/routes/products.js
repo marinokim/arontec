@@ -122,6 +122,17 @@ router.get('/categories', async (req, res) => {
     }
 })
 
+// Get all unique brands (Public)
+router.get('/brands', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT DISTINCT brand FROM products ORDER BY brand')
+        res.json({ brands: result.rows.map(row => row.brand) })
+    } catch (error) {
+        console.error('Get brands error:', error)
+        res.status(500).json({ error: 'Failed to get brands' })
+    }
+})
+
 // Get single product (Public)
 router.get('/:id', async (req, res) => {
     try {
