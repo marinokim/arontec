@@ -7,13 +7,13 @@ const router = express.Router()
 // Create product (Admin only)
 router.post('/', requireAdmin, async (req, res) => {
     try {
-        const { categoryId, brand, modelName, description, imageUrl, b2bPrice, stockQuantity, detailUrl, isAvailable } = req.body
+        const { categoryId, brand, modelName, description, imageUrl, b2bPrice, stockQuantity, detailUrl, isAvailable, consumerPrice, supplyPrice, quantityPerCarton, shippingFee } = req.body
 
         const result = await pool.query(
-            `INSERT INTO products (category_id, brand, model_name, description, image_url, b2b_price, stock_quantity, detail_url, is_available)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+            `INSERT INTO products (category_id, brand, model_name, description, image_url, b2b_price, stock_quantity, detail_url, is_available, consumer_price, supply_price, quantity_per_carton, shipping_fee)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
        RETURNING *`,
-            [categoryId, brand, modelName, description, imageUrl, b2bPrice, stockQuantity, detailUrl, isAvailable !== undefined ? isAvailable : true]
+            [categoryId, brand, modelName, description, imageUrl, b2bPrice, stockQuantity, detailUrl, isAvailable !== undefined ? isAvailable : true, consumerPrice, supplyPrice, quantityPerCarton, shippingFee]
         )
 
         res.status(201).json({ product: result.rows[0] })
@@ -26,15 +26,17 @@ router.post('/', requireAdmin, async (req, res) => {
 // Update product (Admin only)
 router.put('/:id', requireAdmin, async (req, res) => {
     try {
-        const { categoryId, brand, modelName, description, imageUrl, b2bPrice, stockQuantity, isAvailable, detailUrl } = req.body
+        const { categoryId, brand, modelName, description, imageUrl, b2bPrice, stockQuantity, isAvailable, detailUrl, consumerPrice, supplyPrice, quantityPerCarton, shippingFee } = req.body
 
         const result = await pool.query(
             `UPDATE products 
        SET category_id = $1, brand = $2, model_name = $3, description = $4, 
-           image_url = $5, b2b_price = $6, stock_quantity = $7, is_available = $8, detail_url = $9, updated_at = CURRENT_TIMESTAMP
-       WHERE id = $10
+           image_url = $5, b2b_price = $6, stock_quantity = $7, is_available = $8, detail_url = $9, 
+           consumer_price = $10, supply_price = $11, quantity_per_carton = $12, shipping_fee = $13,
+           updated_at = CURRENT_TIMESTAMP
+       WHERE id = $14
        RETURNING *`,
-            [categoryId, brand, modelName, description, imageUrl, b2bPrice, stockQuantity, isAvailable, detailUrl, req.params.id]
+            [categoryId, brand, modelName, description, imageUrl, b2bPrice, stockQuantity, isAvailable, detailUrl, consumerPrice, supplyPrice, quantityPerCarton, shippingFee, req.params.id]
         )
 
         if (result.rows.length === 0) {
