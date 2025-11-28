@@ -249,9 +249,9 @@ function AdminProducts() {
                                 <th style={{ textAlign: 'right' }}>공급가(소가/공급)</th>
                                 <th style={{ textAlign: 'right' }}>재고(재고/카톤)</th>
                                 <th style={{ textAlign: 'right' }}>배송비</th>
+                                <th>제조사/원산지</th>
                                 <th>등록일</th>
-                                <th>상태</th>
-                                <th>관리</th>
+                                <th style={{ textAlign: 'center' }}>상태/관리</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -300,19 +300,25 @@ function AdminProducts() {
                                             </div>
                                         </td>
                                         <td style={{ textAlign: 'right' }}>{product.shipping_fee ? parseInt(product.shipping_fee).toLocaleString() : '0'}</td>
-                                        <td>{new Date(product.created_at).toLocaleDateString()}</td>
-                                        <td style={{ whiteSpace: 'nowrap' }}>
-                                            <span className={`badge ${product.is_available ? 'badge-success' : 'badge-danger'}`}>
-                                                {product.is_available ? '판매중' : '품절/중지'}
-                                            </span>
-                                        </td>
                                         <td>
-                                            <button onClick={() => openEditModal(product)} className="btn btn-secondary" style={{ marginRight: '0.5rem', padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}>
-                                                수정
-                                            </button>
-                                            <button onClick={() => handleDelete(product.id)} className="btn btn-danger" style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem', background: '#dc3545', border: 'none', color: 'white', borderRadius: '4px' }}>
-                                                삭제
-                                            </button>
+                                            <div style={{ fontSize: '0.85rem', fontWeight: 'bold' }}>{product.manufacturer || '-'}</div>
+                                            <div style={{ fontSize: '0.8rem', color: '#666' }}>{product.origin || '-'}</div>
+                                        </td>
+                                        <td>{new Date(product.created_at).toLocaleDateString()}</td>
+                                        <td style={{ textAlign: 'center' }}>
+                                            <div style={{ marginBottom: '0.5rem' }}>
+                                                <span className={`badge ${product.is_available ? 'badge-success' : 'badge-danger'}`}>
+                                                    {product.is_available ? '판매중' : '품절/중지'}
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <button onClick={() => openEditModal(product)} className="btn btn-secondary" style={{ marginRight: '0.5rem', padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}>
+                                                    수정
+                                                </button>
+                                                <button onClick={() => handleDelete(product.id)} className="btn btn-danger" style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem', background: '#dc3545', border: 'none', color: 'white', borderRadius: '4px' }}>
+                                                    삭제
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}
