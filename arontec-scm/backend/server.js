@@ -64,6 +64,13 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Something went wrong!' })
 })
 
-app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`)
+import { runMigrations } from './migrations.js'
+
+// ... (existing imports)
+
+// Run migrations before starting server
+runMigrations().then(() => {
+    app.listen(PORT, () => {
+        console.log(`🚀 Server running on http://localhost:${PORT}`)
+    })
 })

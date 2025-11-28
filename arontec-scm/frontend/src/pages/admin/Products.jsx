@@ -63,20 +63,30 @@ function AdminProducts() {
     const fetchManufacturers = async () => {
         try {
             const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/products/manufacturers', { credentials: 'include' })
-            const data = await res.json()
-            setManufacturers(data.manufacturers)
+            if (res.ok) {
+                const data = await res.json()
+                setManufacturers(data.manufacturers || [])
+            } else {
+                setManufacturers([])
+            }
         } catch (error) {
             console.error('Fetch manufacturers error:', error)
+            setManufacturers([])
         }
     }
 
     const fetchOrigins = async () => {
         try {
             const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/products/origins', { credentials: 'include' })
-            const data = await res.json()
-            setOrigins(data.origins)
+            if (res.ok) {
+                const data = await res.json()
+                setOrigins(data.origins || [])
+            } else {
+                setOrigins([])
+            }
         } catch (error) {
             console.error('Fetch origins error:', error)
+            setOrigins([])
         }
     }
 
