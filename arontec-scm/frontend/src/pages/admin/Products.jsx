@@ -422,12 +422,14 @@ function AdminProducts() {
                             </div>
 
                             <div className="form-group">
-                                <label>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
                                     <input
                                         type="checkbox"
                                         checked={formData.isAvailable}
                                         onChange={e => setFormData({ ...formData, isAvailable: e.target.checked })}
-                                    /> 판매 가능 여부
+                                        style={{ width: 'auto', margin: 0 }}
+                                    />
+                                    <span>판매 가능 여부</span>
                                 </label>
                             </div>
 
