@@ -287,7 +287,7 @@ function AdminProducts() {
                                 <th style={{ minWidth: '100px' }}>브랜드</th>
                                 <th>상품명</th>
                                 <th style={{ textAlign: 'right' }}>실판매가</th>
-                                <th style={{ textAlign: 'center', width: '60px' }}>과세</th>
+                                <th style={{ textAlign: 'center', width: '80px' }}>과세</th>
                                 <th style={{ textAlign: 'right', minWidth: '140px' }}>공급가(소가/공급)</th>
                                 <th style={{ textAlign: 'right', minWidth: '120px' }}>재고(재고/카톤)</th>
                                 <th style={{ textAlign: 'right' }}>배송비</th>
