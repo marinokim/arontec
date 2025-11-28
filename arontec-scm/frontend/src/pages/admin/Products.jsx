@@ -181,11 +181,9 @@ function AdminProducts() {
                                 <th>이미지</th>
                                 <th style={{ minWidth: '100px' }}>브랜드</th>
                                 <th>모델명</th>
-                                <th style={{ textAlign: 'right' }}>소비자가</th>
-                                <th style={{ textAlign: 'right' }}>공급가</th>
                                 <th style={{ textAlign: 'right' }}>실판매가</th>
-                                <th style={{ textAlign: 'right' }}>재고</th>
-                                <th style={{ textAlign: 'right' }}>카톤수량</th>
+                                <th style={{ textAlign: 'right' }}>공급가(소가/공급)</th>
+                                <th style={{ textAlign: 'right' }}>재고(재고/카톤)</th>
                                 <th style={{ textAlign: 'right' }}>배송비</th>
                                 <th>등록일</th>
                                 <th>상태</th>
@@ -208,11 +206,29 @@ function AdminProducts() {
                                         </td>
                                         <td>{product.brand}</td>
                                         <td>{product.model_name}</td>
-                                        <td style={{ textAlign: 'right' }}>{product.consumer_price ? parseInt(product.consumer_price).toLocaleString() : '-'}</td>
-                                        <td style={{ textAlign: 'right' }}>{product.supply_price ? parseInt(product.supply_price).toLocaleString() : '-'}</td>
-                                        <td style={{ fontWeight: 'bold', color: '#007bff', textAlign: 'right' }}>{parseInt(product.b2b_price).toLocaleString()}</td>
-                                        <td style={{ textAlign: 'right' }}>{parseInt(product.stock_quantity).toLocaleString()}</td>
-                                        <td style={{ textAlign: 'right' }}>{product.quantity_per_carton || '-'}</td>
+                                        <td style={{ fontWeight: 'bold', color: '#007bff', textAlign: 'right', fontSize: '1.1rem' }}>
+                                            {parseInt(product.b2b_price).toLocaleString()}
+                                        </td>
+                                        <td style={{ textAlign: 'right' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: '#666' }}>
+                                                <span>소가</span>
+                                                <span style={{ textDecoration: 'line-through' }}>{product.consumer_price ? parseInt(product.consumer_price).toLocaleString() : '-'}</span>
+                                            </div>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold' }}>
+                                                <span style={{ fontSize: '0.8rem', color: '#666' }}>공급</span>
+                                                <span>{product.supply_price ? parseInt(product.supply_price).toLocaleString() : '-'}</span>
+                                            </div>
+                                        </td>
+                                        <td style={{ textAlign: 'right' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                <span style={{ fontSize: '0.8rem', color: '#666' }}>재고</span>
+                                                <span>{parseInt(product.stock_quantity).toLocaleString()}</span>
+                                            </div>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                <span style={{ fontSize: '0.8rem', color: '#666' }}>카톤</span>
+                                                <span>{product.quantity_per_carton || '-'}</span>
+                                            </div>
+                                        </td>
                                         <td style={{ textAlign: 'right' }}>{product.shipping_fee ? parseInt(product.shipping_fee).toLocaleString() : '0'}</td>
                                         <td>{new Date(product.created_at).toLocaleDateString()}</td>
                                         <td style={{ whiteSpace: 'nowrap' }}>
