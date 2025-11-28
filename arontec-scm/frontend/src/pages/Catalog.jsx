@@ -121,8 +121,7 @@ function ProductCard({ product, onAddToCart, navigate, user }) {
                 <button
                     className="btn btn-primary"
                     onClick={() => onAddToCart(product.id, quantity)}
-                    style={{ flex: 1, display: user?.isAdmin ? 'none' : 'block' }}
-                    disabled={user?.isAdmin}
+                    style={{ flex: 1 }}
                 >
                     담기
                 </button>
