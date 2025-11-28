@@ -32,6 +32,8 @@ function AdminProducts() {
         stockQuantity: '',
         quantityPerCarton: '',
         shippingFee: '',
+        manufacturer: '',
+        origin: '',
         isAvailable: true,
         detailUrl: ''
     }
@@ -157,7 +159,10 @@ function AdminProducts() {
             b2bPrice: formatPrice(product.b2b_price),
             stockQuantity: formatPrice(product.stock_quantity),
             quantityPerCarton: product.quantity_per_carton || '',
+            quantityPerCarton: product.quantity_per_carton || '',
             shippingFee: formatPrice(product.shipping_fee || ''),
+            manufacturer: product.manufacturer || '',
+            origin: product.origin || '',
             isAvailable: product.is_available,
             detailUrl: product.detail_url || ''
         })
@@ -365,6 +370,26 @@ function AdminProducts() {
                                     value={formData.modelName}
                                     onChange={e => setFormData({ ...formData, modelName: e.target.value })}
                                     required
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>제조사</label>
+                                <input
+                                    type="text"
+                                    value={formData.manufacturer}
+                                    onChange={e => setFormData({ ...formData, manufacturer: e.target.value })}
+                                    placeholder="예: Samsung, LG..."
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>원산지</label>
+                                <input
+                                    type="text"
+                                    value={formData.origin}
+                                    onChange={e => setFormData({ ...formData, origin: e.target.value })}
+                                    placeholder="예: Korea, China..."
                                 />
                             </div>
 
