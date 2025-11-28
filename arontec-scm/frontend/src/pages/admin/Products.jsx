@@ -178,12 +178,12 @@ function AdminProducts() {
                                 <th>이미지</th>
                                 <th style={{ minWidth: '100px' }}>브랜드</th>
                                 <th>모델명</th>
-                                <th>소비자가</th>
-                                <th>공급가</th>
-                                <th>실판매가</th>
-                                <th>재고</th>
-                                <th>카톤수량</th>
-                                <th>배송비</th>
+                                <th style={{ textAlign: 'right' }}>소비자가</th>
+                                <th style={{ textAlign: 'right' }}>공급가</th>
+                                <th style={{ textAlign: 'right' }}>실판매가</th>
+                                <th style={{ textAlign: 'right' }}>재고</th>
+                                <th style={{ textAlign: 'right' }}>카톤수량</th>
+                                <th style={{ textAlign: 'right' }}>배송비</th>
                                 <th>등록일</th>
                                 <th>상태</th>
                                 <th>관리</th>
@@ -203,12 +203,12 @@ function AdminProducts() {
                                         </td>
                                         <td>{product.brand}</td>
                                         <td>{product.model_name}</td>
-                                        <td>{product.consumer_price ? parseInt(product.consumer_price).toLocaleString() : '-'}</td>
-                                        <td>{product.supply_price ? parseInt(product.supply_price).toLocaleString() : '-'}</td>
-                                        <td style={{ fontWeight: 'bold', color: '#007bff' }}>{parseInt(product.b2b_price).toLocaleString()}</td>
-                                        <td>{product.stock_quantity}</td>
-                                        <td>{product.quantity_per_carton || '-'}</td>
-                                        <td>{product.shipping_fee ? parseInt(product.shipping_fee).toLocaleString() : '0'}</td>
+                                        <td style={{ textAlign: 'right' }}>{product.consumer_price ? parseInt(product.consumer_price).toLocaleString() : '-'}</td>
+                                        <td style={{ textAlign: 'right' }}>{product.supply_price ? parseInt(product.supply_price).toLocaleString() : '-'}</td>
+                                        <td style={{ fontWeight: 'bold', color: '#007bff', textAlign: 'right' }}>{parseInt(product.b2b_price).toLocaleString()}</td>
+                                        <td style={{ textAlign: 'right' }}>{product.stock_quantity}</td>
+                                        <td style={{ textAlign: 'right' }}>{product.quantity_per_carton || '-'}</td>
+                                        <td style={{ textAlign: 'right' }}>{product.shipping_fee ? parseInt(product.shipping_fee).toLocaleString() : '0'}</td>
                                         <td>{new Date(product.created_at).toLocaleDateString()}</td>
                                         <td style={{ whiteSpace: 'nowrap' }}>
                                             <span className={`badge ${product.is_available ? 'badge-success' : 'badge-danger'}`}>
