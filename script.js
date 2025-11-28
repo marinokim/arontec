@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderFilteredProducts(category) {
         const filteredProducts = category === 'All'
             ? fetchedProducts
-            : fetchedProducts.filter(p => p.category === category || (category === 'Other' && !['Audio', 'Mobile', 'Beauty', 'Food', 'Fashion', 'Living'].includes(p.category)));
+            : fetchedProducts.filter(p => p.category === category || (category === 'Other' && !['Audio', 'Mobile', 'Beauty', 'Food', 'Living'].includes(p.category)));
 
         if (filteredProducts.length === 0) {
             productGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 2rem;">해당 카테고리에 제품이 없습니다.</p>';
