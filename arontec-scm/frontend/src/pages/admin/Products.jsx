@@ -97,7 +97,7 @@ function AdminProducts() {
 
             if (res.ok) {
                 alert(editingProduct ? '상품이 수정되었습니다' : '상품이 등록되었습니다')
-                setIsModalOpen(false)
+                setShowModal(false)
                 setEditingProduct(null)
                 setFormData(initialFormState)
                 fetchProducts()
@@ -143,13 +143,13 @@ function AdminProducts() {
             isAvailable: product.is_available,
             detailUrl: product.detail_url || ''
         })
-        setIsModalOpen(true)
+        setShowModal(true)
     }
 
     const openAddModal = () => {
         setEditingProduct(null)
         setFormData(initialFormState)
-        setIsModalOpen(true)
+        setShowModal(true)
     }
 
     return (
@@ -268,7 +268,7 @@ function AdminProducts() {
                 </div>
             </div>
 
-            {isModalOpen && (
+            {showModal && (
                 <div className="modal-overlay" style={{
                     position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
                     background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
@@ -417,7 +417,7 @@ function AdminProducts() {
 
                             <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
                                 <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>저장</button>
-                                <button type="button" onClick={() => setIsModalOpen(false)} className="btn btn-secondary" style={{ flex: 1, background: '#6c757d' }}>취소</button>
+                                <button type="button" onClick={() => setShowModal(false)} className="btn btn-secondary" style={{ flex: 1, background: '#6c757d' }}>취소</button>
                             </div>
                         </form>
                     </div>
