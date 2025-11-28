@@ -126,9 +126,12 @@ router.get('/categories', async (req, res) => {
 router.post('/categories', requireAdmin, async (req, res) => {
     const { name } = req.body
     try {
+        // Generate slug: lowercase, replace spaces with hyphens, remove special chars
+        const slug = name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '')
+
         const result = await pool.query(
-            'INSERT INTO categories (name) VALUES ($1) RETURNING *',
-            [name]
+            'INSERT INTO categories (name, slug) VALUES ($1, $2) RETURNING *',
+            [name, slug]
         )
         res.status(201).json(result.rows[0])
     } catch (error) {
