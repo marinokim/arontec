@@ -57,7 +57,11 @@ function AdminProducts() {
 
     const formatPrice = (value) => {
         if (!value) return ''
-        const number = value.toString().replace(/[^0-9]/g, '')
+        // Handle numeric values that might have decimals (e.g. 3000.00 from DB)
+        const stringValue = typeof value === 'number' ? Math.floor(value).toString() : value.toString()
+        // If string contains decimal, take integer part
+        const integerPart = stringValue.split('.')[0]
+        const number = integerPart.replace(/[^0-9]/g, '')
         return number.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
     }
 
@@ -84,7 +88,9 @@ function AdminProducts() {
                 consumerPrice: parsePrice(formData.consumerPrice),
                 supplyPrice: parsePrice(formData.supplyPrice),
                 b2bPrice: parsePrice(formData.b2bPrice),
+                b2bPrice: parsePrice(formData.b2bPrice),
                 stockQuantity: parsePrice(formData.stockQuantity),
+                quantityPerCarton: formData.quantityPerCarton ? formData.quantityPerCarton : '0',
                 shippingFee: parsePrice(formData.shippingFee)
             }
 
