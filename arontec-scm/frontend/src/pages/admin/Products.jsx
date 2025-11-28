@@ -288,7 +288,7 @@ function AdminProducts() {
                                 <th style={{ textAlign: 'right', minWidth: '120px' }}>재고(재고/카톤)</th>
                                 <th style={{ textAlign: 'right' }}>배송비</th>
                                 <th>제조사/원산지</th>
-                                <th>등록일</th>
+                                <th style={{ minWidth: '100px' }}>등록일</th>
                                 <th style={{ textAlign: 'center' }}>상태/관리</th>
                             </tr>
                         </thead>
