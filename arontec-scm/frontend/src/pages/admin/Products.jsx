@@ -349,8 +349,8 @@ function AdminProducts() {
                                                     {product.is_available ? '판매중' : '품절/중지'}
                                                 </span>
                                             </div>
-                                            <div>
-                                                <button onClick={() => openEditModal(product)} className="btn btn-secondary" style={{ marginRight: '0.5rem', padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
+                                                <button onClick={() => openEditModal(product)} className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}>
                                                     수정
                                                 </button>
                                                 <button onClick={() => handleDelete(product.id)} className="btn btn-danger" style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem', background: '#dc3545', border: 'none', color: 'white', borderRadius: '4px' }}>
