@@ -8,6 +8,8 @@ function AdminProducts() {
     const [editingProduct, setEditingProduct] = useState(null)
     const [selectedCategory, setSelectedCategory] = useState('All')
     const [showModal, setShowModal] = useState(false)
+    const [showCategoryModal, setShowCategoryModal] = useState(false)
+    const [newCategoryName, setNewCategoryName] = useState('')
 
     const categoryColors = {
         'Audio': '#4e73df',   // Blue
@@ -168,6 +170,32 @@ function AdminProducts() {
         setShowModal(true)
     }
 
+    const handleAddCategory = async (e) => {
+        e.preventDefault()
+        if (!newCategoryName.trim()) return
+
+        try {
+            const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/products/categories', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ name: newCategoryName })
+            })
+
+            if (res.ok) {
+                alert('카테고리가 추가되었습니다')
+                setNewCategoryName('')
+                setShowCategoryModal(false)
+                fetchCategories()
+            } else {
+                alert('카테고리 추가 실패')
+            }
+        } catch (error) {
+            console.error('Add category error:', error)
+            alert('오류가 발생했습니다')
+        }
+    }
+
     return (
         <div className="dashboard">
             <nav className="dashboard-nav">
@@ -194,6 +222,9 @@ function AdminProducts() {
                                 <option key={cat.id} value={cat.id}>{cat.name}</option>
                             ))}
                         </select>
+                        <button onClick={() => setShowCategoryModal(true)} className="btn btn-secondary" style={{ padding: '0.5rem', fontSize: '0.8rem' }}>
+                            + 카테고리 추가
+                        </button>
                     </div>
                     <button onClick={openAddModal} className="btn btn-primary">
                         + 신규 상품 등록
@@ -436,6 +467,35 @@ function AdminProducts() {
                             <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
                                 <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>저장</button>
                                 <button type="button" onClick={() => setShowModal(false)} className="btn btn-secondary" style={{ flex: 1, background: '#6c757d' }}>취소</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {showCategoryModal && (
+                <div className="modal-overlay" style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
+                }}>
+                    <div className="modal-content" style={{
+                        background: 'white', padding: '2rem', borderRadius: '8px', width: '90%', maxWidth: '400px'
+                    }}>
+                        <h3>새 카테고리 추가</h3>
+                        <form onSubmit={handleAddCategory} style={{ marginTop: '1.5rem' }}>
+                            <div className="form-group">
+                                <label>카테고리명</label>
+                                <input
+                                    type="text"
+                                    value={newCategoryName}
+                                    onChange={e => setNewCategoryName(e.target.value)}
+                                    required
+                                    placeholder="예: Audio, Living..."
+                                />
+                            </div>
+                            <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
+                                <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>추가</button>
+                                <button type="button" onClick={() => setShowCategoryModal(false)} className="btn btn-secondary" style={{ flex: 1, background: '#6c757d' }}>취소</button>
                             </div>
                         </form>
                     </div>

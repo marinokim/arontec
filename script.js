@@ -12,7 +12,45 @@ document.addEventListener('DOMContentLoaded', () => {
     // API Configuration
     // const API_BASE_URL = 'http://localhost:5001'; // Localhost
     // const API_BASE_URL = 'http://192.168.0.7:5001'; // Local Network
+    // const API_BASE_URL = 'http://localhost:5001'; // Localhost
+    // const API_BASE_URL = 'http://192.168.0.7:5001'; // Local Network
     const API_BASE_URL = 'https://arontec-backend.onrender.com'; // Production
+
+    // Render Notices
+    const noticeList = document.getElementById('notice-list');
+    if (noticeList) {
+        fetchNotices();
+    }
+
+    async function fetchNotices() {
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/notifications`);
+            if (res.ok) {
+                const notices = await res.json();
+                const activeNotices = notices.filter(n => n.is_active);
+
+                if (activeNotices.length === 0) {
+                    noticeList.innerHTML = '<p style="text-align: center; color: #666;">등록된 공지사항이 없습니다.</p>';
+                    return;
+                }
+
+                noticeList.innerHTML = activeNotices.map(notice => `
+                    <div class="notice-item" style="background: white; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <h3 style="font-size: 1.1rem; color: var(--primary-color); margin: 0;">${notice.title}</h3>
+                            <span style="font-size: 0.8rem; color: #999;">${new Date(notice.created_at).toLocaleDateString()}</span>
+                        </div>
+                        <p style="color: #555; line-height: 1.5;">${notice.content}</p>
+                    </div>
+                `).join('');
+            } else {
+                noticeList.innerHTML = '<p style="text-align: center; color: #666;">공지사항을 불러올 수 없습니다.</p>';
+            }
+        } catch (error) {
+            console.error('Fetch notices error:', error);
+            noticeList.innerHTML = '<p style="text-align: center; color: #666;">공지사항을 불러오는 중 오류가 발생했습니다.</p>';
+        }
+    }
 
     // Render Products
     const productGrid = document.getElementById('product-grid');

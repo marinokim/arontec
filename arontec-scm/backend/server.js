@@ -7,6 +7,7 @@ import productRoutes from './routes/products.js'
 import cartRoutes from './routes/cart.js'
 import quoteRoutes from './routes/quotes.js'
 import dashboardRoutes from './routes/dashboard.js'
+import notificationRoutes from './routes/notifications.js'
 import adminRoutes from './routes/admin.js'
 
 dotenv.config()
@@ -49,6 +50,7 @@ app.use('/api/products', productRoutes)
 app.use('/api/cart', cartRoutes)
 app.use('/api/quotes', quoteRoutes)
 app.use('/api/dashboard', dashboardRoutes)
+app.use('/api/notifications', notificationRoutes)
 app.use('/api/admin', adminRoutes)
 
 // Health check

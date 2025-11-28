@@ -114,11 +114,26 @@ router.get('/', async (req, res) => {
 // Get all categories (Public)
 router.get('/categories', async (req, res) => {
     try {
-        const result = await pool.query('SELECT * FROM categories ORDER BY name')
+        const result = await pool.query('SELECT * FROM categories ORDER BY id')
         res.json({ categories: result.rows })
     } catch (error) {
         console.error('Get categories error:', error)
-        res.status(500).json({ error: 'Failed to get categories' })
+        res.status(500).json({ error: 'Failed to fetch categories' })
+    }
+})
+
+// Create category
+router.post('/categories', requireAdmin, async (req, res) => {
+    const { name } = req.body
+    try {
+        const result = await pool.query(
+            'INSERT INTO categories (name) VALUES ($1) RETURNING *',
+            [name]
+        )
+        res.status(201).json(result.rows[0])
+    } catch (error) {
+        console.error('Create category error:', error)
+        res.status(500).json({ error: 'Failed to create category' })
     }
 })
 

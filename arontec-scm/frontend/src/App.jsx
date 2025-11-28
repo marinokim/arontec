@@ -11,7 +11,24 @@ import AdminDashboard from './pages/admin/Dashboard'
 import AdminMembers from './pages/admin/Members'
 import AdminProducts from './pages/admin/Products'
 import AdminQuotes from './pages/admin/Quotes'
+import AdminNotifications from './pages/admin/Notifications'
 import ProductDetail from './pages/ProductDetail'
+
+// Assuming ProtectedRoute is defined elsewhere or will be added.
+// For now, let's define a placeholder ProtectedRoute that mimics the original logic
+// to ensure the code remains syntactically correct and functional based on the user's intent
+// to introduce this component. If ProtectedRoute is not provided, this will cause a runtime error.
+// However, the instruction is to apply the change as given, which includes this component.
+const ProtectedRoute = ({ children, requireAdmin, user }) => {
+    if (!user) {
+        return <Navigate to="/login" />;
+    }
+    if (requireAdmin && !user.isAdmin) {
+        return <Navigate to="/dashboard" />;
+    }
+    return children;
+};
+
 
 function App() {
     const [user, setUser] = useState(null)
@@ -57,9 +74,10 @@ function App() {
 
                     {/* Protected Routes - Admin Only */}
                     <Route path="/admin" element={user?.isAdmin ? <AdminDashboard /> : <Navigate to="/dashboard" />} />
-                    <Route path="/admin/members" element={user?.isAdmin ? <AdminMembers /> : <Navigate to="/dashboard" />} />
-                    <Route path="/admin/products" element={user?.isAdmin ? <AdminProducts /> : <Navigate to="/dashboard" />} />
-                    <Route path="/admin/quotes" element={user?.isAdmin ? <AdminQuotes /> : <Navigate to="/dashboard" />} />
+                    <Route path="/admin/members" element={<ProtectedRoute requireAdmin user={user}><AdminMembers /></ProtectedRoute>} />
+                    <Route path="/admin/products" element={<ProtectedRoute requireAdmin user={user}><AdminProducts /></ProtectedRoute>} />
+                    <Route path="/admin/quotes" element={<ProtectedRoute requireAdmin user={user}><AdminQuotes /></ProtectedRoute>} />
+                    <Route path="/admin/notifications" element={<ProtectedRoute requireAdmin user={user}><AdminNotifications /></ProtectedRoute>} />
 
                     <Route path="/" element={<Navigate to="/dashboard" />} />
                 </Routes>
