@@ -5,6 +5,8 @@ function AdminProducts() {
     const [products, setProducts] = useState([])
     const [categories, setCategories] = useState([])
     const [brands, setBrands] = useState([])
+    const [manufacturers, setManufacturers] = useState([])
+    const [origins, setOrigins] = useState([])
     const [editingProduct, setEditingProduct] = useState(null)
     const [selectedCategory, setSelectedCategory] = useState('All')
     const [showModal, setShowModal] = useState(false)
@@ -44,6 +46,8 @@ function AdminProducts() {
         fetchProducts()
         fetchCategories()
         fetchBrands()
+        fetchManufacturers()
+        fetchOrigins()
     }, [])
 
     const fetchBrands = async () => {
@@ -53,6 +57,26 @@ function AdminProducts() {
             setBrands(data.brands)
         } catch (error) {
             console.error('Fetch brands error:', error)
+        }
+    }
+
+    const fetchManufacturers = async () => {
+        try {
+            const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/products/manufacturers', { credentials: 'include' })
+            const data = await res.json()
+            setManufacturers(data.manufacturers)
+        } catch (error) {
+            console.error('Fetch manufacturers error:', error)
+        }
+    }
+
+    const fetchOrigins = async () => {
+        try {
+            const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/products/origins', { credentials: 'include' })
+            const data = await res.json()
+            setOrigins(data.origins)
+        } catch (error) {
+            console.error('Fetch origins error:', error)
         }
     }
 
@@ -123,6 +147,8 @@ function AdminProducts() {
                 setFormData(initialFormState)
                 fetchProducts()
                 fetchBrands()
+                fetchManufacturers()
+                fetchOrigins()
             } else {
                 const data = await res.json()
                 alert(data.error || '오류가 발생했습니다')
@@ -385,20 +411,32 @@ function AdminProducts() {
                                 <label>제조사</label>
                                 <input
                                     type="text"
+                                    list="manufacturer-list"
                                     value={formData.manufacturer}
                                     onChange={e => setFormData({ ...formData, manufacturer: e.target.value })}
                                     placeholder="예: Samsung, LG..."
                                 />
+                                <datalist id="manufacturer-list">
+                                    {manufacturers.map((item, index) => (
+                                        <option key={index} value={item} />
+                                    ))}
+                                </datalist>
                             </div>
 
                             <div className="form-group">
                                 <label>원산지</label>
                                 <input
                                     type="text"
+                                    list="origin-list"
                                     value={formData.origin}
                                     onChange={e => setFormData({ ...formData, origin: e.target.value })}
                                     placeholder="예: Korea, China..."
                                 />
+                                <datalist id="origin-list">
+                                    {origins.map((item, index) => (
+                                        <option key={index} value={item} />
+                                    ))}
+                                </datalist>
                             </div>
 
                             <div className="form-group">

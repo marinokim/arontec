@@ -144,11 +144,33 @@ router.post('/categories', requireAdmin, async (req, res) => {
 // Get all unique brands (Public)
 router.get('/brands', async (req, res) => {
     try {
-        const result = await pool.query('SELECT DISTINCT brand FROM products ORDER BY brand')
+        const result = await pool.query('SELECT DISTINCT brand FROM products WHERE brand IS NOT NULL AND brand != \'\' ORDER BY brand')
         res.json({ brands: result.rows.map(row => row.brand) })
     } catch (error) {
         console.error('Get brands error:', error)
         res.status(500).json({ error: 'Failed to get brands' })
+    }
+})
+
+// Get all unique manufacturers (Public)
+router.get('/manufacturers', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT DISTINCT manufacturer FROM products WHERE manufacturer IS NOT NULL AND manufacturer != \'\' ORDER BY manufacturer')
+        res.json({ manufacturers: result.rows.map(row => row.manufacturer) })
+    } catch (error) {
+        console.error('Get manufacturers error:', error)
+        res.status(500).json({ error: 'Failed to get manufacturers' })
+    }
+})
+
+// Get all unique origins (Public)
+router.get('/origins', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT DISTINCT origin FROM products WHERE origin IS NOT NULL AND origin != \'\' ORDER BY origin')
+        res.json({ origins: result.rows.map(row => row.origin) })
+    } catch (error) {
+        console.error('Get origins error:', error)
+        res.status(500).json({ error: 'Failed to get origins' })
     }
 })
 
