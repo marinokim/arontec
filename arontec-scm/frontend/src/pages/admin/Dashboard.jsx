@@ -44,6 +44,7 @@ function AdminDashboard() {
                     <Link to="/admin/members">회원 관리</Link>
                     <Link to="/admin/products">상품 관리</Link>
                     <Link to="/admin/quotes">견적 관리</Link>
+                    <Link to="/admin/notifications">공지사항</Link>
                     <Link to="/dashboard">사용자 모드</Link>
                     <button onClick={handleLogout} className="btn-logout">로그아웃</button>
                 </div>

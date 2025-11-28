@@ -205,6 +205,7 @@ function AdminProducts() {
                     <Link to="/admin/members">회원 관리</Link>
                     <Link to="/admin/products" className="active">상품 관리</Link>
                     <Link to="/admin/quotes">견적 관리</Link>
+                    <Link to="/admin/notifications">공지사항</Link>
                 </div>
             </nav>
 
