@@ -252,7 +252,7 @@ function AdminProducts() {
                 </div>
             </nav>
 
-            <div className="dashboard-content container" style={{ maxWidth: '1600px' }}>
+            <div className="dashboard-content container" style={{ maxWidth: '100%' }}>
                 <div className="dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                         <h1>상품 관리</h1>
@@ -276,7 +276,7 @@ function AdminProducts() {
                 </div>
 
                 <div className="card">
-                    <table className="table" style={{ fontSize: '0.85rem' }}>
+                    <table className="table" style={{ fontSize: '0.85rem', width: '100%' }}>
                         <thead>
                             <tr>
                                 <th style={{ textAlign: 'center', width: '60px' }}>No.</th>
