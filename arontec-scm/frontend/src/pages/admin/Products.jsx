@@ -287,7 +287,6 @@ function AdminProducts() {
                                 <th style={{ minWidth: '100px' }}>브랜드</th>
                                 <th>상품명</th>
                                 <th style={{ textAlign: 'right' }}>실판매가</th>
-                                <th style={{ textAlign: 'center', width: '80px' }}>과세</th>
                                 <th style={{ textAlign: 'right', minWidth: '140px' }}>공급가(소가/공급)</th>
                                 <th style={{ textAlign: 'right', minWidth: '120px' }}>재고(재고/카톤)</th>
                                 <th style={{ textAlign: 'right' }}>배송비</th>
@@ -318,13 +317,15 @@ function AdminProducts() {
                                                 {product.model_name}
                                             </div>
                                         </td>
-                                        <td style={{ fontWeight: 'bold', color: '#007bff', textAlign: 'right', fontSize: '1.1rem' }}>
-                                            {parseInt(product.b2b_price).toLocaleString()}
-                                        </td>
-                                        <td style={{ textAlign: 'center' }}>
-                                            <span className={`badge ${product.is_tax_free ? 'badge-info' : 'badge-secondary'}`} style={{ background: product.is_tax_free ? '#17a2b8' : '#6c757d' }}>
-                                                {product.is_tax_free ? '면세' : '과세'}
-                                            </span>
+                                        <td style={{ textAlign: 'right' }}>
+                                            <div style={{ fontWeight: 'bold', color: '#007bff', fontSize: '1.1rem' }}>
+                                                {parseInt(product.b2b_price).toLocaleString()}
+                                            </div>
+                                            <div style={{ marginTop: '2px' }}>
+                                                <span className={`badge ${product.is_tax_free ? 'badge-info' : 'badge-secondary'}`} style={{ background: product.is_tax_free ? '#17a2b8' : '#6c757d', fontSize: '0.7rem', padding: '2px 4px' }}>
+                                                    {product.is_tax_free ? '면세' : '과세'}
+                                                </span>
+                                            </div>
                                         </td>
                                         <td style={{ textAlign: 'right' }}>
                                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: '#666' }}>
