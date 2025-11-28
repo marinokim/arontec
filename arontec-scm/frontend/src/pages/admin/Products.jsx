@@ -197,9 +197,9 @@ function AdminProducts() {
                                         <td style={{ textAlign: 'center' }}>{product.id}</td>
                                         <td>
                                             {product.image_url ? (
-                                                <img src={product.image_url} alt={product.model_name} style={{ width: '50px', height: '50px', objectFit: 'contain' }} />
+                                                <img src={product.image_url} alt={product.model_name} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '4px' }} />
                                             ) : (
-                                                <div style={{ width: '50px', height: '50px', background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>No Img</div>
+                                                <div style={{ width: '80px', height: '80px', background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px', fontSize: '0.8rem' }}>No Img</div>
                                             )}
                                         </td>
                                         <td>{product.brand}</td>
