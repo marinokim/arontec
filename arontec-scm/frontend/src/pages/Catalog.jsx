@@ -138,7 +138,10 @@ function Catalog({ user }) {
         // Add data rows
         for (let i = 0; i < proposalItems.length; i++) {
             const item = proposalItems[i]
-            const row = worksheet.addRow({
+            // Use getRow(i + 3) because Row 1 is Title, Row 2 is Header.
+            // addRow() skips rows if addImage() instantiated the next row (due to 'br' coordinates).
+            const row = worksheet.getRow(i + 3)
+            row.values = {
                 no: i + 1,
                 status: item.is_available ? '' : '품절',
                 id: item.id,
@@ -157,7 +160,7 @@ function Catalog({ user }) {
                 imageUrl: item.image_url || '',
                 detailUrl: item.detail_url || '',
                 remarks: ''
-            })
+            }
 
             // Set row height for image
             row.height = 100
