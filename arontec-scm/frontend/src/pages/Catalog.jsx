@@ -167,14 +167,22 @@ function Catalog({ user }) {
             if (item.image_url) {
                 try {
                     // Fetch image as buffer
-                    // Note: This requires CORS to be configured correctly on the image server if external
-                    // Or use a proxy. For now assuming images are accessible.
                     const response = await fetch(item.image_url)
+                    if (!response.ok) throw new Error(`Failed to fetch image: ${response.statusText}`)
+
                     const buffer = await response.arrayBuffer()
+
+                    // Determine extension from URL
+                    let extension = 'jpeg'
+                    if (item.image_url.toLowerCase().endsWith('.png')) {
+                        extension = 'png'
+                    } else if (item.image_url.toLowerCase().endsWith('.gif')) {
+                        extension = 'gif'
+                    }
 
                     const imageId = workbook.addImage({
                         buffer: buffer,
-                        extension: 'jpeg', // Assuming jpeg/png, exceljs handles it reasonably well
+                        extension: extension,
                     })
 
                     worksheet.addImage(imageId, {
