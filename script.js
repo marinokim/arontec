@@ -75,7 +75,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch(`${API_BASE_URL}/api/products/categories`);
             if (res.ok) {
                 const data = await res.json();
-                const categories = data.categories;
+                let categories = data.categories;
+
+                // Sort categories: 'Other' at the end
+                categories.sort((a, b) => {
+                    if (a.name === 'Other') return 1;
+                    if (b.name === 'Other') return -1;
+                    return 0; // Keep original order for others (or sort by ID/Name if needed)
+                });
 
                 // Create buttons: All + Dynamic Categories
                 let buttonsHtml = `<button class="category-btn active" data-category="All">All</button>`;
