@@ -103,8 +103,30 @@ function Catalog({ user }) {
             { header: '비고', key: 'remarks', width: 20 },
         ]
 
-        // Style header row
-        const headerRow = worksheet.getRow(1)
+        // Insert Title/Warning Row at the top
+        worksheet.insertRow(1, [])
+
+        // Merge cells for Title and Warning
+        worksheet.mergeCells('A1:C1')
+        worksheet.mergeCells('D1:R1')
+
+        // Set Title (ARONTEC Logo placeholder)
+        const titleCell = worksheet.getCell('A1')
+        titleCell.value = 'ARONTEC'
+        titleCell.font = { name: 'Arial', size: 20, bold: true, color: { argb: '003366' } } // Dark Blue
+        titleCell.alignment = { vertical: 'middle', horizontal: 'left' }
+
+        // Set Warning Text
+        const warningCell = worksheet.getCell('D1')
+        warningCell.value = '■ 당사가 운영하는 모든 상품은 폐쇄몰을 제외한 온라인 판매를 금하며, 판매 시 상품 공급이 중단됩니다.'
+        warningCell.font = { name: 'Malgun Gothic', size: 12, bold: true, color: { argb: 'FF0000' } } // Red
+        warningCell.alignment = { vertical: 'middle', horizontal: 'left' }
+
+        // Set Header Row Height
+        worksheet.getRow(1).height = 30
+
+        // Style Table Header Row (Now Row 2)
+        const headerRow = worksheet.getRow(2)
         headerRow.font = { bold: true, color: { argb: '000000' } }
         headerRow.fill = {
             type: 'pattern',
@@ -156,12 +178,8 @@ function Catalog({ user }) {
                     })
 
                     worksheet.addImage(imageId, {
-                        tl: { col: 4, row: i + 1 }, // Column E (index 4), Row i+1 (header is 0-indexed for addImage? No, 0-based col, 0-based row)
-                        // Wait, exceljs addImage uses 0-based index.
-                        // Header is row 1. Data starts at row 2.
-                        // So for i=0 (first item), we want row 2.
-                        // tl: { col: 4, row: i + 1 } -> Col E (4), Row 2 (1)
-                        br: { col: 5, row: i + 2 },
+                        tl: { col: 4, row: i + 2 }, // Column E (index 4), Row starts at 0. Header is 0, 1. Data starts at 2.
+                        br: { col: 5, row: i + 3 },
                         editAs: 'oneCell'
                     })
                 } catch (err) {
