@@ -184,6 +184,102 @@ document.addEventListener('DOMContentLoaded', () => {
         initProducts();
     }
 
+    // Product Detail Page Logic
+    const detailContainer = document.getElementById('product-detail-container');
+    if (detailContainer) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+
+        if (productId) {
+            fetchProductDetail(productId);
+        } else {
+            detailContainer.innerHTML = '<p style="text-align: center;">잘못된 접근입니다.</p>';
+        }
+    }
+
+    async function fetchProductDetail(id) {
+        try {
+            // Create a timeout promise
+            const timeout = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error('Request timed out')), 5000)
+            );
+
+            // Race fetch against timeout
+            const res = await Promise.race([
+                fetch(`${API_BASE_URL}/api/products/${id}`),
+                timeout
+            ]);
+
+            if (res.ok) {
+                const data = await res.json();
+                renderProductDetail(data.product);
+            } else {
+                throw new Error('Product not found');
+            }
+        } catch (error) {
+            console.warn('Error fetching product detail, trying static data:', error);
+
+            // Fallback to static data
+            if (typeof products !== 'undefined') {
+                // products array from products_data.js
+                // Note: ID from URL is string, product.id might be number
+                const product = products.find(p => p.id == id);
+                if (product) {
+                    renderProductDetail(product);
+                    return;
+                }
+            }
+
+            // If both fail, show error
+            detailContainer.innerHTML = `
+                <div style="text-align: center; padding: 50px;">
+                    <p style="color: #666; font-size: 1.2rem;">제품 정보를 불러올 수 없습니다.</p>
+                    <p style="color: #999; font-size: 0.9rem; margin-top: 10px;">(Error: ${error.message})</p>
+                    <button onclick="window.location.reload()" style="margin-top: 20px; padding: 10px 20px; background: var(--primary-color); color: white; border: none; border-radius: 5px; cursor: pointer;">다시 시도</button>
+                    <button onclick="history.back()" style="margin-top: 20px; margin-left: 10px; padding: 10px 20px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer;">목록으로</button>
+                </div>
+            `;
+        }
+    }
+
+    function renderProductDetail(product) {
+        // Normalize properties (API returns snake_case, static data returns camelCase)
+        const imageUrl = product.image_url || product.image;
+        const detailUrl = product.detail_url || product.detailUrl;
+        const modelName = product.model_name || product.model;
+
+        const isEmoji = !imageUrl.includes('/') && !imageUrl.includes('.');
+        const imageHtml = isEmoji
+            ? `<div style="font-size: 10rem; text-align: center; background: #f8f9fa; padding: 2rem; border-radius: 8px;">${imageUrl}</div>`
+            : `<img src="${imageUrl}" alt="${modelName}" style="width: 100%; max-width: 500px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 0 auto;">`;
+
+        const detailImageHtml = detailUrl
+            ? `<div style="margin-top: 60px; border-top: 1px solid #eee; padding-top: 40px;">
+                 <h3 style="font-size: 1.5rem; margin-bottom: 20px; border-left: 4px solid var(--primary-color); padding-left: 10px;">상세 정보</h3>
+                 <img src="${detailUrl}" alt="Detail" style="width: 100%; max-width: 800px; display: block; margin: 0 auto;">
+               </div>`
+            : '';
+
+        detailContainer.innerHTML = `
+            <div class="product-detail-wrapper" style="max-width: 800px; margin: 0 auto;">
+                <div style="text-align: center;">
+                    ${imageHtml}
+                </div>
+                <div style="padding: 20px; text-align: center;">
+                    <span style="background: #f0f0f0; padding: 5px 10px; border-radius: 20px; font-size: 0.9rem; color: #666;">${product.category_name || product.category}</span>
+                    <h2 style="font-size: 2rem; margin: 10px 0 20px; color: #333;">${product.brand}</h2>
+                    <h1 style="font-size: 1.5rem; margin-bottom: 20px; font-weight: normal; color: #555;">${modelName}</h1>
+                    <p style="font-size: 1.1rem; line-height: 1.6; color: #666; margin-bottom: 30px; word-break: keep-all;">${product.description}</p>
+                    
+                    <div style="margin-top: 30px;">
+                        <button onclick="history.back()" style="padding: 12px 30px; background: #333; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem;">목록으로</button>
+                    </div>
+                </div>
+            </div>
+            ${detailImageHtml}
+        `;
+    }
+
     // Smooth Scroll for Anchor Links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
