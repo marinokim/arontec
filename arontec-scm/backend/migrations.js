@@ -80,6 +80,16 @@ export const runMigrations = async () => {
                 END $$;
             `)
 
+            // Add model_no column
+            await client.query(`
+                DO $$ 
+                BEGIN 
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'products' AND column_name = 'model_no') THEN 
+                        ALTER TABLE products ADD COLUMN model_no VARCHAR(255); 
+                    END IF; 
+                END $$;
+            `)
+
             await client.query('COMMIT')
             console.log('✅ Database migrations completed successfully')
         } catch (error) {

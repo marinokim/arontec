@@ -26,7 +26,8 @@ function AdminProducts() {
     const initialFormState = {
         categoryId: '',
         brand: '',
-        modelName: '',
+        modelName: '', // This is now "Product Name"
+        modelNo: '',   // This is the new "Model Name"
         description: '',
         imageUrl: '',
         consumerPrice: '',
@@ -150,6 +151,7 @@ function AdminProducts() {
                 // Keep legacy shippingFee for compatibility if needed, or remove it. Let's set it to individual fee for now.
                 shippingFee: formData.shippingFeeIndividual ? parsePrice(formData.shippingFeeIndividual) : '0',
                 productOptions: formData.productOptions,
+                modelNo: formData.modelNo,
                 manufacturer: formData.manufacturer,
                 origin: formData.origin,
                 isTaxFree: formData.isTaxFree
@@ -204,6 +206,7 @@ function AdminProducts() {
             categoryId: product.category_id,
             brand: product.brand,
             modelName: product.model_name,
+            modelNo: product.model_no || '',
             description: product.description || '',
             imageUrl: product.image_url || '',
             consumerPrice: formatPrice(product.consumer_price || ''),
@@ -299,7 +302,7 @@ function AdminProducts() {
                                     <th style={{ textAlign: 'center', width: '60px' }}>No.</th>
                                     <th style={{ width: '100px', textAlign: 'center' }}>IMG</th>
                                     <th style={{ minWidth: '100px' }}>브랜드/카테고리</th>
-                                    <th>상품명/옵션</th>
+                                    <th>상품명/모델명/옵션</th>
                                     <th style={{ textAlign: 'right' }}>실판매가</th>
                                     <th style={{ textAlign: 'right', minWidth: '140px' }}>공급가(소가/공급)</th>
                                     <th style={{ textAlign: 'right', minWidth: '120px' }}>재고(재고/카톤)</th>
@@ -332,8 +335,13 @@ function AdminProducts() {
                                                 <div style={{ fontWeight: '500' }}>
                                                     {product.model_name}
                                                 </div>
+                                                {product.model_no && (
+                                                    <div style={{ fontSize: '0.85rem', color: '#555', marginTop: '2px' }}>
+                                                        {product.model_no}
+                                                    </div>
+                                                )}
                                                 {product.product_options && (
-                                                    <div style={{ fontSize: '0.8rem', color: '#666', marginTop: '4px', whiteSpace: 'pre-wrap' }}>
+                                                    <div style={{ fontSize: '0.8rem', color: '#888', marginTop: '4px', whiteSpace: 'pre-wrap' }}>
                                                         {product.product_options}
                                                     </div>
                                                 )}
@@ -449,12 +457,21 @@ function AdminProducts() {
                             </div>
 
                             <div className="form-group">
-                                <label>모델명</label>
+                                <label>상품명</label>
                                 <input
                                     type="text"
                                     value={formData.modelName}
                                     onChange={e => setFormData({ ...formData, modelName: e.target.value })}
                                     required
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>모델명</label>
+                                <input
+                                    type="text"
+                                    value={formData.modelNo}
+                                    onChange={e => setFormData({ ...formData, modelNo: e.target.value })}
                                 />
                             </div>
 

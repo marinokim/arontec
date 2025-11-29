@@ -7,13 +7,13 @@ const router = express.Router()
 // Create product (Admin only)
 router.post('/', requireAdmin, async (req, res) => {
     try {
-        const { categoryId, brand, modelName, description, imageUrl, b2bPrice, stockQuantity, detailUrl, isAvailable, consumerPrice, supplyPrice, quantityPerCarton, shippingFee, manufacturer, origin, isTaxFree, shippingFeeIndividual, shippingFeeCarton, productOptions } = req.body
+        const { categoryId, brand, modelName, description, imageUrl, b2bPrice, stockQuantity, detailUrl, isAvailable, consumerPrice, supplyPrice, quantityPerCarton, shippingFee, manufacturer, origin, isTaxFree, shippingFeeIndividual, shippingFeeCarton, productOptions, modelNo } = req.body
 
         const result = await pool.query(
-            `INSERT INTO products (category_id, brand, model_name, description, image_url, b2b_price, stock_quantity, detail_url, is_available, consumer_price, supply_price, quantity_per_carton, shipping_fee, manufacturer, origin, is_tax_free, shipping_fee_individual, shipping_fee_carton, product_options)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
+            `INSERT INTO products (category_id, brand, model_name, description, image_url, b2b_price, stock_quantity, detail_url, is_available, consumer_price, supply_price, quantity_per_carton, shipping_fee, manufacturer, origin, is_tax_free, shipping_fee_individual, shipping_fee_carton, product_options, model_no)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
        RETURNING *`,
-            [categoryId, brand, modelName, description, imageUrl, b2bPrice, stockQuantity, detailUrl, isAvailable !== undefined ? isAvailable : true, consumerPrice, supplyPrice, quantityPerCarton, shippingFee, manufacturer, origin, isTaxFree || false, shippingFeeIndividual || 0, shippingFeeCarton || 0, productOptions || '']
+            [categoryId, brand, modelName, description, imageUrl, b2bPrice, stockQuantity, detailUrl, isAvailable !== undefined ? isAvailable : true, consumerPrice, supplyPrice, quantityPerCarton, shippingFee, manufacturer, origin, isTaxFree || false, shippingFeeIndividual || 0, shippingFeeCarton || 0, productOptions || '', modelNo || '']
         )
 
         res.status(201).json({ product: result.rows[0] })
@@ -26,7 +26,7 @@ router.post('/', requireAdmin, async (req, res) => {
 // Update product (Admin only)
 router.put('/:id', requireAdmin, async (req, res) => {
     try {
-        const { categoryId, brand, modelName, description, imageUrl, b2bPrice, stockQuantity, isAvailable, detailUrl, consumerPrice, supplyPrice, quantityPerCarton, shippingFee, manufacturer, origin, isTaxFree, shippingFeeIndividual, shippingFeeCarton, productOptions } = req.body
+        const { categoryId, brand, modelName, description, imageUrl, b2bPrice, stockQuantity, isAvailable, detailUrl, consumerPrice, supplyPrice, quantityPerCarton, shippingFee, manufacturer, origin, isTaxFree, shippingFeeIndividual, shippingFeeCarton, productOptions, modelNo } = req.body
 
         const result = await pool.query(
             `UPDATE products 
@@ -34,11 +34,11 @@ router.put('/:id', requireAdmin, async (req, res) => {
            image_url = $5, b2b_price = $6, stock_quantity = $7, is_available = $8, detail_url = $9, 
            consumer_price = $10, supply_price = $11, quantity_per_carton = $12, shipping_fee = $13,
            manufacturer = $14, origin = $15, is_tax_free = $16,
-           shipping_fee_individual = $17, shipping_fee_carton = $18, product_options = $19,
+           shipping_fee_individual = $17, shipping_fee_carton = $18, product_options = $19, model_no = $20,
            updated_at = CURRENT_TIMESTAMP
-       WHERE id = $20
+       WHERE id = $21
        RETURNING *`,
-            [categoryId, brand, modelName, description, imageUrl, b2bPrice, stockQuantity, isAvailable, detailUrl, consumerPrice, supplyPrice, quantityPerCarton, shippingFee, manufacturer, origin, isTaxFree, shippingFeeIndividual, shippingFeeCarton, productOptions, req.params.id]
+            [categoryId, brand, modelName, description, imageUrl, b2bPrice, stockQuantity, isAvailable, detailUrl, consumerPrice, supplyPrice, quantityPerCarton, shippingFee, manufacturer, origin, isTaxFree, shippingFeeIndividual, shippingFeeCarton, productOptions, modelNo, req.params.id]
         )
 
         if (result.rows.length === 0) {
