@@ -33,7 +33,9 @@ function AdminProducts() {
         b2bPrice: '',
         stockQuantity: '',
         quantityPerCarton: '',
-        shippingFee: '',
+        shippingFeeIndividual: '',
+        shippingFeeCarton: '',
+        productOptions: '',
         manufacturer: '',
         origin: '',
         isAvailable: true,
@@ -139,7 +141,11 @@ function AdminProducts() {
                 b2bPrice: parsePrice(formData.b2bPrice),
                 stockQuantity: parsePrice(formData.stockQuantity),
                 quantityPerCarton: formData.quantityPerCarton ? formData.quantityPerCarton : '0',
-                shippingFee: formData.shippingFee ? parsePrice(formData.shippingFee) : '0',
+                shippingFeeIndividual: formData.shippingFeeIndividual ? parsePrice(formData.shippingFeeIndividual) : '0',
+                shippingFeeCarton: formData.shippingFeeCarton ? parsePrice(formData.shippingFeeCarton) : '0',
+                // Keep legacy shippingFee for compatibility if needed, or remove it. Let's set it to individual fee for now.
+                shippingFee: formData.shippingFeeIndividual ? parsePrice(formData.shippingFeeIndividual) : '0',
+                productOptions: formData.productOptions,
                 manufacturer: formData.manufacturer,
                 origin: formData.origin,
                 isTaxFree: formData.isTaxFree
@@ -199,8 +205,9 @@ function AdminProducts() {
             b2bPrice: formatPrice(product.b2b_price),
             stockQuantity: formatPrice(product.stock_quantity),
             quantityPerCarton: product.quantity_per_carton || '',
-            quantityPerCarton: product.quantity_per_carton || '',
-            shippingFee: formatPrice(product.shipping_fee || ''),
+            shippingFeeIndividual: formatPrice(product.shipping_fee_individual || product.shipping_fee || ''),
+            shippingFeeCarton: formatPrice(product.shipping_fee_carton || ''),
+            productOptions: product.product_options || '',
             manufacturer: product.manufacturer || '',
             origin: product.origin || '',
             isAvailable: product.is_available,
@@ -285,12 +292,12 @@ function AdminProducts() {
                                 <tr>
                                     <th style={{ textAlign: 'center', width: '60px' }}>No.</th>
                                     <th style={{ width: '100px', textAlign: 'center' }}>IMG</th>
-                                    <th style={{ minWidth: '100px' }}>브랜드</th>
-                                    <th>상품명</th>
+                                    <th style={{ minWidth: '100px' }}>브랜드/카테고리</th>
+                                    <th>상품명/옵션</th>
                                     <th style={{ textAlign: 'right' }}>실판매가</th>
                                     <th style={{ textAlign: 'right', minWidth: '140px' }}>공급가(소가/공급)</th>
                                     <th style={{ textAlign: 'right', minWidth: '120px' }}>재고(재고/카톤)</th>
-                                    <th style={{ textAlign: 'right' }}>배송비</th>
+                                    <th style={{ textAlign: 'right' }}>배송비(개별/카톤)</th>
                                     <th>제조사/원산지</th>
                                     <th style={{ minWidth: '100px' }}>등록일</th>
                                     <th style={{ textAlign: 'center' }}>상태/관리</th>
@@ -309,14 +316,21 @@ function AdminProducts() {
                                                     <div style={{ width: '100%', height: '100px', background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem' }}>No Img</div>
                                                 )}
                                             </td>
-                                            <td>{product.brand}</td>
                                             <td>
-                                                <div style={{ fontSize: '0.8rem', color: categoryColors[product.category_name] || '#666', marginBottom: '4px', fontWeight: 'bold' }}>
+                                                <div style={{ fontWeight: 'bold' }}>{product.brand}</div>
+                                                <div style={{ fontSize: '0.8rem', color: categoryColors[product.category_name] || '#666', marginTop: '4px' }}>
                                                     {product.category_name}
                                                 </div>
+                                            </td>
+                                            <td>
                                                 <div style={{ fontWeight: '500' }}>
                                                     {product.model_name}
                                                 </div>
+                                                {product.product_options && (
+                                                    <div style={{ fontSize: '0.8rem', color: '#666', marginTop: '4px', whiteSpace: 'pre-wrap' }}>
+                                                        {product.product_options}
+                                                    </div>
+                                                )}
                                             </td>
                                             <td style={{ textAlign: 'right' }}>
                                                 <div style={{ fontWeight: 'bold', color: '#007bff', fontSize: '1.1rem' }}>
@@ -348,7 +362,16 @@ function AdminProducts() {
                                                     <span>{product.quantity_per_carton || '-'}</span>
                                                 </div>
                                             </td>
-                                            <td style={{ textAlign: 'right' }}>{product.shipping_fee ? parseInt(product.shipping_fee).toLocaleString() : '0'}</td>
+                                            <td style={{ textAlign: 'right' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                    <span style={{ fontSize: '0.8rem', color: '#666' }}>개별</span>
+                                                    <span>{product.shipping_fee_individual ? parseInt(product.shipping_fee_individual).toLocaleString() : (product.shipping_fee ? parseInt(product.shipping_fee).toLocaleString() : '0')}</span>
+                                                </div>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                    <span style={{ fontSize: '0.8rem', color: '#666' }}>카톤</span>
+                                                    <span>{product.shipping_fee_carton ? parseInt(product.shipping_fee_carton).toLocaleString() : '0'}</span>
+                                                </div>
+                                            </td>
                                             <td>
                                                 <div style={{ fontSize: '0.85rem', fontWeight: 'bold' }}>{product.manufacturer || '-'}</div>
                                                 <div style={{ fontSize: '0.8rem', color: '#666' }}>{product.origin || '-'}</div>
@@ -509,11 +532,32 @@ function AdminProducts() {
                             </div>
 
                             <div className="form-group">
-                                <label>배송비</label>
+                                <label>배송비 (개별)</label>
                                 <input
                                     type="text"
-                                    value={formData.shippingFee}
-                                    onChange={e => handlePriceChange('shippingFee', e.target.value)}
+                                    value={formData.shippingFeeIndividual}
+                                    onChange={e => handlePriceChange('shippingFeeIndividual', e.target.value)}
+                                    placeholder="개별 배송비"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>배송비 (카톤)</label>
+                                <input
+                                    type="text"
+                                    value={formData.shippingFeeCarton}
+                                    onChange={e => handlePriceChange('shippingFeeCarton', e.target.value)}
+                                    placeholder="카톤 배송비"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>옵션 (선택사항)</label>
+                                <textarea
+                                    value={formData.productOptions}
+                                    onChange={e => setFormData({ ...formData, productOptions: e.target.value })}
+                                    rows="2"
+                                    placeholder="예: 색상, 사이즈 등 옵션 정보"
                                 />
                             </div>
 

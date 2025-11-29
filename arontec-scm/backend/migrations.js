@@ -50,6 +50,36 @@ export const runMigrations = async () => {
                 END $$;
             `)
 
+            // Add shipping_fee_individual column
+            await client.query(`
+                DO $$ 
+                BEGIN 
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'products' AND column_name = 'shipping_fee_individual') THEN 
+                        ALTER TABLE products ADD COLUMN shipping_fee_individual INTEGER DEFAULT 0; 
+                    END IF; 
+                END $$;
+            `)
+
+            // Add shipping_fee_carton column
+            await client.query(`
+                DO $$ 
+                BEGIN 
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'products' AND column_name = 'shipping_fee_carton') THEN 
+                        ALTER TABLE products ADD COLUMN shipping_fee_carton INTEGER DEFAULT 0; 
+                    END IF; 
+                END $$;
+            `)
+
+            // Add product_options column
+            await client.query(`
+                DO $$ 
+                BEGIN 
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'products' AND column_name = 'product_options') THEN 
+                        ALTER TABLE products ADD COLUMN product_options TEXT; 
+                    END IF; 
+                END $$;
+            `)
+
             await client.query('COMMIT')
             console.log('✅ Database migrations completed successfully')
         } catch (error) {
