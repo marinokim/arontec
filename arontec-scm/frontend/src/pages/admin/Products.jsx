@@ -12,6 +12,7 @@ function AdminProducts() {
     const [showModal, setShowModal] = useState(false)
     const [showCategoryModal, setShowCategoryModal] = useState(false)
     const [newCategoryName, setNewCategoryName] = useState('')
+    const [isSubmitting, setIsSubmitting] = useState(false)
 
     const categoryColors = {
         'Audio': '#4e73df',   // Blue
@@ -132,6 +133,9 @@ function AdminProducts() {
         const url = editingProduct ? `${baseUrl}/api/products/${editingProduct.id}` : `${baseUrl}/api/products`
         const method = editingProduct ? 'PUT' : 'POST'
 
+        if (isSubmitting) return
+        setIsSubmitting(true)
+
         try {
             const payload = {
                 ...formData,
@@ -174,6 +178,8 @@ function AdminProducts() {
         } catch (error) {
             console.error('Submit error:', error)
             alert('오류가 발생했습니다')
+        } finally {
+            setIsSubmitting(false)
         }
     }
 
@@ -629,8 +635,10 @@ function AdminProducts() {
                             </div>
 
                             <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
-                                <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>저장</button>
-                                <button type="button" onClick={() => setShowModal(false)} className="btn btn-secondary" style={{ flex: 1, background: '#6c757d' }}>취소</button>
+                                <button type="submit" className="btn btn-primary" style={{ flex: 1 }} disabled={isSubmitting}>
+                                    {isSubmitting ? '저장 중...' : '저장'}
+                                </button>
+                                <button type="button" onClick={() => setShowModal(false)} className="btn btn-secondary" style={{ flex: 1, background: '#6c757d' }} disabled={isSubmitting}>취소</button>
                             </div>
                         </form>
                     </div>
