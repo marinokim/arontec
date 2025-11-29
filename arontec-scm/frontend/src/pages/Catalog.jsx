@@ -374,7 +374,7 @@ function ProductCard({ product, onAddToCart, onAddToProposal, navigate, user }) 
                         onClick={() => onAddToCart(product.id, quantity)}
                         style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
                     >
-                        🛒 담기
+                        <span style={{ fontSize: '1.4rem' }}>🛒</span> 담기
                     </button>
                 </div>
                 <button
