@@ -279,99 +279,101 @@ function AdminProducts() {
                 </div>
 
                 <div className="card">
-                    <table className="table" style={{ fontSize: '0.85rem', width: '100%' }}>
-                        <thead>
-                            <tr>
-                                <th style={{ textAlign: 'center', width: '60px' }}>No.</th>
-                                <th style={{ width: '100px', textAlign: 'center' }}>IMG</th>
-                                <th style={{ minWidth: '100px' }}>브랜드</th>
-                                <th>상품명</th>
-                                <th style={{ textAlign: 'right' }}>실판매가</th>
-                                <th style={{ textAlign: 'right', minWidth: '140px' }}>공급가(소가/공급)</th>
-                                <th style={{ textAlign: 'right', minWidth: '120px' }}>재고(재고/카톤)</th>
-                                <th style={{ textAlign: 'right' }}>배송비</th>
-                                <th>제조사/원산지</th>
-                                <th style={{ minWidth: '100px' }}>등록일</th>
-                                <th style={{ textAlign: 'center' }}>상태/관리</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {products
-                                .filter(p => selectedCategory === 'All' || p.category_id === parseInt(selectedCategory))
-                                .map(product => (
-                                    <tr key={product.id}>
-                                        <td style={{ textAlign: 'center' }}>{product.id}</td>
-                                        <td style={{ padding: 0, width: '100px' }}>
-                                            {product.image_url ? (
-                                                <img src={product.image_url} alt={product.model_name} style={{ width: '100%', height: '100px', objectFit: 'cover', display: 'block' }} />
-                                            ) : (
-                                                <div style={{ width: '100%', height: '100px', background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem' }}>No Img</div>
-                                            )}
-                                        </td>
-                                        <td>{product.brand}</td>
-                                        <td>
-                                            <div style={{ fontSize: '0.8rem', color: categoryColors[product.category_name] || '#666', marginBottom: '4px', fontWeight: 'bold' }}>
-                                                {product.category_name}
-                                            </div>
-                                            <div style={{ fontWeight: '500' }}>
-                                                {product.model_name}
-                                            </div>
-                                        </td>
-                                        <td style={{ textAlign: 'right' }}>
-                                            <div style={{ fontWeight: 'bold', color: '#007bff', fontSize: '1.1rem' }}>
-                                                {parseInt(product.b2b_price).toLocaleString()}
-                                            </div>
-                                            <div style={{ marginTop: '2px' }}>
-                                                <span className={`badge ${product.is_tax_free ? 'badge-info' : 'badge-secondary'}`} style={{ background: product.is_tax_free ? '#17a2b8' : '#6c757d', fontSize: '0.7rem', padding: '2px 4px' }}>
-                                                    {product.is_tax_free ? '면세' : '과세'}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td style={{ textAlign: 'right' }}>
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: '#666' }}>
-                                                <span>소가</span>
-                                                <span style={{ textDecoration: 'line-through' }}>{product.consumer_price ? parseInt(product.consumer_price).toLocaleString() : '-'}</span>
-                                            </div>
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold' }}>
-                                                <span style={{ fontSize: '0.8rem', color: '#666' }}>공급</span>
-                                                <span>{product.supply_price ? parseInt(product.supply_price).toLocaleString() : '-'}</span>
-                                            </div>
-                                        </td>
-                                        <td style={{ textAlign: 'right' }}>
-                                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                                <span style={{ fontSize: '0.8rem', color: '#666' }}>재고</span>
-                                                <span>{parseInt(product.stock_quantity).toLocaleString()}</span>
-                                            </div>
-                                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                                <span style={{ fontSize: '0.8rem', color: '#666' }}>카톤</span>
-                                                <span>{product.quantity_per_carton || '-'}</span>
-                                            </div>
-                                        </td>
-                                        <td style={{ textAlign: 'right' }}>{product.shipping_fee ? parseInt(product.shipping_fee).toLocaleString() : '0'}</td>
-                                        <td>
-                                            <div style={{ fontSize: '0.85rem', fontWeight: 'bold' }}>{product.manufacturer || '-'}</div>
-                                            <div style={{ fontSize: '0.8rem', color: '#666' }}>{product.origin || '-'}</div>
-                                        </td>
-                                        <td>{new Date(product.created_at).toLocaleDateString()}</td>
-                                        <td style={{ textAlign: 'center' }}>
-                                            <div style={{ marginBottom: '0.5rem' }}>
-                                                <span className={`badge ${product.is_available ? 'badge-success' : 'badge-danger'}`}>
-                                                    {product.is_available ? '판매중' : '품절/중지'}
-                                                </span>
-                                            </div>
-                                            <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
-                                                <button onClick={() => openEditModal(product)} className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}>
-                                                    수정
-                                                </button>
-                                                <button onClick={() => handleDelete(product.id)} className="btn btn-danger" style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem', background: '#dc3545', border: 'none', color: 'white', borderRadius: '4px' }}>
-                                                    삭제
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                        </tbody>
-                    </table>
+                    <div className="table-responsive">
+                        <table className="table" style={{ fontSize: '0.85rem', width: '100%' }}>
+                            <thead>
+                                <tr>
+                                    <th style={{ textAlign: 'center', width: '60px' }}>No.</th>
+                                    <th style={{ width: '100px', textAlign: 'center' }}>IMG</th>
+                                    <th style={{ minWidth: '100px' }}>브랜드</th>
+                                    <th>상품명</th>
+                                    <th style={{ textAlign: 'right' }}>실판매가</th>
+                                    <th style={{ textAlign: 'right', minWidth: '140px' }}>공급가(소가/공급)</th>
+                                    <th style={{ textAlign: 'right', minWidth: '120px' }}>재고(재고/카톤)</th>
+                                    <th style={{ textAlign: 'right' }}>배송비</th>
+                                    <th>제조사/원산지</th>
+                                    <th style={{ minWidth: '100px' }}>등록일</th>
+                                    <th style={{ textAlign: 'center' }}>상태/관리</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {products
+                                    .filter(p => selectedCategory === 'All' || p.category_id === parseInt(selectedCategory))
+                                    .map(product => (
+                                        <tr key={product.id}>
+                                            <td style={{ textAlign: 'center' }}>{product.id}</td>
+                                            <td style={{ padding: 0, width: '100px' }}>
+                                                {product.image_url ? (
+                                                    <img src={product.image_url} alt={product.model_name} style={{ width: '100%', height: '100px', objectFit: 'cover', display: 'block' }} />
+                                                ) : (
+                                                    <div style={{ width: '100%', height: '100px', background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem' }}>No Img</div>
+                                                )}
+                                            </td>
+                                            <td>{product.brand}</td>
+                                            <td>
+                                                <div style={{ fontSize: '0.8rem', color: categoryColors[product.category_name] || '#666', marginBottom: '4px', fontWeight: 'bold' }}>
+                                                    {product.category_name}
+                                                </div>
+                                                <div style={{ fontWeight: '500' }}>
+                                                    {product.model_name}
+                                                </div>
+                                            </td>
+                                            <td style={{ textAlign: 'right' }}>
+                                                <div style={{ fontWeight: 'bold', color: '#007bff', fontSize: '1.1rem' }}>
+                                                    {parseInt(product.b2b_price).toLocaleString()}
+                                                </div>
+                                                <div style={{ marginTop: '2px' }}>
+                                                    <span className={`badge ${product.is_tax_free ? 'badge-info' : 'badge-secondary'}`} style={{ background: product.is_tax_free ? '#17a2b8' : '#6c757d', fontSize: '0.7rem', padding: '2px 4px' }}>
+                                                        {product.is_tax_free ? '면세' : '과세'}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td style={{ textAlign: 'right' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: '#666' }}>
+                                                    <span>소가</span>
+                                                    <span style={{ textDecoration: 'line-through' }}>{product.consumer_price ? parseInt(product.consumer_price).toLocaleString() : '-'}</span>
+                                                </div>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold' }}>
+                                                    <span style={{ fontSize: '0.8rem', color: '#666' }}>공급</span>
+                                                    <span>{product.supply_price ? parseInt(product.supply_price).toLocaleString() : '-'}</span>
+                                                </div>
+                                            </td>
+                                            <td style={{ textAlign: 'right' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                    <span style={{ fontSize: '0.8rem', color: '#666' }}>재고</span>
+                                                    <span>{parseInt(product.stock_quantity).toLocaleString()}</span>
+                                                </div>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                    <span style={{ fontSize: '0.8rem', color: '#666' }}>카톤</span>
+                                                    <span>{product.quantity_per_carton || '-'}</span>
+                                                </div>
+                                            </td>
+                                            <td style={{ textAlign: 'right' }}>{product.shipping_fee ? parseInt(product.shipping_fee).toLocaleString() : '0'}</td>
+                                            <td>
+                                                <div style={{ fontSize: '0.85rem', fontWeight: 'bold' }}>{product.manufacturer || '-'}</div>
+                                                <div style={{ fontSize: '0.8rem', color: '#666' }}>{product.origin || '-'}</div>
+                                            </td>
+                                            <td>{new Date(product.created_at).toLocaleDateString()}</td>
+                                            <td style={{ textAlign: 'center' }}>
+                                                <div style={{ marginBottom: '0.5rem' }}>
+                                                    <span className={`badge ${product.is_available ? 'badge-success' : 'badge-danger'}`}>
+                                                        {product.is_available ? '판매중' : '품절/중지'}
+                                                    </span>
+                                                </div>
+                                                <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
+                                                    <button onClick={() => openEditModal(product)} className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}>
+                                                        수정
+                                                    </button>
+                                                    <button onClick={() => handleDelete(product.id)} className="btn btn-danger" style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem', background: '#dc3545', border: 'none', color: 'white', borderRadius: '4px' }}>
+                                                        삭제
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
