@@ -253,10 +253,20 @@ document.addEventListener('DOMContentLoaded', () => {
             ? `<div style="font-size: 10rem; text-align: center; background: #f8f9fa; padding: 2rem; border-radius: 8px;">${imageUrl}</div>`
             : `<img src="${imageUrl}" alt="${modelName}" style="width: 100%; max-width: 500px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 0 auto;">`;
 
-        const detailImageHtml = detailUrl
+        let detailContentHtml = '';
+        if (detailUrl) {
+            // Check if it contains HTML tags (specifically img)
+            if (detailUrl.trim().match(/<img/i) || detailUrl.includes('<img')) {
+                detailContentHtml = `<div class="product-detail-content">${detailUrl}</div>`;
+            } else {
+                detailContentHtml = `<div class="product-detail-content"><img src="${detailUrl}" alt="Detail"></div>`;
+            }
+        }
+
+        const detailImageHtml = detailContentHtml
             ? `<div style="margin-top: 60px; border-top: 1px solid #eee; padding-top: 40px;">
                  <h3 style="font-size: 1.5rem; margin-bottom: 20px; border-left: 4px solid var(--primary-color); padding-left: 10px;">상세 정보</h3>
-                 <img src="${detailUrl}" alt="Detail" style="width: 100%; max-width: 800px; display: block; margin: 0 auto;">
+                 ${detailContentHtml}
                </div>`
             : '';
 

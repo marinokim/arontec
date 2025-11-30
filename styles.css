@@ -451,3 +451,11 @@ footer {
     left: 0;
     transform: none;
 }
+
+/* Product Detail Content */
+.product-detail-content img {
+    width: 100%;
+    max-width: 800px;
+    display: block;
+    margin: 0 auto;
+}
