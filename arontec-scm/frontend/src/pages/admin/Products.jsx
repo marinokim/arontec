@@ -422,7 +422,7 @@ function AdminProducts() {
                                                         onClick={() => handleToggleAvailability(product)}
                                                         title="클릭하여 상태 변경"
                                                     >
-                                                        {product.is_available ? '판매중' : '품절/중지'}
+                                                        {product.is_available ? '판매중' : '중지'}
                                                     </span>
                                                 </div>
                                                 <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
