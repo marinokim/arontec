@@ -227,9 +227,16 @@ router.get('/proxy-image', async (req, res) => {
             return res.status(400).json({ error: 'URL is required' })
         }
 
-        const response = await fetch(url)
+        // Add User-Agent to avoid being blocked by some servers
+        const response = await fetch(url, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+            }
+        })
+
         if (!response.ok) {
-            return res.status(response.status).json({ error: 'Failed to fetch image' })
+            console.error(`Proxy fetch failed: ${response.status} ${response.statusText} for ${url}`)
+            return res.status(response.status).json({ error: `Failed to fetch image: ${response.statusText}` })
         }
 
         const contentType = response.headers.get('content-type')
@@ -238,9 +245,6 @@ router.get('/proxy-image', async (req, res) => {
         }
 
         // Convert the response body (stream) to a Node.js stream and pipe it to res
-        // In Node 18+, response.body is a ReadableStream (Web Streams API)
-        // We need to convert it to a Node.js Readable stream or iterate over it
-
         const reader = response.body.getReader()
         while (true) {
             const { done, value } = await reader.read()
@@ -251,7 +255,7 @@ router.get('/proxy-image', async (req, res) => {
 
     } catch (error) {
         console.error('Proxy image error:', error)
-        res.status(500).json({ error: 'Internal server error' })
+        res.status(500).json({ error: `Internal server error: ${error.message}` })
     }
 })
 
