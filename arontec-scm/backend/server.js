@@ -25,8 +25,10 @@ app.use(cors({
         'http://localhost:8080',
         process.env.FRONTEND_URL,
         'https://arontec-home.onrender.com', // Homepage
-        'https://arontec.co.kr',
-        'https://www.arontec.co.kr'
+        'https://arontec.co.kr', // Main Homepage
+        'https://www.arontec.co.kr',
+        'https://scm.arontec.co.kr', // SCM System
+        'https://b2b.arontec.co.kr' // Alternative SCM subdomain
     ].filter(Boolean),
     credentials: true
 }));
