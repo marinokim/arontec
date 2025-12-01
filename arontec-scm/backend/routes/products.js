@@ -1,6 +1,7 @@
 import express from 'express'
 import pool from '../config/database.js'
 import { requireApproved, requireAdmin } from '../middleware/auth.js'
+import { Buffer } from 'node:buffer'
 
 const router = express.Router()
 
@@ -197,32 +198,6 @@ router.get('/origins', async (req, res) => {
     }
 })
 
-// Get single product (Public)
-router.get('/:id', async (req, res) => {
-    try {
-        const result = await pool.query(
-            `SELECT p.*, c.name as category_name 
-             FROM products p
-             LEFT JOIN categories c ON p.category_id = c.id
-             WHERE p.id = $1`,
-            [req.params.id]
-        )
-
-        if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'Product not found' })
-        }
-
-        res.json({ product: result.rows[0] })
-    } catch (error) {
-        console.error('Get product error:', error)
-        res.status(500).json({ error: 'Failed to get product' })
-    }
-})
-
-import { Buffer } from 'node:buffer'
-
-// ... (existing imports)
-
 // Proxy image endpoint to bypass CORS
 router.get('/proxy-image', async (req, res) => {
     const { url } = req.query
@@ -276,5 +251,29 @@ router.get('/proxy-image', async (req, res) => {
         res.status(500).json({ error: `Internal server error: ${error.message}` })
     }
 })
+
+// Get single product (Public)
+router.get('/:id', async (req, res) => {
+    try {
+        const result = await pool.query(
+            `SELECT p.*, c.name as category_name 
+             FROM products p
+             LEFT JOIN categories c ON p.category_id = c.id
+             WHERE p.id = $1`,
+            [req.params.id]
+        )
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Product not found' })
+        }
+
+        res.json({ product: result.rows[0] })
+    } catch (error) {
+        console.error('Get product error:', error)
+        res.status(500).json({ error: 'Failed to get product' })
+    }
+})
+
+
 
 export default router
