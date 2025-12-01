@@ -167,20 +167,33 @@ function Catalog({ user }) {
             row.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true }
 
             // Embed image if available
+            // Embed image if available
             if (item.image_url) {
                 try {
+                    // Upgrade to HTTPS if possible to avoid Mixed Content
+                    let imageUrl = item.image_url
+                    if (imageUrl.startsWith('http://')) {
+                        imageUrl = imageUrl.replace('http://', 'https://')
+                    }
+
                     // Fetch image as buffer
-                    const response = await fetch(item.image_url)
+                    // Use a CORS proxy if needed, or try standard fetch
+                    // For now, try standard fetch with cache busting to avoid some cache issues
+                    const response = await fetch(imageUrl + '?t=' + new Date().getTime(), { mode: 'cors' })
                     if (!response.ok) throw new Error(`Failed to fetch image: ${response.statusText}`)
 
                     const buffer = await response.arrayBuffer()
 
-                    // Determine extension from URL
+                    // Determine extension from URL or Content-Type
                     let extension = 'jpeg'
-                    if (item.image_url.toLowerCase().endsWith('.png')) {
-                        extension = 'png'
-                    } else if (item.image_url.toLowerCase().endsWith('.gif')) {
-                        extension = 'gif'
+                    const contentType = response.headers.get('content-type')
+                    if (contentType) {
+                        if (contentType.includes('png')) extension = 'png'
+                        else if (contentType.includes('gif')) extension = 'gif'
+                    } else {
+                        const lowerUrl = item.image_url.toLowerCase()
+                        if (lowerUrl.includes('.png')) extension = 'png'
+                        else if (lowerUrl.includes('.gif')) extension = 'gif'
                     }
 
                     const imageId = workbook.addImage({
@@ -189,12 +202,15 @@ function Catalog({ user }) {
                     })
 
                     worksheet.addImage(imageId, {
-                        tl: { col: 4, row: i + 2 }, // Column E (index 4), Row starts at 0. Header is 0, 1. Data starts at 2.
+                        tl: { col: 4, row: i + 2 }, // Column E (index 4)
                         br: { col: 5, row: i + 3 },
                         editAs: 'oneCell'
                     })
                 } catch (err) {
                     console.error('Failed to embed image for', item.model_name, err)
+                    // Fallback: put text in the cell
+                    const cell = worksheet.getCell(i + 3, 5) // Row i+3, Col 5 (E)
+                    cell.value = '이미지 로드 실패'
                 }
             }
         }
