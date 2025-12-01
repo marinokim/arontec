@@ -175,8 +175,9 @@ function ProductDetail({ user }) {
                                 if (/<[a-z][\s\S]*>/i.test(detailUrl)) {
                                     return (
                                         <div
+                                            className="product-detail-content"
                                             dangerouslySetInnerHTML={{ __html: detailUrl }}
-                                            style={{ width: '100%', maxWidth: '1000px', margin: '0 auto', overflowX: 'auto' }}
+                                            style={{ margin: '0 auto' }}
                                         />
                                     );
                                 }
@@ -184,13 +185,12 @@ function ProductDetail({ user }) {
                                 const urls = detailUrl.split(',').map(u => u.trim()).filter(u => u);
                                 if (urls.length > 1) {
                                     return (
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center' }}>
+                                        <div className="product-detail-content" style={{ display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center' }}>
                                             {urls.map((url, index) => (
                                                 <img
                                                     key={index}
                                                     src={url}
                                                     alt={`Detailed Description ${index + 1}`}
-                                                    style={{ width: '100%', maxWidth: '1000px', display: 'block' }}
                                                 />
                                             ))}
                                         </div>
@@ -198,11 +198,12 @@ function ProductDetail({ user }) {
                                 }
                                 // Fallback to single image
                                 return (
-                                    <img
-                                        src={detailUrl}
-                                        alt="Detailed Description"
-                                        style={{ width: '100%', maxWidth: '1000px', display: 'block', margin: '0 auto' }}
-                                    />
+                                    <div className="product-detail-content">
+                                        <img
+                                            src={detailUrl}
+                                            alt="Detailed Description"
+                                        />
+                                    </div>
                                 );
                             })()}
                         </div>
