@@ -359,6 +359,17 @@ function ProductCard({ product, onAddToCart, onAddToProposal, navigate, user }) 
                 <h3>{product.brand}</h3>
                 <p className="model">{product.model_name}</p>
                 <p className="price">{parseInt(product.b2b_price).toLocaleString()}원</p>
+                {product.remarks && (
+                    <p className="remarks" style={{
+                        color: '#d63384',
+                        fontSize: product.remarks.length > 20 ? '0.7rem' : '0.75rem',
+                        marginTop: '0.25rem',
+                        fontWeight: 'bold',
+                        whiteSpace: 'pre-wrap'
+                    }}>
+                        {product.remarks}
+                    </p>
+                )}
             </div>
             <div className="product-actions" onClick={e => e.stopPropagation()} style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
