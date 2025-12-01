@@ -328,7 +328,7 @@ function AdminProducts() {
                                     <th style={{ textAlign: 'center', width: '60px' }}>No.</th>
                                     <th style={{ width: '100px', textAlign: 'center' }}>IMG</th>
                                     <th style={{ minWidth: '100px' }}>브랜드</th>
-                                    <th>상품명/모델명/옵션</th>
+                                    <th style={{ minWidth: '250px' }}>상품명/모델명/옵션</th>
                                     <th style={{ textAlign: 'right' }}>실판매가</th>
                                     <th style={{ textAlign: 'right', minWidth: '140px' }}>공급가</th>
                                     <th style={{ textAlign: 'right', minWidth: '120px' }}>재고</th>
