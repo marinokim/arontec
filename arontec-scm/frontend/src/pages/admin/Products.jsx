@@ -380,7 +380,7 @@ function AdminProducts() {
                                                     <div style={{
                                                         marginTop: '4px',
                                                         color: '#d63384',
-                                                        fontSize: product.remarks.length > 20 ? '0.75rem' : '0.8rem',
+                                                        fontSize: product.remarks.length > 20 ? '0.7rem' : '0.75rem',
                                                         fontWeight: 'bold',
                                                         whiteSpace: 'pre-wrap'
                                                     }}>
