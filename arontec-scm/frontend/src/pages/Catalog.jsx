@@ -175,7 +175,11 @@ function Catalog({ user }) {
 
                     // Fetch image as buffer via proxy
                     const response = await fetch(proxyUrl)
-                    if (!response.ok) throw new Error(`Failed to fetch image: ${response.statusText}`)
+                    if (!response.ok) {
+                        const errorText = await response.text()
+                        console.error(`Proxy fetch failed for ${item.image_url}:`, response.status, response.statusText, errorText)
+                        throw new Error(`Failed to fetch image: ${response.statusText}`)
+                    }
 
                     const buffer = await response.arrayBuffer()
 
