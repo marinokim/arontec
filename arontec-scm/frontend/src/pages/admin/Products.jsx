@@ -431,14 +431,22 @@ function AdminProducts() {
                                             </td>
                                             <td>
                                                 <div style={{
-                                                    fontSize: (product.manufacturer || '').length > 8 ? '0.7rem' : '0.85rem',
-                                                    fontWeight: 'bold',
-                                                    whiteSpace: 'nowrap'
+                                                    fontSize: product.manufacturer && product.manufacturer.length > 8 ? '0.75rem' : '0.85rem',
+                                                    whiteSpace: 'nowrap',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis'
                                                 }}>
-                                                    {product.manufacturer || '-'}
+                                                    <span style={{ color: '#666', marginRight: '4px' }}>제조사:</span>
+                                                    {product.manufacturer}
                                                 </div>
-                                                <div style={{ fontSize: '0.8rem', color: '#666' }}>{product.origin || '-'}</div>
-                                                <div style={{ fontSize: '0.75rem', color: '#888', marginTop: '2px' }}>{new Date(product.created_at).toLocaleDateString()}</div>
+                                                <div style={{ color: '#666', fontSize: '0.8rem' }}>
+                                                    <span style={{ marginRight: '4px' }}>원산지:</span>
+                                                    {product.origin}
+                                                </div>
+                                                <div style={{ color: '#999', fontSize: '0.75rem' }}>
+                                                    <span style={{ marginRight: '4px' }}>등록일:</span>
+                                                    {new Date(product.created_at).toLocaleDateString()}
+                                                </div>
                                             </td>
                                             <td style={{ textAlign: 'center' }}>
                                                 <div style={{ marginBottom: '0.5rem' }}>
