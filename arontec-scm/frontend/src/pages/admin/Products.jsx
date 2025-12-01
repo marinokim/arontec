@@ -348,7 +348,13 @@ function AdminProducts() {
                                                 )}
                                             </td>
                                             <td>
-                                                <div style={{ fontWeight: 'bold' }}>{product.brand}</div>
+                                                <div style={{
+                                                    fontWeight: 'bold',
+                                                    whiteSpace: 'nowrap',
+                                                    fontSize: product.brand.length > 6 ? '0.75rem' : 'inherit'
+                                                }}>
+                                                    {product.brand}
+                                                </div>
                                                 <div style={{ fontSize: '0.8rem', color: categoryColors[product.category_name] || '#666', marginTop: '4px' }}>
                                                     {product.category_name}
                                                 </div>
@@ -409,7 +415,13 @@ function AdminProducts() {
                                                 </div>
                                             </td>
                                             <td>
-                                                <div style={{ fontSize: '0.85rem', fontWeight: 'bold' }}>{product.manufacturer || '-'}</div>
+                                                <div style={{
+                                                    fontSize: (product.manufacturer || '').length > 8 ? '0.7rem' : '0.85rem',
+                                                    fontWeight: 'bold',
+                                                    whiteSpace: 'nowrap'
+                                                }}>
+                                                    {product.manufacturer || '-'}
+                                                </div>
                                                 <div style={{ fontSize: '0.8rem', color: '#666' }}>{product.origin || '-'}</div>
                                                 <div style={{ fontSize: '0.75rem', color: '#888', marginTop: '2px' }}>{new Date(product.created_at).toLocaleDateString()}</div>
                                             </td>
