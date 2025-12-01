@@ -94,11 +94,42 @@ function ProductDetail({ user }) {
                             <h3 style={{ fontSize: '1.5rem', marginBottom: '20px', borderLeft: '4px solid #007bff', paddingLeft: '10px' }}>
                                 상세 정보
                             </h3>
-                            <img
-                                src={product.detail_url}
-                                alt="Detailed Description"
-                                style={{ width: '100%', maxWidth: '1000px', display: 'block', margin: '0 auto' }}
-                            />
+                            {(() => {
+                                const detailUrl = product.detail_url;
+                                // Check for HTML tags
+                                if (/<[a-z][\s\S]*>/i.test(detailUrl)) {
+                                    return (
+                                        <div
+                                            dangerouslySetInnerHTML={{ __html: detailUrl }}
+                                            style={{ width: '100%', maxWidth: '1000px', margin: '0 auto', overflowX: 'auto' }}
+                                        />
+                                    );
+                                }
+                                // Check for comma-separated URLs
+                                const urls = detailUrl.split(',').map(u => u.trim()).filter(u => u);
+                                if (urls.length > 1) {
+                                    return (
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center' }}>
+                                            {urls.map((url, index) => (
+                                                <img
+                                                    key={index}
+                                                    src={url}
+                                                    alt={`Detailed Description ${index + 1}`}
+                                                    style={{ width: '100%', maxWidth: '1000px', display: 'block' }}
+                                                />
+                                            ))}
+                                        </div>
+                                    );
+                                }
+                                // Fallback to single image
+                                return (
+                                    <img
+                                        src={detailUrl}
+                                        alt="Detailed Description"
+                                        style={{ width: '100%', maxWidth: '1000px', display: 'block', margin: '0 auto' }}
+                                    />
+                                );
+                            })()}
                         </div>
                     )}
                 </div>
