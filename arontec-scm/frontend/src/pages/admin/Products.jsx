@@ -42,7 +42,8 @@ function AdminProducts() {
         origin: '',
         isAvailable: true,
         isTaxFree: false,
-        detailUrl: ''
+        detailUrl: '',
+        remarks: ''
     }
 
     const [formData, setFormData] = useState(initialFormState)
@@ -154,7 +155,8 @@ function AdminProducts() {
                 modelNo: formData.modelNo,
                 manufacturer: formData.manufacturer,
                 origin: formData.origin,
-                isTaxFree: formData.isTaxFree
+                isTaxFree: formData.isTaxFree,
+                remarks: formData.remarks
             }
 
             const res = await fetch(url, {
@@ -244,7 +246,8 @@ function AdminProducts() {
             origin: product.origin || '',
             isAvailable: product.is_available,
             isTaxFree: product.is_tax_free || false,
-            detailUrl: product.detail_url || ''
+            detailUrl: product.detail_url || '',
+            remarks: product.remarks || ''
         })
         setShowModal(true)
     }
@@ -331,6 +334,7 @@ function AdminProducts() {
                                     <th style={{ textAlign: 'right', minWidth: '120px' }}>재고</th>
                                     <th style={{ textAlign: 'right', minWidth: '100px' }}>배송비</th>
                                     <th>제조사/원산지/등록일</th>
+                                    <th style={{ minWidth: '100px' }}>비고</th>
                                     <th style={{ textAlign: 'center', minWidth: '120px' }}>상태/관리</th>
                                 </tr>
                             </thead>
@@ -424,6 +428,9 @@ function AdminProducts() {
                                                 </div>
                                                 <div style={{ fontSize: '0.8rem', color: '#666' }}>{product.origin || '-'}</div>
                                                 <div style={{ fontSize: '0.75rem', color: '#888', marginTop: '2px' }}>{new Date(product.created_at).toLocaleDateString()}</div>
+                                            </td>
+                                            <td>
+                                                <div style={{ fontSize: '0.8rem', color: '#666', whiteSpace: 'pre-wrap' }}>{product.remarks || '-'}</div>
                                             </td>
                                             <td style={{ textAlign: 'center' }}>
                                                 <div style={{ marginBottom: '0.5rem' }}>
@@ -649,6 +656,16 @@ function AdminProducts() {
                                     value={formData.description}
                                     onChange={e => setFormData({ ...formData, description: e.target.value })}
                                     rows="3"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>비고</label>
+                                <textarea
+                                    value={formData.remarks}
+                                    onChange={e => setFormData({ ...formData, remarks: e.target.value })}
+                                    rows="2"
+                                    placeholder="비고 사항을 입력하세요"
                                 />
                             </div>
 
