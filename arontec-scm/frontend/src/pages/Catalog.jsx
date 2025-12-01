@@ -362,9 +362,10 @@ function ProductCard({ product, onAddToCart, onAddToProposal, navigate, user }) 
                 {product.remarks && (
                     <p className="remarks" style={{
                         color: '#d63384',
-                        fontSize: product.remarks.length > 20 ? '0.7rem' : '0.75rem',
+                        fontSize: '0.7rem',
+                        lineHeight: '1.2',
                         marginTop: '0.25rem',
-                        fontWeight: 'bold',
+                        fontWeight: 'normal',
                         whiteSpace: 'pre-wrap'
                     }}>
                         {product.remarks}
