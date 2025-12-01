@@ -324,14 +324,13 @@ function AdminProducts() {
                                 <tr>
                                     <th style={{ textAlign: 'center', width: '60px' }}>No.</th>
                                     <th style={{ width: '100px', textAlign: 'center' }}>IMG</th>
-                                    <th style={{ minWidth: '100px' }}>브랜드/카테고리</th>
+                                    <th style={{ minWidth: '100px' }}>브랜드</th>
                                     <th>상품명/모델명/옵션</th>
                                     <th style={{ textAlign: 'right' }}>실판매가</th>
-                                    <th style={{ textAlign: 'right', minWidth: '140px' }}>공급가(소가/공급)</th>
-                                    <th style={{ textAlign: 'right', minWidth: '120px' }}>재고(재고/카톤)</th>
-                                    <th style={{ textAlign: 'right' }}>배송비(개별/카톤)</th>
-                                    <th>제조사/원산지</th>
-                                    <th style={{ minWidth: '100px' }}>등록일</th>
+                                    <th style={{ textAlign: 'right', minWidth: '140px' }}>공급가</th>
+                                    <th style={{ textAlign: 'right', minWidth: '120px' }}>재고</th>
+                                    <th style={{ textAlign: 'right' }}>배송비</th>
+                                    <th>제조사/원산지/등록일</th>
                                     <th style={{ textAlign: 'center' }}>상태/관리</th>
                                 </tr>
                             </thead>
@@ -412,8 +411,8 @@ function AdminProducts() {
                                             <td>
                                                 <div style={{ fontSize: '0.85rem', fontWeight: 'bold' }}>{product.manufacturer || '-'}</div>
                                                 <div style={{ fontSize: '0.8rem', color: '#666' }}>{product.origin || '-'}</div>
+                                                <div style={{ fontSize: '0.75rem', color: '#888', marginTop: '2px' }}>{new Date(product.created_at).toLocaleDateString()}</div>
                                             </td>
-                                            <td>{new Date(product.created_at).toLocaleDateString()}</td>
                                             <td style={{ textAlign: 'center' }}>
                                                 <div style={{ marginBottom: '0.5rem' }}>
                                                     <span
