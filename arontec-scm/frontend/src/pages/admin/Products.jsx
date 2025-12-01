@@ -200,6 +200,29 @@ function AdminProducts() {
         }
     }
 
+    const handleToggleAvailability = async (product) => {
+        try {
+            const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/products/${product.id}/availability`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ isAvailable: !product.is_available })
+            })
+
+            if (res.ok) {
+                setProducts(products.map(p =>
+                    p.id === product.id ? { ...p, is_available: !p.is_available } : p
+                ))
+            } else {
+                const data = await res.json()
+                alert(data.error || '상태 변경 실패')
+            }
+        } catch (error) {
+            console.error('Toggle availability error:', error)
+            alert('오류가 발생했습니다')
+        }
+    }
+
     const openEditModal = (product) => {
         setEditingProduct(product)
         setFormData({
@@ -393,7 +416,12 @@ function AdminProducts() {
                                             <td>{new Date(product.created_at).toLocaleDateString()}</td>
                                             <td style={{ textAlign: 'center' }}>
                                                 <div style={{ marginBottom: '0.5rem' }}>
-                                                    <span className={`badge ${product.is_available ? 'badge-success' : 'badge-danger'}`}>
+                                                    <span
+                                                        className={`badge ${product.is_available ? 'badge-success' : 'badge-danger'}`}
+                                                        style={{ cursor: 'pointer' }}
+                                                        onClick={() => handleToggleAvailability(product)}
+                                                        title="클릭하여 상태 변경"
+                                                    >
                                                         {product.is_available ? '판매중' : '품절/중지'}
                                                     </span>
                                                 </div>
