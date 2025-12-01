@@ -244,14 +244,9 @@ router.get('/proxy-image', async (req, res) => {
             res.setHeader('Content-Type', contentType)
         }
 
-        // Convert the response body (stream) to a Node.js stream and pipe it to res
-        const reader = response.body.getReader()
-        while (true) {
-            const { done, value } = await reader.read()
-            if (done) break
-            res.write(value)
-        }
-        res.end()
+        const arrayBuffer = await response.arrayBuffer()
+        const buffer = Buffer.from(arrayBuffer)
+        res.send(buffer)
 
     } catch (error) {
         console.error('Proxy image error:', error)
