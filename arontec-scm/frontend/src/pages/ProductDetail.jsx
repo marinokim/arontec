@@ -8,6 +8,15 @@ function ProductDetail({ user }) {
     const [product, setProduct] = useState(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
+    const [quantity, setQuantity] = useState(1)
+    const [proposalItems, setProposalItems] = useState([])
+
+    useEffect(() => {
+        const savedProposal = localStorage.getItem('proposalItems')
+        if (savedProposal) {
+            setProposalItems(JSON.parse(savedProposal))
+        }
+    }, [])
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -29,6 +38,34 @@ function ProductDetail({ user }) {
 
         fetchProduct()
     }, [id])
+
+    const addToCart = async () => {
+        try {
+            const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/cart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ productId: product.id, quantity })
+            })
+
+            if (res.ok) {
+                alert('장바구니에 추가되었습니다')
+            }
+        } catch (error) {
+            console.error('Add to cart error:', error)
+        }
+    }
+
+    const addToProposal = () => {
+        if (proposalItems.find(item => item.id === product.id)) {
+            alert('이미 제안서 목록에 있는 상품입니다.')
+            return
+        }
+        const newItems = [...proposalItems, product]
+        setProposalItems(newItems)
+        localStorage.setItem('proposalItems', JSON.stringify(newItems))
+        alert('제안서 목록에 추가되었습니다.')
+    }
 
     if (loading) return <div className="loading">Loading...</div>
     if (error) return <div className="error">{error}</div>
@@ -78,6 +115,18 @@ function ProductDetail({ user }) {
                             <h2 style={{ color: '#007bff', marginBottom: '20px' }}>
                                 <p className="product-price">{parseInt(product.b2b_price).toLocaleString()}원</p>
                             </h2>
+                            {product.remarks && (
+                                <p style={{
+                                    color: '#d63384',
+                                    fontSize: '0.9rem',
+                                    lineHeight: '1.4',
+                                    marginBottom: '20px',
+                                    fontWeight: 'normal',
+                                    whiteSpace: 'pre-wrap'
+                                }}>
+                                    {product.remarks}
+                                </p>
+                            )}
                             <p style={{ fontSize: '1.1rem', lineHeight: '1.6', color: '#555', marginBottom: '30px' }}>
                                 {product.description}
                             </p>
@@ -85,6 +134,32 @@ function ProductDetail({ user }) {
                             <div style={{ padding: '20px', background: '#f8f9fa', borderRadius: '8px' }}>
                                 <p><strong>재고:</strong> {product.stock_quantity}개</p>
                                 <p><strong>상태:</strong> {product.is_available ? '판매중' : '품절/중지'}</p>
+                            </div>
+
+                            <div style={{ marginTop: '30px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                <div style={{ display: 'flex', gap: '10px' }}>
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        value={quantity}
+                                        onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                                        style={{ width: '80px', padding: '10px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '1rem' }}
+                                    />
+                                    <button
+                                        className="btn btn-primary"
+                                        onClick={addToCart}
+                                        style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', fontSize: '1.1rem', padding: '10px' }}
+                                    >
+                                        <span style={{ fontSize: '1.4rem' }}>🛒</span> 장바구니 담기
+                                    </button>
+                                </div>
+                                <button
+                                    className="btn btn-secondary"
+                                    onClick={addToProposal}
+                                    style={{ width: '100%', background: '#28a745', padding: '10px', fontSize: '1.1rem' }}
+                                >
+                                    제안서 담기
+                                </button>
                             </div>
                         </div>
                     </div>
