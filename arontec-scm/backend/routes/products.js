@@ -253,7 +253,7 @@ router.get('/proxy-image', async (req, res) => {
 })
 
 // Get single product (Public)
-router.get('/:id', async (req, res) => {
+router.get('/:id(\\d+)', async (req, res) => {
     try {
         const result = await pool.query(
             `SELECT p.*, c.name as category_name 
