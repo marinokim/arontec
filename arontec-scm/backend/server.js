@@ -24,7 +24,9 @@ app.use(cors({
         'http://127.0.0.1:5500',
         'http://localhost:8080',
         process.env.FRONTEND_URL,
-        'https://arontec-home.onrender.com' // Homepage
+        'https://arontec-home.onrender.com', // Homepage
+        'https://arontec.co.kr',
+        'https://www.arontec.co.kr'
     ].filter(Boolean),
     credentials: true
 }));
