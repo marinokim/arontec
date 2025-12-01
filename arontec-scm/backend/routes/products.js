@@ -219,4 +219,40 @@ router.get('/:id', async (req, res) => {
     }
 })
 
+// Proxy image endpoint to bypass CORS
+router.get('/proxy-image', async (req, res) => {
+    try {
+        const { url } = req.query
+        if (!url) {
+            return res.status(400).json({ error: 'URL is required' })
+        }
+
+        const response = await fetch(url)
+        if (!response.ok) {
+            return res.status(response.status).json({ error: 'Failed to fetch image' })
+        }
+
+        const contentType = response.headers.get('content-type')
+        if (contentType) {
+            res.setHeader('Content-Type', contentType)
+        }
+
+        // Convert the response body (stream) to a Node.js stream and pipe it to res
+        // In Node 18+, response.body is a ReadableStream (Web Streams API)
+        // We need to convert it to a Node.js Readable stream or iterate over it
+
+        const reader = response.body.getReader()
+        while (true) {
+            const { done, value } = await reader.read()
+            if (done) break
+            res.write(value)
+        }
+        res.end()
+
+    } catch (error) {
+        console.error('Proxy image error:', error)
+        res.status(500).json({ error: 'Internal server error' })
+    }
+})
+
 export default router

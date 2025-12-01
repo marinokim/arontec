@@ -170,16 +170,11 @@ function Catalog({ user }) {
             // Embed image if available
             if (item.image_url) {
                 try {
-                    // Upgrade to HTTPS if possible to avoid Mixed Content
-                    let imageUrl = item.image_url
-                    if (imageUrl.startsWith('http://')) {
-                        imageUrl = imageUrl.replace('http://', 'https://')
-                    }
+                    // Use backend proxy to avoid CORS and Mixed Content issues
+                    const proxyUrl = `${import.meta.env.VITE_API_URL}/api/products/proxy-image?url=${encodeURIComponent(item.image_url)}`
 
-                    // Fetch image as buffer
-                    // Use a CORS proxy if needed, or try standard fetch
-                    // For now, try standard fetch with cache busting to avoid some cache issues
-                    const response = await fetch(imageUrl + '?t=' + new Date().getTime(), { mode: 'cors' })
+                    // Fetch image as buffer via proxy
+                    const response = await fetch(proxyUrl)
                     if (!response.ok) throw new Error(`Failed to fetch image: ${response.statusText}`)
 
                     const buffer = await response.arrayBuffer()
