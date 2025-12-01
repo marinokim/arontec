@@ -334,7 +334,6 @@ function AdminProducts() {
                                     <th style={{ textAlign: 'right', minWidth: '120px' }}>재고</th>
                                     <th style={{ textAlign: 'right', minWidth: '100px' }}>배송비</th>
                                     <th>제조사/원산지/등록일</th>
-                                    <th style={{ minWidth: '100px' }}>비고</th>
                                     <th style={{ textAlign: 'center', minWidth: '120px' }}>상태/관리</th>
                                 </tr>
                             </thead>
@@ -375,6 +374,17 @@ function AdminProducts() {
                                                 {product.product_options && (
                                                     <div style={{ fontSize: '0.8rem', color: '#888', marginTop: '4px', whiteSpace: 'pre-wrap' }}>
                                                         {product.product_options}
+                                                    </div>
+                                                )}
+                                                {product.remarks && (
+                                                    <div style={{
+                                                        marginTop: '4px',
+                                                        color: '#d63384',
+                                                        fontSize: product.remarks.length > 20 ? '0.75rem' : '0.8rem',
+                                                        fontWeight: 'bold',
+                                                        whiteSpace: 'pre-wrap'
+                                                    }}>
+                                                        {product.remarks}
                                                     </div>
                                                 )}
                                             </td>
@@ -428,9 +438,6 @@ function AdminProducts() {
                                                 </div>
                                                 <div style={{ fontSize: '0.8rem', color: '#666' }}>{product.origin || '-'}</div>
                                                 <div style={{ fontSize: '0.75rem', color: '#888', marginTop: '2px' }}>{new Date(product.created_at).toLocaleDateString()}</div>
-                                            </td>
-                                            <td>
-                                                <div style={{ fontSize: '0.8rem', color: '#666', whiteSpace: 'pre-wrap' }}>{product.remarks || '-'}</div>
                                             </td>
                                             <td style={{ textAlign: 'center' }}>
                                                 <div style={{ marginBottom: '0.5rem' }}>
