@@ -331,7 +331,7 @@ function AdminProducts() {
                                     <th style={{ textAlign: 'right', minWidth: '120px' }}>재고</th>
                                     <th style={{ textAlign: 'right' }}>배송비</th>
                                     <th>제조사/원산지/등록일</th>
-                                    <th style={{ textAlign: 'center' }}>상태/관리</th>
+                                    <th style={{ textAlign: 'center', minWidth: '120px' }}>상태/관리</th>
                                 </tr>
                             </thead>
                             <tbody>
