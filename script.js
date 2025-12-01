@@ -165,17 +165,19 @@ document.addEventListener('DOMContentLoaded', () => {
             // Check if image is an emoji or a URL
             const isEmoji = !product.image.includes('/') && !product.image.includes('.');
             const imageHtml = isEmoji
-                ? `<div class="product-icon" style="font-size: 3rem; margin-bottom: 1rem;">${product.image}</div>`
-                : `<div class="product-image" style="margin-bottom: 1rem; height: 150px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-                     <img src="${product.image}" alt="${product.model}" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                ? `<div class="product-icon" style="font-size: 3rem; padding: 2rem;">${product.image}</div>`
+                : `<div class="product-image-container">
+                     <img src="${product.image}" alt="${product.model}" class="product-thumb">
                    </div>`;
 
             return `
             <div class="product-card" onclick="window.location.href='product_detail.html?id=${product.id}'" style="cursor: pointer;">
                 ${imageHtml}
-                <h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">${product.brand}</h3>
-                <h4 style="font-size: 1.1rem; margin-bottom: 0.5rem;">${product.model}</h4>
-                <p style="color: #666; margin-bottom: 1rem;">${product.description}</p>
+                <div class="product-info">
+                    <h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">${product.brand}</h3>
+                    <h4 style="font-size: 1.1rem; margin-bottom: 0.5rem;">${product.model}</h4>
+                    <p style="color: #666; margin-bottom: 1rem;">${product.description}</p>
+                </div>
             </div>
         `}).join('');
     }
