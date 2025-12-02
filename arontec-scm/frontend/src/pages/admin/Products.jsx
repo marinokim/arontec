@@ -177,7 +177,8 @@ function AdminProducts() {
                 console.log(`Found ${matches.length} images in HTML`)
 
                 if (matches.length > 0) {
-                    return matches.join(', ')
+                    // Convert to HTML tags as requested
+                    return matches.map(imgUrl => `<img src="${imgUrl}"><br>`).join('')
                 }
             }
         } catch (error) {
@@ -208,11 +209,11 @@ function AdminProducts() {
 
             let finalDetailUrl = formData.detailUrl
             if (finalDetailUrl && finalDetailUrl.match(/\.html?$/i)) {
-                const extractedUrls = await extractAllImagesFromHtml(finalDetailUrl)
-                if (extractedUrls) {
-                    finalDetailUrl = extractedUrls
-                    const count = finalDetailUrl.split(',').length
-                    alert(`HTML에서 ${count}장의 상세 이미지를 추출하여 저장합니다.`)
+                const extractedHtml = await extractAllImagesFromHtml(finalDetailUrl)
+                if (extractedHtml) {
+                    finalDetailUrl = extractedHtml
+                    const count = (finalDetailUrl.match(/<img/g) || []).length
+                    alert(`HTML에서 ${count}장의 이미지를 추출하여 태그로 변환했습니다.`)
                 }
             }
 
@@ -783,11 +784,11 @@ function AdminProducts() {
                                     placeholder="https://example.com/product/123"
                                     onBlur={async (e) => {
                                         const url = e.target.value
-                                        const extractedUrls = await extractAllImagesFromHtml(url)
-                                        if (extractedUrls) {
-                                            setFormData(prev => ({ ...prev, detailUrl: extractedUrls }))
-                                            const count = extractedUrls.split(',').length
-                                            alert(`HTML에서 ${count}장의 상세 이미지를 추출했습니다.`)
+                                        const extractedHtml = await extractAllImagesFromHtml(url)
+                                        if (extractedHtml) {
+                                            setFormData(prev => ({ ...prev, detailUrl: extractedHtml }))
+                                            const count = (extractedHtml.match(/<img/g) || []).length
+                                            alert(`HTML에서 ${count}장의 이미지를 추출하여 태그로 변환했습니다.`)
                                         }
                                     }}
                                 />
