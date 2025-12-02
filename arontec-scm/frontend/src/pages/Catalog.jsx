@@ -356,62 +356,80 @@ function Catalog({ user }) {
 
 function ProductCard({ product, onAddToCart, onAddToProposal, navigate, user }) {
     const [quantity, setQuantity] = useState(1)
+    const [isHovered, setIsHovered] = useState(false)
+
+    const handleAddToCart = (e) => {
+        e.stopPropagation()
+        onAddToCart(product.id, quantity)
+    }
+
+    const handleAddToProposal = (e) => {
+        e.stopPropagation()
+        onAddToProposal(product)
+    }
 
     return (
         <div
             className="product-card"
             onClick={() => navigate(`/product/${product.id}`)}
-            style={{ cursor: 'pointer' }}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
         >
-            <div className="product-image">
-                {product.image_url ? (
-                    <img src={product.image_url} alt={product.model_name} />
-                ) : (
-                    <div className="no-image">No Image</div>
-                )}
+            <div className="product-image-container">
+                <div className={`product-image ${isHovered ? 'hovered' : ''}`}>
+                    {product.image_url ? (
+                        <img src={product.image_url} alt={product.model_name} />
+                    ) : (
+                        <div className="no-image">No Image</div>
+                    )}
+                    {isHovered && (
+                        <div className="image-overlay">
+                            <h3>{product.brand}</h3>
+                            <p className="model">{product.model_name}</p>
+                            <div className="prices">
+                                <span className="consumer-price">{parseInt(product.consumer_price).toLocaleString()}</span>
+                                <span className="b2b-price">{parseInt(product.b2b_price).toLocaleString()}</span>
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
-            <div className="product-info">
-                <h3>{product.brand}</h3>
-                <p className="model">{product.model_name}</p>
-                <p className="price">{parseInt(product.b2b_price).toLocaleString()}원</p>
-                {product.remarks && (
-                    <p className="remarks" style={{
-                        color: '#d63384',
-                        fontSize: '0.7rem',
-                        lineHeight: '1.2',
-                        marginTop: '0.25rem',
-                        fontWeight: 'normal',
-                        whiteSpace: 'pre-wrap'
-                    }}>
-                        {product.remarks}
-                    </p>
-                )}
-            </div>
-            <div className="product-actions" onClick={e => e.stopPropagation()} style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <input
-                        type="number"
-                        min="1"
-                        value={quantity}
-                        onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                        style={{ width: '60px', padding: '0.5rem', border: '1px solid #ddd', borderRadius: '4px' }}
-                    />
-                    <button
-                        className="btn btn-primary"
-                        onClick={() => onAddToCart(product.id, quantity)}
-                        style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
-                    >
-                        <span style={{ fontSize: '1.4rem' }}>🛒</span> 담기
+
+            {!isHovered ? (
+                <div className="product-info-default">
+                    <h3>{product.brand}</h3>
+                    <p className="model">{product.model_name}</p>
+                    <div className="prices">
+                        <span className="consumer-price">{parseInt(product.consumer_price).toLocaleString()}</span>
+                        <span className="b2b-price">{parseInt(product.b2b_price).toLocaleString()}</span>
+                    </div>
+                    {product.remarks && (
+                        <p className="remarks">{product.remarks}</p>
+                    )}
+                    <div className="action-buttons-default">
+                        <button className="btn-add-cart-default" onClick={(e) => { e.stopPropagation(); setIsHovered(true); }}>
+                            바로담기
+                        </button>
+                        <button className="btn-heart" onClick={handleAddToProposal}>
+                            ♥
+                        </button>
+                    </div>
+                </div>
+            ) : (
+                <div className="product-actions-hover" onClick={e => e.stopPropagation()}>
+                    <div className="option-selector">
+                        <span>기본 옵션</span>
+                        <div className="quantity-control">
+                            <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</button>
+                            <span>{quantity}</span>
+                            <button onClick={() => setQuantity(quantity + 1)}>+</button>
+                        </div>
+                    </div>
+                    <button className="btn-add-cart-hover" onClick={handleAddToCart}>
+                        바로담기
                     </button>
                 </div>
-                <button
-                    className="btn btn-secondary"
-                    onClick={() => onAddToProposal(product)}
-                    style={{ width: '100%', background: '#28a745', marginTop: '0.25rem' }}
-                >
-                    제안서 담기
-                </button>
-            </div>
+            )}
         </div>
     )
 }
