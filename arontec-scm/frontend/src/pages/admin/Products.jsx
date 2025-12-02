@@ -397,7 +397,7 @@ function AdminProducts() {
     return (
         <div className="dashboard">
             <nav className="dashboard-nav">
-                <div className="nav-brand">ARONTEC ADMIN</div>
+                <div className="nav-brand">ARONTEC KOREA ADMIN</div>
                 <div className="nav-links">
                     <Link to="/admin">대시보드</Link>
                     <Link to="/admin/members">회원 관리</Link>

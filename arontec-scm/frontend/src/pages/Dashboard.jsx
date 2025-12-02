@@ -39,7 +39,7 @@ function Dashboard({ user }) {
     return (
         <div className="dashboard">
             <nav className="dashboard-nav">
-                <div className="nav-brand">ARONTEC B2B SCM</div>
+                <div className="nav-brand">ARONTEC KOREA B2B SCM</div>
                 <div className="nav-links">
                     <Link to="/dashboard">대시보드</Link>
                     <Link to="/catalog">상품 카탈로그</Link>

@@ -74,7 +74,7 @@ function ProductDetail({ user }) {
     return (
         <div className="dashboard">
             <nav className="dashboard-nav">
-                <div className="nav-brand">ARONTEC SCM</div>
+                <div className="nav-brand">ARONTEC KOREA SCM</div>
                 <div className="nav-links">
                     <button onClick={() => navigate('/dashboard')} className="nav-link">대시보드</button>
                     <button onClick={() => navigate('/catalog')} className="nav-link active">상품 카탈로그</button>

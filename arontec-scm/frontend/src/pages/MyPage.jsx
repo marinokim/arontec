@@ -259,7 +259,7 @@ function MyPage({ user }) {
 
                             <div style={{ marginTop: 'auto', textAlign: 'center', color: '#666', fontSize: '0.9rem', paddingTop: '3rem' }}>
                                 <p style={{ marginBottom: '1rem' }}>본 견적서는 아론텍코리아 SCM 시스템에서 발급되었습니다.</p>
-                                <h2 style={{ color: '#0056b3', letterSpacing: '2px' }}>ARONTEC</h2>
+                                <h2 style={{ color: '#0056b3', letterSpacing: '2px' }}>ARONTEC KOREA</h2>
                             </div>
                         </div>
 

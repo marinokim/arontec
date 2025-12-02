@@ -137,7 +137,7 @@ function Catalog({ user }) {
 
         // Set Title (ARONTEC Logo placeholder)
         const titleCell = worksheet.getCell('A1')
-        titleCell.value = 'ARONTEC'
+        titleCell.value = 'ARONTEC KOREA'
         titleCell.font = { name: 'Arial', size: 20, bold: true, color: { argb: '003366' } } // Dark Blue
         titleCell.alignment = { vertical: 'middle', horizontal: 'left' }
 

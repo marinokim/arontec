@@ -44,7 +44,7 @@ function Login({ setUser }) {
         <div className="login-page">
             <div className="login-container">
                 <div className="login-header">
-                    <h1>ARONTEC B2B SCM</h1>
+                    <h1>ARONTEC KOREA B2B SCM</h1>
                     <p>파트너사 전용 시스템</p>
                 </div>
 
