@@ -131,9 +131,10 @@ function Catalog({ user }) {
         // Insert Title/Warning Row at the top
         worksheet.insertRow(1, [])
 
-        // Merge cells for Title and Warning
-        worksheet.mergeCells('A1:C1')
-        worksheet.mergeCells('D1:R1')
+        // Merge cells for Title, Warning, and File Info
+        worksheet.mergeCells('A1:D1')
+        worksheet.mergeCells('E1:L1')
+        worksheet.mergeCells('M1:P1')
 
         // Set Title (ARONTEC Logo placeholder)
         const titleCell = worksheet.getCell('A1')
@@ -142,10 +143,23 @@ function Catalog({ user }) {
         titleCell.alignment = { vertical: 'middle', horizontal: 'left' }
 
         // Set Warning Text
-        const warningCell = worksheet.getCell('D1')
+        const warningCell = worksheet.getCell('E1')
         warningCell.value = '■ 당사가 운영하는 모든 상품은 폐쇄몰을 제외한 온라인 판매를 금하며, 판매 시 상품 공급이 중단됩니다.'
         warningCell.font = { name: 'Malgun Gothic', size: 12, bold: true, color: { argb: 'FF0000' } } // Red
         warningCell.alignment = { vertical: 'middle', horizontal: 'left' }
+
+        // Set File Info Text
+        const now = new Date()
+        const clientName = user?.companyName || 'Client'
+        const dateStr = `${now.getFullYear()}년${now.getMonth() + 1}월${now.getDate()}일`
+        const hours = now.getHours()
+        const ampm = hours >= 12 ? '오후' : '오전'
+        const timeStr = `${ampm}${hours % 12 || 12}:${String(now.getMinutes()).padStart(2, '0')}`
+
+        const fileInfoCell = worksheet.getCell('M1')
+        fileInfoCell.value = `(${clientName})_제안_${dateStr}_${timeStr}`
+        fileInfoCell.font = { name: 'Malgun Gothic', size: 10, bold: true }
+        fileInfoCell.alignment = { vertical: 'middle', horizontal: 'right' }
 
         // Set Header Row Height
         worksheet.getRow(1).height = 30
@@ -240,15 +254,15 @@ function Catalog({ user }) {
         }
 
         // Generate filename: [ClientName]_제안_[YYYYMMDD]_[HHmm].xlsx
-        const now = new Date()
-        const dateStr = now.getFullYear() +
-            String(now.getMonth() + 1).padStart(2, '0') +
-            String(now.getDate()).padStart(2, '0')
-        const timeStr = String(now.getHours()).padStart(2, '0') +
-            String(now.getMinutes()).padStart(2, '0')
+        const nowForFilename = new Date()
+        const dateStrForFilename = nowForFilename.getFullYear() +
+            String(nowForFilename.getMonth() + 1).padStart(2, '0') +
+            String(nowForFilename.getDate()).padStart(2, '0')
+        const timeStrForFilename = String(nowForFilename.getHours()).padStart(2, '0') +
+            String(nowForFilename.getMinutes()).padStart(2, '0')
 
-        const clientName = user?.companyName || 'Client'
-        const filename = `${clientName}_제안_${dateStr}_${timeStr}.xlsx`
+        const clientNameForFilename = user?.companyName || 'Client'
+        const filename = `${clientNameForFilename}_제안_${dateStrForFilename}_${timeStrForFilename}.xlsx`
 
         // Generate and save file
         const buffer = await workbook.xlsx.writeBuffer()
