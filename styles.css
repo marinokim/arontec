@@ -332,6 +332,8 @@ footer {
     .grid-3,
     .grid-4 {
         grid-template-columns: 1fr;
+        display: grid;
+        /* Ensure display is grid */
     }
 
     .section-title {

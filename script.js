@@ -58,6 +58,18 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchAndRenderBrands();
     }
 
+    // Brand Data Mapping
+    const brandData = {
+        'INKEL': { icon: '🎧', desc: '대한민국 대표 음향 가전 브랜드' },
+        'IRIVER': { icon: '🔊', desc: '라이프스타일 오디오 & 모바일 액세서리' },
+        'MobiFren': { icon: '📱', desc: '프리미엄 블루투스 이어폰 & 케이스' },
+        'Elargo': { icon: '💄', desc: '자연주의 뷰티 & 코스메틱' },
+        'Swisswin': { icon: '🎒', desc: '글로벌 기능성 가방 브랜드' },
+        'LG Electronics': { icon: '📺', desc: '스마트 라이프를 위한 가전' },
+        'Yamaha': { icon: '🎹', desc: '감동을 전하는 사운드' },
+        'SOUL': { icon: '🎵', desc: '파워풀한 사운드 퍼포먼스' }
+    };
+
     async function fetchAndRenderBrands() {
         try {
             const res = await fetch(`${API_BASE_URL}/api/products/brands`);
@@ -70,11 +82,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
-                brandList.innerHTML = brands.map(brand => `
-                    <div class="brand-card" style="padding: 2rem; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-                        ${brand}
+                brandList.innerHTML = brands.map(brandName => {
+                    const info = brandData[brandName] || { icon: '📦', desc: 'Global Brand' };
+                    return `
+                    <div class="brand-card">
+                        <div class="brand-icon">${info.icon}</div>
+                        <h3>${brandName}</h3>
+                        <p>${info.desc}</p>
                     </div>
-                `).join('');
+                `}).join('');
             } else {
                 brandList.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #666;">브랜드 목록을 불러올 수 없습니다.</p>';
             }
