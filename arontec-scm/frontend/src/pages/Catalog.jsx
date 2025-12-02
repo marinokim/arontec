@@ -361,9 +361,12 @@ function ProductCard({ product, onAddToCart, onAddToProposal, navigate, user, pr
 
     const isInProposal = proposalItems && proposalItems.find(item => item.id === product.id)
 
-    // Parse options
-    const options = product.product_options
-        ? product.product_options.split(',').map(opt => opt.trim()).filter(opt => opt)
+    // Parse options: support comma, newline, slash
+    const rawOptions = product.product_options
+    console.log(`Product ${product.id} options:`, rawOptions)
+
+    const options = rawOptions
+        ? rawOptions.split(/[,/\n]+/).map(opt => opt.trim()).filter(opt => opt)
         : []
 
     useEffect(() => {

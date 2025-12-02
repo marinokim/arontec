@@ -754,7 +754,7 @@ function AdminProducts() {
                                     value={formData.productOptions}
                                     onChange={e => setFormData({ ...formData, productOptions: e.target.value })}
                                     rows="2"
-                                    placeholder="예: 색상, 사이즈 등 옵션 정보"
+                                    placeholder="예: 블랙, 화이트, 레드 (쉼표로 구분)"
                                 />
                             </div>
 
