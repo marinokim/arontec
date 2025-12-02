@@ -172,9 +172,19 @@ function AdminProducts() {
                 }
             }
 
+            let finalDetailUrl = formData.detailUrl
+            if (finalDetailUrl && finalDetailUrl.match(/\.html?$/i)) {
+                const extractedUrl = await extractImageFromHtml(finalDetailUrl)
+                if (extractedUrl) {
+                    finalDetailUrl = extractedUrl
+                    alert('HTML에서 상세 이미지 URL을 추출하여 저장합니다.')
+                }
+            }
+
             const payload = {
                 ...formData,
                 imageUrl: finalImageUrl,
+                detailUrl: finalDetailUrl,
                 consumerPrice: parsePrice(formData.consumerPrice),
                 supplyPrice: parsePrice(formData.supplyPrice),
                 b2bPrice: parsePrice(formData.b2bPrice),
@@ -736,6 +746,14 @@ function AdminProducts() {
                                     value={formData.detailUrl}
                                     onChange={e => setFormData({ ...formData, detailUrl: e.target.value })}
                                     placeholder="https://example.com/product/123"
+                                    onBlur={async (e) => {
+                                        const url = e.target.value
+                                        const extractedUrl = await extractImageFromHtml(url)
+                                        if (extractedUrl) {
+                                            setFormData(prev => ({ ...prev, detailUrl: extractedUrl }))
+                                            alert('HTML에서 상세 이미지 URL을 추출했습니다.')
+                                        }
+                                    }}
                                 />
                             </div>
 
