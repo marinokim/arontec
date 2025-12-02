@@ -281,6 +281,7 @@ function Catalog({ user }) {
                         product={product}
                         onAddToCart={addToCart}
                         onAddToProposal={addToProposal}
+                        onRemoveFromProposal={removeFromProposal}
                         navigate={navigate}
                         user={user}
                         proposalItems={proposalItems}
@@ -380,7 +381,7 @@ function Catalog({ user }) {
     )
 }
 
-function ProductCard({ product, onAddToCart, onAddToProposal, navigate, user, proposalItems }) {
+function ProductCard({ product, onAddToCart, onAddToProposal, onRemoveFromProposal, navigate, user, proposalItems }) {
     const [isHovered, setIsHovered] = useState(false)
     const [isLocked, setIsLocked] = useState(false)
     const [quantities, setQuantities] = useState({})
@@ -450,7 +451,11 @@ function ProductCard({ product, onAddToCart, onAddToProposal, navigate, user, pr
 
     const handleAddToProposal = (e) => {
         e.stopPropagation()
-        onAddToProposal(product)
+        if (isInProposal) {
+            onRemoveFromProposal(product.id)
+        } else {
+            onAddToProposal(product)
+        }
     }
 
     const showOptions = isHovered || isLocked
