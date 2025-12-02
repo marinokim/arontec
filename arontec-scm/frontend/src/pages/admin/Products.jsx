@@ -159,7 +159,10 @@ function AdminProducts() {
             const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/products/proxy-image?url=${encodeURIComponent(url)}`)
             if (res.ok) {
                 const html = await res.text()
-                const regex = /<img[^>]+src=['"]([^'"]+)['"]/g
+                console.log('Fetched HTML length:', html.length)
+
+                // More robust regex: case insensitive, handles spaces around =
+                const regex = /<img\s+[^>]*src\s*=\s*['"]([^'"]+)['"]/gi
                 const matches = []
                 let match
                 while ((match = regex.exec(html)) !== null) {
@@ -170,6 +173,8 @@ function AdminProducts() {
                     }
                     matches.push(imgUrl)
                 }
+
+                console.log(`Found ${matches.length} images in HTML`)
 
                 if (matches.length > 0) {
                     return matches.join(', ')
@@ -206,16 +211,8 @@ function AdminProducts() {
                 const extractedUrls = await extractAllImagesFromHtml(finalDetailUrl)
                 if (extractedUrls) {
                     finalDetailUrl = extractedUrls
-                    alert('HTML에서 상세 이미지 URL들을 추출하여 저장합니다.')
-                }
-            }
-
-            let finalDetailUrl = formData.detailUrl
-            if (finalDetailUrl && finalDetailUrl.match(/\.html?$/i)) {
-                const extractedUrl = await extractImageFromHtml(finalDetailUrl)
-                if (extractedUrl) {
-                    finalDetailUrl = extractedUrl
-                    alert('HTML에서 상세 이미지 URL을 추출하여 저장합니다.')
+                    const count = finalDetailUrl.split(',').length
+                    alert(`HTML에서 ${count}장의 상세 이미지를 추출하여 저장합니다.`)
                 }
             }
 
@@ -789,7 +786,8 @@ function AdminProducts() {
                                         const extractedUrls = await extractAllImagesFromHtml(url)
                                         if (extractedUrls) {
                                             setFormData(prev => ({ ...prev, detailUrl: extractedUrls }))
-                                            alert('HTML에서 상세 이미지 URL들을 추출했습니다.')
+                                            const count = extractedUrls.split(',').length
+                                            alert(`HTML에서 ${count}장의 상세 이미지를 추출했습니다.`)
                                         }
                                     }}
                                 />
