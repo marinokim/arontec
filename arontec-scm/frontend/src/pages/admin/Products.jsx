@@ -199,7 +199,11 @@ function AdminProducts() {
 
         try {
             let finalImageUrl = formData.imageUrl
-            if (finalImageUrl && finalImageUrl.match(/\.html?$/i)) {
+            // Check for <img src="..."> tag first
+            const imgTagSrc = finalImageUrl && finalImageUrl.match(/<img[^>]+src=['"]([^'"]+)['"]/i)
+            if (imgTagSrc && imgTagSrc[1]) {
+                finalImageUrl = imgTagSrc[1]
+            } else if (finalImageUrl && finalImageUrl.match(/\.html?$/i)) {
                 const extractedUrl = await extractImageFromHtml(finalImageUrl)
                 if (extractedUrl) {
                     finalImageUrl = extractedUrl
@@ -763,6 +767,14 @@ function AdminProducts() {
                                     placeholder="https://example.com/image.jpg"
                                     onBlur={async (e) => {
                                         const url = e.target.value
+                                        // Check for <img src="..."> tag
+                                        const imgTagMatch = url.match(/<img[^>]+src=['"]([^'"]+)['"]/i)
+                                        if (imgTagMatch && imgTagMatch[1]) {
+                                            setFormData(prev => ({ ...prev, imageUrl: imgTagMatch[1] }))
+                                            alert('이미지 태그에서 URL을 추출했습니다.')
+                                            return
+                                        }
+
                                         const extractedUrl = await extractImageFromHtml(url)
                                         if (extractedUrl) {
                                             setFormData(prev => ({ ...prev, imageUrl: extractedUrl }))
