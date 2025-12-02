@@ -63,7 +63,6 @@ function Catalog({ user }) {
         const newItems = [...proposalItems, product]
         setProposalItems(newItems)
         localStorage.setItem('proposalItems', JSON.stringify(newItems))
-        setShowProposalModal(true)
     }
 
     const removeFromProposal = (productId) => {
