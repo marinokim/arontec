@@ -63,7 +63,7 @@ function Catalog({ user }) {
         const newItems = [...proposalItems, product]
         setProposalItems(newItems)
         localStorage.setItem('proposalItems', JSON.stringify(newItems))
-        alert('제안서 목록에 추가되었습니다.')
+        setShowProposalModal(true)
     }
 
     const removeFromProposal = (productId) => {
@@ -258,6 +258,7 @@ function Catalog({ user }) {
                         onAddToProposal={addToProposal}
                         navigate={navigate}
                         user={user}
+                        proposalItems={proposalItems}
                     />
                 ))}
             </div>
@@ -354,9 +355,11 @@ function Catalog({ user }) {
     )
 }
 
-function ProductCard({ product, onAddToCart, onAddToProposal, navigate, user }) {
+function ProductCard({ product, onAddToCart, onAddToProposal, navigate, user, proposalItems }) {
     const [quantity, setQuantity] = useState(1)
     const [isHovered, setIsHovered] = useState(false)
+
+    const isInProposal = proposalItems && proposalItems.find(item => item.id === product.id)
 
     const handleAddToCart = (e) => {
         e.stopPropagation()
@@ -413,7 +416,10 @@ function ProductCard({ product, onAddToCart, onAddToProposal, navigate, user }) 
                         >
                             바로담기
                         </button>
-                        <button className="btn-heart" onClick={handleAddToProposal}>
+                        <button
+                            className={`btn-heart ${isInProposal ? 'active' : ''}`}
+                            onClick={handleAddToProposal}
+                        >
                             ♥
                         </button>
                     </div>

@@ -209,7 +209,8 @@
     transition: color 0.2s;
 }
 
-.btn-heart:hover {
+.btn-heart:hover,
+.btn-heart.active {
     color: #ff4757;
     border-color: #ff4757;
 }
