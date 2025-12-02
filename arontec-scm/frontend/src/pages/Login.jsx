@@ -48,6 +48,21 @@ function Login({ setUser }) {
                     <p>파트너사 전용 시스템</p>
                 </div>
 
+                <div className="warning-message" style={{
+                    color: '#dc3545',
+                    fontWeight: 'bold',
+                    fontSize: '1.1rem',
+                    textAlign: 'center',
+                    marginBottom: '20px',
+                    padding: '10px',
+                    border: '2px solid #dc3545',
+                    borderRadius: '8px',
+                    backgroundColor: '#fff5f5'
+                }}>
+                    당사 모든상품은 온라인노출 불가하며<br />
+                    패쇄몰,특판만 가능합니다
+                </div>
+
                 <form className="login-form" onSubmit={handleSubmit}>
                     {error && <div className="error-message">{error}</div>}
 
