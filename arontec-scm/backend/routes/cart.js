@@ -24,15 +24,15 @@ router.get('/', requireApproved, async (req, res) => {
 // Add to cart
 router.post('/', requireApproved, async (req, res) => {
     try {
-        const { productId, quantity = 1 } = req.body
+        const { productId, quantity = 1, option = '' } = req.body
 
         const result = await pool.query(`
-      INSERT INTO carts (user_id, product_id, quantity)
-      VALUES ($1, $2, $3)
-      ON CONFLICT (user_id, product_id)
+      INSERT INTO carts (user_id, product_id, quantity, option)
+      VALUES ($1, $2, $3, $4)
+      ON CONFLICT (user_id, product_id, option)
       DO UPDATE SET quantity = carts.quantity + $3
       RETURNING *
-    `, [req.session.userId, productId, quantity])
+    `, [req.session.userId, productId, quantity, option])
 
         res.json({ message: '장바구니에 추가되었습니다', item: result.rows[0] })
     } catch (error) {

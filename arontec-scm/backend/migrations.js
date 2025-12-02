@@ -111,6 +111,27 @@ export const runMigrations = async () => {
                     product_options LIKE '%"%';
             `)
 
+            // Update carts table to support options
+            await client.query(`
+                DO $$ 
+                BEGIN 
+                    -- Add option column if missing
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'carts' AND column_name = 'option') THEN 
+                        ALTER TABLE carts ADD COLUMN option VARCHAR(255) DEFAULT ''; 
+                    END IF;
+
+                    -- Drop old unique constraint if exists
+                    IF EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'carts_user_id_product_id_key') THEN
+                        ALTER TABLE carts DROP CONSTRAINT carts_user_id_product_id_key;
+                    END IF;
+
+                    -- Add new unique constraint including option
+                    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'carts_user_id_product_id_option_key') THEN
+                        ALTER TABLE carts ADD CONSTRAINT carts_user_id_product_id_option_key UNIQUE (user_id, product_id, option);
+                    END IF;
+                END $$;
+            `)
+
             await client.query('COMMIT')
             console.log('✅ Database migrations completed successfully')
         } catch (error) {

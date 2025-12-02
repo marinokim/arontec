@@ -38,13 +38,13 @@ function Catalog({ user }) {
         setProducts(data.products)
     }
 
-    const addToCart = async (productId, quantity) => {
+    const addToCart = async (productId, quantity, option = '') => {
         try {
             const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/cart', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
-                body: JSON.stringify({ productId, quantity })
+                body: JSON.stringify({ productId, quantity, option })
             })
 
             if (res.ok) {
@@ -357,12 +357,24 @@ function Catalog({ user }) {
 function ProductCard({ product, onAddToCart, onAddToProposal, navigate, user, proposalItems }) {
     const [quantity, setQuantity] = useState(1)
     const [isHovered, setIsHovered] = useState(false)
+    const [selectedOption, setSelectedOption] = useState('')
 
     const isInProposal = proposalItems && proposalItems.find(item => item.id === product.id)
 
+    // Parse options
+    const options = product.product_options
+        ? product.product_options.split(',').map(opt => opt.trim()).filter(opt => opt)
+        : []
+
+    useEffect(() => {
+        if (options.length > 0) {
+            setSelectedOption(options[0])
+        }
+    }, [product.product_options])
+
     const handleAddToCart = (e) => {
         e.stopPropagation()
-        onAddToCart(product.id, quantity)
+        onAddToCart(product.id, quantity, selectedOption)
     }
 
     const handleAddToProposal = (e) => {
@@ -426,7 +438,19 @@ function ProductCard({ product, onAddToCart, onAddToProposal, navigate, user, pr
             ) : (
                 <div className="product-actions-hover" onClick={e => e.stopPropagation()}>
                     <div className="option-selector">
-                        <span>기본 옵션</span>
+                        {options.length > 0 ? (
+                            <select
+                                value={selectedOption}
+                                onChange={(e) => setSelectedOption(e.target.value)}
+                                style={{ padding: '5px', borderRadius: '4px', border: '1px solid #ddd', flex: 1, marginRight: '10px' }}
+                            >
+                                {options.map((opt, idx) => (
+                                    <option key={idx} value={opt}>{opt}</option>
+                                ))}
+                            </select>
+                        ) : (
+                            <span>기본 옵션</span>
+                        )}
                         <div className="quantity-control">
                             <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</button>
                             <span>{quantity}</span>
