@@ -152,6 +152,35 @@ function AdminProducts() {
         return null
     }
 
+    const extractAllImagesFromHtml = async (url) => {
+        if (!url || !url.match(/\.html?$/i)) return null
+
+        try {
+            const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/products/proxy-image?url=${encodeURIComponent(url)}`)
+            if (res.ok) {
+                const html = await res.text()
+                const regex = /<img[^>]+src=['"]([^'"]+)['"]/g
+                const matches = []
+                let match
+                while ((match = regex.exec(html)) !== null) {
+                    let imgUrl = match[1]
+                    if (!imgUrl.startsWith('http')) {
+                        const baseUrl = url.substring(0, url.lastIndexOf('/') + 1)
+                        imgUrl = new URL(imgUrl, baseUrl).href
+                    }
+                    matches.push(imgUrl)
+                }
+
+                if (matches.length > 0) {
+                    return matches.join(', ')
+                }
+            }
+        } catch (error) {
+            console.error('Failed to extract images from HTML:', error)
+        }
+        return null
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault()
 
@@ -168,7 +197,16 @@ function AdminProducts() {
                 const extractedUrl = await extractImageFromHtml(finalImageUrl)
                 if (extractedUrl) {
                     finalImageUrl = extractedUrl
-                    alert('HTML에서 이미지 URL을 추출하여 저장합니다.')
+                    alert('HTML에서 대표 이미지 URL을 추출하여 저장합니다.')
+                }
+            }
+
+            let finalDetailUrl = formData.detailUrl
+            if (finalDetailUrl && finalDetailUrl.match(/\.html?$/i)) {
+                const extractedUrls = await extractAllImagesFromHtml(finalDetailUrl)
+                if (extractedUrls) {
+                    finalDetailUrl = extractedUrls
+                    alert('HTML에서 상세 이미지 URL들을 추출하여 저장합니다.')
                 }
             }
 
@@ -748,10 +786,10 @@ function AdminProducts() {
                                     placeholder="https://example.com/product/123"
                                     onBlur={async (e) => {
                                         const url = e.target.value
-                                        const extractedUrl = await extractImageFromHtml(url)
-                                        if (extractedUrl) {
-                                            setFormData(prev => ({ ...prev, detailUrl: extractedUrl }))
-                                            alert('HTML에서 상세 이미지 URL을 추출했습니다.')
+                                        const extractedUrls = await extractAllImagesFromHtml(url)
+                                        if (extractedUrls) {
+                                            setFormData(prev => ({ ...prev, detailUrl: extractedUrls }))
+                                            alert('HTML에서 상세 이미지 URL들을 추출했습니다.')
                                         }
                                     }}
                                 />
