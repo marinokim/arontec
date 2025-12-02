@@ -43,7 +43,8 @@ app.use(session({
     cookie: {
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        sameSite: 'lax', // Use 'lax' for subdomain sharing
+        domain: process.env.NODE_ENV === 'production' ? '.arontec.co.kr' : undefined, // Share cookie across subdomains
         maxAge: 24 * 60 * 60 * 1000 // 24 hours
     }
 }))
