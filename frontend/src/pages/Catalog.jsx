@@ -382,6 +382,7 @@ function Catalog({ user }) {
 
 function ProductCard({ product, onAddToCart, onAddToProposal, navigate, user, proposalItems }) {
     const [isHovered, setIsHovered] = useState(false)
+    const [isLocked, setIsLocked] = useState(false)
     const [quantities, setQuantities] = useState({})
     const [defaultQuantity, setDefaultQuantity] = useState(1)
 
@@ -439,12 +440,20 @@ function ProductCard({ product, onAddToCart, onAddToProposal, navigate, user, pr
         } else {
             onAddToCart(product.id, { quantity: defaultQuantity, option: '' })
         }
+
+        // Optional: Close after adding? Let's keep it open or close it.
+        // User might want to add more. Let's keep it open but maybe give feedback.
+        // For now, let's close it to indicate success and reset state.
+        setIsLocked(false)
+        setIsHovered(false)
     }
 
     const handleAddToProposal = (e) => {
         e.stopPropagation()
         onAddToProposal(product)
     }
+
+    const showOptions = isHovered || isLocked
 
     return (
         <div
@@ -453,13 +462,13 @@ function ProductCard({ product, onAddToCart, onAddToProposal, navigate, user, pr
             onMouseLeave={() => setIsHovered(false)}
         >
             <div className="product-image-container">
-                <div className={`product-image ${isHovered ? 'hovered' : ''}`}>
+                <div className={`product-image ${showOptions ? 'hovered' : ''}`}>
                     {product.image_url ? (
                         <img src={product.image_url} alt={product.model_name} />
                     ) : (
                         <div className="no-image">No Image</div>
                     )}
-                    {isHovered && (
+                    {showOptions && (
                         <div className="image-overlay">
                             <h3>{product.brand}</h3>
                             <p className="model">{product.model_name}</p>
@@ -472,7 +481,7 @@ function ProductCard({ product, onAddToCart, onAddToProposal, navigate, user, pr
                 </div>
             </div>
 
-            {!isHovered ? (
+            {!showOptions ? (
                 <div className="product-info-default">
                     <h3>{product.brand}</h3>
                     <p className="model">{product.model_name}</p>
@@ -487,7 +496,11 @@ function ProductCard({ product, onAddToCart, onAddToProposal, navigate, user, pr
                         <button
                             className="btn-add-cart-default"
                             onMouseEnter={() => setIsHovered(true)}
-                            onClick={(e) => { e.stopPropagation(); setIsHovered(true); }}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setIsLocked(true);
+                                setIsHovered(true);
+                            }}
                         >
                             바로담기
                         </button>
@@ -501,6 +514,19 @@ function ProductCard({ product, onAddToCart, onAddToProposal, navigate, user, pr
                 </div>
             ) : (
                 <div className="product-actions-hover" onClick={e => e.stopPropagation()}>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '5px' }}>
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setIsLocked(false);
+                                setIsHovered(false);
+                            }}
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: '#999', padding: '0 5px' }}
+                            title="닫기"
+                        >
+                            &times;
+                        </button>
+                    </div>
                     <div className="option-selector-container" style={{
                         maxHeight: '150px',
                         overflowY: 'auto',
