@@ -38,20 +38,46 @@ function Catalog({ user }) {
         setProducts(data.products)
     }
 
-    const addToCart = async (productId, quantity, option = '') => {
-        try {
-            const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/cart', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ productId, quantity, option })
-            })
+    const addToCart = async (productId, items) => {
+        // items can be a single object { quantity, option } or an array of objects
+        const itemsToAdd = Array.isArray(items) ? items : [items]
 
-            if (res.ok) {
-                alert('장바구니에 추가되었습니다')
+        if (itemsToAdd.length === 0) return
+
+        let successCount = 0
+
+        for (const item of itemsToAdd) {
+            try {
+                const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/cart', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        productId,
+                        quantity: item.quantity,
+                        option: item.option
+                    })
+                })
+
+                if (res.ok) {
+                    successCount++
+                } else {
+                    if (res.status === 401) {
+                        alert('로그인이 필요합니다')
+                        return
+                    }
+                    const data = await res.json()
+                    console.error('Add to cart failed:', data.error)
+                }
+            } catch (error) {
+                console.error('Add to cart error:', error)
             }
-        } catch (error) {
-            console.error('Add to cart error:', error)
+        }
+
+        if (successCount > 0) {
+            alert(`${successCount}개 항목이 장바구니에 추가되었습니다`)
+        } else {
+            alert('장바구니 추가에 실패했습니다')
         }
     }
 
@@ -355,29 +381,64 @@ function Catalog({ user }) {
 }
 
 function ProductCard({ product, onAddToCart, onAddToProposal, navigate, user, proposalItems }) {
-    const [quantity, setQuantity] = useState(1)
     const [isHovered, setIsHovered] = useState(false)
-    const [selectedOption, setSelectedOption] = useState('')
+    const [quantities, setQuantities] = useState({})
+    const [defaultQuantity, setDefaultQuantity] = useState(1)
 
     const isInProposal = proposalItems && proposalItems.find(item => item.id === product.id)
 
     // Parse options: support comma, newline, slash
     const rawOptions = product.product_options
-    console.log(`Product ${product.id} options:`, rawOptions)
 
     const options = rawOptions
         ? rawOptions.split(/[,/\n]+/).map(opt => opt.trim()).filter(opt => opt)
         : []
 
+    // Initialize quantities for options
     useEffect(() => {
         if (options.length > 0) {
-            setSelectedOption(options[0])
+            const initialQuantities = {}
+            options.forEach(opt => {
+                initialQuantities[opt] = 0
+            })
+            setQuantities(initialQuantities)
         }
     }, [product.product_options])
 
+    const handleQuantityChange = (option, delta) => {
+        setQuantities(prev => ({
+            ...prev,
+            [option]: Math.max(0, (prev[option] || 0) + delta)
+        }))
+    }
+
     const handleAddToCart = (e) => {
         e.stopPropagation()
-        onAddToCart(product.id, quantity, selectedOption)
+
+        if (options.length > 0) {
+            const itemsToAdd = Object.entries(quantities)
+                .filter(([_, qty]) => qty > 0)
+                .map(([opt, qty]) => ({
+                    quantity: qty,
+                    option: opt
+                }))
+
+            if (itemsToAdd.length === 0) {
+                alert('최소 1개 이상의 옵션을 선택해주세요')
+                return
+            }
+
+            onAddToCart(product.id, itemsToAdd)
+
+            // Reset quantities after add
+            const resetQuantities = {}
+            options.forEach(opt => {
+                resetQuantities[opt] = 0
+            })
+            setQuantities(resetQuantities)
+        } else {
+            onAddToCart(product.id, { quantity: defaultQuantity, option: '' })
+        }
     }
 
     const handleAddToProposal = (e) => {
@@ -440,27 +501,41 @@ function ProductCard({ product, onAddToCart, onAddToProposal, navigate, user, pr
                 </div>
             ) : (
                 <div className="product-actions-hover" onClick={e => e.stopPropagation()}>
-                    <div className="option-selector">
+                    <div className="option-selector-container" style={{
+                        maxHeight: '150px',
+                        overflowY: 'auto',
+                        marginBottom: '10px',
+                        width: '100%'
+                    }}>
                         {options.length > 0 ? (
-                            <select
-                                value={selectedOption}
-                                onChange={(e) => setSelectedOption(e.target.value)}
-                                style={{ padding: '5px', borderRadius: '4px', border: '1px solid #ddd', flex: 1, marginRight: '10px' }}
-                            >
+                            <div className="option-list" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
                                 {options.map((opt, idx) => (
-                                    <option key={idx} value={opt}>{opt}</option>
+                                    <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8rem', color: 'white' }}>
+                                        <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginRight: '5px' }}>{opt}</span>
+                                        <div className="quantity-control" style={{ background: 'rgba(255,255,255,0.2)', borderRadius: '4px', padding: '2px' }}>
+                                            <button onClick={() => handleQuantityChange(opt, -1)} style={{ color: 'white' }}>-</button>
+                                            <span style={{ minWidth: '20px', textAlign: 'center', display: 'inline-block' }}>{quantities[opt] || 0}</span>
+                                            <button onClick={() => handleQuantityChange(opt, 1)} style={{ color: 'white' }}>+</button>
+                                        </div>
+                                    </div>
                                 ))}
-                            </select>
+                            </div>
                         ) : (
-                            <span>기본 옵션</span>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'white' }}>
+                                <span>기본 옵션</span>
+                                <div className="quantity-control">
+                                    <button onClick={() => setDefaultQuantity(Math.max(1, defaultQuantity - 1))}>-</button>
+                                    <span>{defaultQuantity}</span>
+                                    <button onClick={() => setDefaultQuantity(defaultQuantity + 1)}>+</button>
+                                </div>
+                            </div>
                         )}
-                        <div className="quantity-control">
-                            <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</button>
-                            <span>{quantity}</span>
-                            <button onClick={() => setQuantity(quantity + 1)}>+</button>
-                        </div>
                     </div>
-                    <button className="btn-add-cart-hover" onClick={handleAddToCart}>
+                    <button
+                        className="btn-cart-hover"
+                        onClick={handleAddToCart}
+                        style={{ width: '100%', marginTop: '5px' }}
+                    >
                         바로담기
                     </button>
                 </div>
