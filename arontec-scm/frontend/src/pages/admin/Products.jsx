@@ -203,7 +203,6 @@ function AdminProducts() {
                 const extractedUrl = await extractImageFromHtml(finalImageUrl)
                 if (extractedUrl) {
                     finalImageUrl = extractedUrl
-                    alert('HTML에서 대표 이미지 URL을 추출하여 저장합니다.')
                 }
             }
 
@@ -212,8 +211,6 @@ function AdminProducts() {
                 const extractedHtml = await extractAllImagesFromHtml(finalDetailUrl)
                 if (extractedHtml) {
                     finalDetailUrl = extractedHtml
-                    const count = (finalDetailUrl.match(/<img/g) || []).length
-                    alert(`HTML에서 ${count}장의 이미지를 추출하여 태그로 변환했습니다.`)
                 }
             }
 
