@@ -174,11 +174,7 @@ router.put('/profile', async (req, res) => {
     }
 })
 
-    } catch (error) {
-    console.error('Update profile error:', error)
-    res.status(500).json({ error: '프로필 수정 중 오류가 발생했습니다' })
-}
-})
+
 
 // Reset Password Check (Identity Verification)
 router.post('/reset-password-check', async (req, res) => {
