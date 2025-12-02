@@ -372,7 +372,6 @@ function ProductCard({ product, onAddToCart, onAddToProposal, navigate, user }) 
         <div
             className="product-card"
             onClick={() => navigate(`/product/${product.id}`)}
-            onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
             <div className="product-image-container">
@@ -407,7 +406,11 @@ function ProductCard({ product, onAddToCart, onAddToProposal, navigate, user }) 
                         <p className="remarks">{product.remarks}</p>
                     )}
                     <div className="action-buttons-default">
-                        <button className="btn-add-cart-default" onClick={(e) => { e.stopPropagation(); setIsHovered(true); }}>
+                        <button
+                            className="btn-add-cart-default"
+                            onMouseEnter={() => setIsHovered(true)}
+                            onClick={(e) => { e.stopPropagation(); setIsHovered(true); }}
+                        >
                             바로담기
                         </button>
                         <button className="btn-heart" onClick={handleAddToProposal}>
