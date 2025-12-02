@@ -52,6 +52,38 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Render Brands
+    const brandList = document.getElementById('brand-list');
+    if (brandList) {
+        fetchAndRenderBrands();
+    }
+
+    async function fetchAndRenderBrands() {
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/products/brands`);
+            if (res.ok) {
+                const data = await res.json();
+                const brands = data.brands;
+
+                if (brands.length === 0) {
+                    brandList.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #666;">등록된 브랜드가 없습니다.</p>';
+                    return;
+                }
+
+                brandList.innerHTML = brands.map(brand => `
+                    <div class="brand-card" style="padding: 2rem; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                        ${brand}
+                    </div>
+                `).join('');
+            } else {
+                brandList.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #666;">브랜드 목록을 불러올 수 없습니다.</p>';
+            }
+        } catch (error) {
+            console.error('Fetch brands error:', error);
+            brandList.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #666;">브랜드 목록을 불러오는 중 오류가 발생했습니다.</p>';
+        }
+    }
+
     // Render Products & Categories
     const productGrid = document.getElementById('product-grid');
     const categoryContainer = document.querySelector('.category-filters');
