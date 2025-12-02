@@ -180,6 +180,11 @@ function AdminProducts() {
                 fetchManufacturers()
                 fetchOrigins()
             } else {
+                if (res.status === 401) {
+                    alert('세션이 만료되었습니다. 다시 로그인해주세요.')
+                    window.location.href = '/login'
+                    return
+                }
                 const data = await res.json()
                 alert(data.error || '오류가 발생했습니다')
             }
@@ -199,6 +204,11 @@ function AdminProducts() {
             if (res.ok) {
                 fetchProducts()
             } else {
+                if (res.status === 401) {
+                    alert('세션이 만료되었습니다. 다시 로그인해주세요.')
+                    window.location.href = '/login'
+                    return
+                }
                 alert('삭제 실패')
             }
         } catch (error) {
@@ -220,6 +230,11 @@ function AdminProducts() {
                     p.id === product.id ? { ...p, is_available: !p.is_available } : p
                 ))
             } else {
+                if (res.status === 401) {
+                    alert('세션이 만료되었습니다. 다시 로그인해주세요.')
+                    window.location.href = '/login'
+                    return
+                }
                 const data = await res.json()
                 alert(data.error || '상태 변경 실패')
             }
@@ -280,6 +295,11 @@ function AdminProducts() {
                 setShowCategoryModal(false)
                 fetchCategories()
             } else {
+                if (res.status === 401) {
+                    alert('세션이 만료되었습니다. 다시 로그인해주세요.')
+                    window.location.href = '/login'
+                    return
+                }
                 alert('카테고리 추가 실패')
             }
         } catch (error) {

@@ -43,6 +43,11 @@ function AdminNotifications() {
                 setFormData({ title: '', content: '', is_active: true })
                 fetchNotifications()
             } else {
+                if (res.status === 401) {
+                    alert('세션이 만료되었습니다. 다시 로그인해주세요.')
+                    window.location.href = '/login'
+                    return
+                }
                 alert('저장 실패')
             }
         } catch (error) {
@@ -62,6 +67,11 @@ function AdminNotifications() {
             if (res.ok) {
                 fetchNotifications()
             } else {
+                if (res.status === 401) {
+                    alert('세션이 만료되었습니다. 다시 로그인해주세요.')
+                    window.location.href = '/login'
+                    return
+                }
                 alert('삭제 실패')
             }
         } catch (error) {

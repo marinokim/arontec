@@ -15,13 +15,23 @@ function Members() {
     }
 
     const toggleApproval = async (id, isApproved) => {
-        await fetch((import.meta.env.VITE_API_URL || '') + `/api/admin/members/${id}/approval`, {
+        const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/admin/members/${id}/approval`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
             body: JSON.stringify({ approved: isApproved })
         })
-        fetchMembers()
+
+        if (res.ok) {
+            fetchMembers()
+        } else {
+            if (res.status === 401) {
+                alert('세션이 만료되었습니다. 다시 로그인해주세요.')
+                window.location.href = '/login'
+                return
+            }
+            alert('승인 상태 변경 실패')
+        }
     }
 
     const handleLogout = async () => {

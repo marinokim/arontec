@@ -17,13 +17,23 @@ function AdminQuotes() {
     }
 
     const updateStatus = async (id, status) => {
-        await fetch((import.meta.env.VITE_API_URL || '') + `/api/admin/quotes/${id}`, {
+        const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/admin/quotes/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
             body: JSON.stringify({ status })
         })
-        fetchQuotes()
+
+        if (res.ok) {
+            fetchQuotes()
+        } else {
+            if (res.status === 401) {
+                alert('세션이 만료되었습니다. 다시 로그인해주세요.')
+                window.location.href = '/login'
+                return
+            }
+            alert('상태 변경 실패')
+        }
     }
 
     const openShippingModal = (quoteId) => {
@@ -50,6 +60,11 @@ function AdminQuotes() {
                 setShippingModal({ open: false, quoteId: null })
                 fetchQuotes()
             } else {
+                if (res.status === 401) {
+                    alert('세션이 만료되었습니다. 다시 로그인해주세요.')
+                    window.location.href = '/login'
+                    return
+                }
                 alert('송장 등록에 실패했습니다.')
             }
         } catch (error) {
@@ -170,7 +185,8 @@ function AdminQuotes() {
                     </div>
                 )}
             </div>
-            )
+        </div>
+    )
 }
 
-            export default AdminQuotes
+export default AdminQuotes
