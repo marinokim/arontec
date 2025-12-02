@@ -239,10 +239,27 @@ function Catalog({ user }) {
             }
         }
 
+        // Generate filename: [ClientName]_제안_[YYYYMMDD]_[HHmm].xlsx
+        const now = new Date()
+        const dateStr = now.getFullYear() +
+            String(now.getMonth() + 1).padStart(2, '0') +
+            String(now.getDate()).padStart(2, '0')
+        const timeStr = String(now.getHours()).padStart(2, '0') +
+            String(now.getMinutes()).padStart(2, '0')
+
+        const clientName = user?.companyName || 'Client'
+        const filename = `${clientName}_제안_${dateStr}_${timeStr}.xlsx`
+
         // Generate and save file
         const buffer = await workbook.xlsx.writeBuffer()
         const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
-        saveAs(blob, `제안서_${new Date().toISOString().slice(0, 10)}.xlsx`)
+        saveAs(blob, filename)
+
+        // Clear proposal list after download
+        setProposalItems([])
+        localStorage.removeItem('proposalItems')
+        setShowProposalModal(false)
+        alert('제안서가 다운로드되었습니다. 목록이 초기화됩니다.')
     }
 
     return (
