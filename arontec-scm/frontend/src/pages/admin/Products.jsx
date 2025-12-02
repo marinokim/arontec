@@ -152,12 +152,14 @@ function AdminProducts() {
                 // Keep legacy shippingFee for compatibility if needed, or remove it. Let's set it to individual fee for now.
                 shippingFee: formData.shippingFeeIndividual ? parsePrice(formData.shippingFeeIndividual) : '0',
                 productOptions: formData.productOptions,
-                modelNo: formData.modelNo,
-                manufacturer: formData.manufacturer,
-                origin: formData.origin,
+                // Remove double quotes from text fields as requested
+                modelName: formData.modelName ? formData.modelName.replace(/"/g, '') : '',
+                modelNo: formData.modelNo ? formData.modelNo.replace(/"/g, '') : '',
+                manufacturer: formData.manufacturer ? formData.manufacturer.replace(/"/g, '') : '',
+                origin: formData.origin ? formData.origin.replace(/"/g, '') : '',
                 isTaxFree: formData.isTaxFree,
-                remarks: formData.remarks,
-                // Remove double quotes from description as requested
+                remarks: formData.remarks ? formData.remarks.replace(/"/g, '') : '',
+                productOptions: formData.productOptions ? formData.productOptions.replace(/"/g, '') : '',
                 description: formData.description ? formData.description.replace(/"/g, '') : ''
             }
 

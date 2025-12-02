@@ -90,11 +90,25 @@ export const runMigrations = async () => {
                 END $$;
             `)
 
-            // Sanitize existing descriptions (remove double quotes)
+            // Sanitize existing text fields (remove double quotes)
             await client.query(`
                 UPDATE products 
-                SET description = REPLACE(description, '"', '') 
-                WHERE description LIKE '%"%';
+                SET 
+                    description = REPLACE(description, '"', ''),
+                    model_name = REPLACE(model_name, '"', ''),
+                    model_no = REPLACE(model_no, '"', ''),
+                    manufacturer = REPLACE(manufacturer, '"', ''),
+                    origin = REPLACE(origin, '"', ''),
+                    remarks = REPLACE(remarks, '"', ''),
+                    product_options = REPLACE(product_options, '"', '')
+                WHERE 
+                    description LIKE '%"%' OR
+                    model_name LIKE '%"%' OR
+                    model_no LIKE '%"%' OR
+                    manufacturer LIKE '%"%' OR
+                    origin LIKE '%"%' OR
+                    remarks LIKE '%"%' OR
+                    product_options LIKE '%"%';
             `)
 
             await client.query('COMMIT')
