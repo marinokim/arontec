@@ -128,6 +128,30 @@ function AdminProducts() {
         setFormData({ ...formData, [field]: formatted })
     }
 
+    const extractImageFromHtml = async (url) => {
+        if (!url || !url.match(/\.html?$/i)) return null
+
+        try {
+            const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/products/proxy-image?url=${encodeURIComponent(url)}`)
+            if (res.ok) {
+                const html = await res.text()
+                const match = html.match(/<img[^>]+src=['"]([^'"]+)['"]/)
+                if (match && match[1]) {
+                    let imgUrl = match[1]
+                    if (!imgUrl.startsWith('http')) {
+                        // Resolve relative URL
+                        const baseUrl = url.substring(0, url.lastIndexOf('/') + 1)
+                        imgUrl = new URL(imgUrl, baseUrl).href
+                    }
+                    return imgUrl
+                }
+            }
+        } catch (error) {
+            console.error('Failed to extract image from HTML:', error)
+        }
+        return null
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault()
 
@@ -139,8 +163,18 @@ function AdminProducts() {
         setIsSubmitting(true)
 
         try {
+            let finalImageUrl = formData.imageUrl
+            if (finalImageUrl && finalImageUrl.match(/\.html?$/i)) {
+                const extractedUrl = await extractImageFromHtml(finalImageUrl)
+                if (extractedUrl) {
+                    finalImageUrl = extractedUrl
+                    alert('HTML에서 이미지 URL을 추출하여 저장합니다.')
+                }
+            }
+
             const payload = {
                 ...formData,
+                imageUrl: finalImageUrl,
                 consumerPrice: parsePrice(formData.consumerPrice),
                 supplyPrice: parsePrice(formData.supplyPrice),
                 b2bPrice: parsePrice(formData.b2bPrice),
@@ -686,26 +720,10 @@ function AdminProducts() {
                                     placeholder="https://example.com/image.jpg"
                                     onBlur={async (e) => {
                                         const url = e.target.value
-                                        if (url && url.match(/\.html?$/i)) {
-                                            try {
-                                                const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/products/proxy-image?url=${encodeURIComponent(url)}`)
-                                                if (res.ok) {
-                                                    const html = await res.text()
-                                                    const match = html.match(/<img[^>]+src=['"]([^'"]+)['"]/)
-                                                    if (match && match[1]) {
-                                                        let imgUrl = match[1]
-                                                        if (!imgUrl.startsWith('http')) {
-                                                            // Resolve relative URL
-                                                            const baseUrl = url.substring(0, url.lastIndexOf('/') + 1)
-                                                            imgUrl = new URL(imgUrl, baseUrl).href
-                                                        }
-                                                        setFormData(prev => ({ ...prev, imageUrl: imgUrl }))
-                                                        alert('HTML에서 이미지 URL을 추출했습니다.')
-                                                    }
-                                                }
-                                            } catch (error) {
-                                                console.error('Failed to extract image from HTML:', error)
-                                            }
+                                        const extractedUrl = await extractImageFromHtml(url)
+                                        if (extractedUrl) {
+                                            setFormData(prev => ({ ...prev, imageUrl: extractedUrl }))
+                                            alert('HTML에서 이미지 URL을 추출했습니다.')
                                         }
                                     }}
                                 />
