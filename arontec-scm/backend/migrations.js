@@ -90,6 +90,13 @@ export const runMigrations = async () => {
                 END $$;
             `)
 
+            // Sanitize existing descriptions (remove double quotes)
+            await client.query(`
+                UPDATE products 
+                SET description = REPLACE(description, '"', '') 
+                WHERE description LIKE '%"%';
+            `)
+
             await client.query('COMMIT')
             console.log('✅ Database migrations completed successfully')
         } catch (error) {
