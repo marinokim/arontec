@@ -156,7 +156,9 @@ function AdminProducts() {
                 manufacturer: formData.manufacturer,
                 origin: formData.origin,
                 isTaxFree: formData.isTaxFree,
-                remarks: formData.remarks
+                remarks: formData.remarks,
+                // Remove double quotes from description as requested
+                description: formData.description ? formData.description.replace(/"/g, '') : ''
             }
 
             const res = await fetch(url, {
