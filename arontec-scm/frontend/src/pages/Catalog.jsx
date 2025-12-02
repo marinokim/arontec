@@ -510,29 +510,29 @@ function ProductCard({ product, onAddToCart, onAddToProposal, navigate, user, pr
                         {options.length > 0 ? (
                             <div className="option-list" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
                                 {options.map((opt, idx) => (
-                                    <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8rem', color: 'white' }}>
+                                    <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.9rem', color: '#333' }}>
                                         <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginRight: '5px' }}>{opt}</span>
-                                        <div className="quantity-control" style={{ background: 'rgba(255,255,255,0.2)', borderRadius: '4px', padding: '2px' }}>
-                                            <button onClick={() => handleQuantityChange(opt, -1)} style={{ color: 'white' }}>-</button>
-                                            <span style={{ minWidth: '20px', textAlign: 'center', display: 'inline-block' }}>{quantities[opt] || 0}</span>
-                                            <button onClick={() => handleQuantityChange(opt, 1)} style={{ color: 'white' }}>+</button>
+                                        <div className="quantity-control" style={{ background: '#f1f3f5', borderRadius: '4px', padding: '2px' }}>
+                                            <button onClick={() => handleQuantityChange(opt, -1)} style={{ color: '#333', border: 'none', background: 'transparent' }}>-</button>
+                                            <span style={{ minWidth: '20px', textAlign: 'center', display: 'inline-block', fontWeight: 'bold' }}>{quantities[opt] || 0}</span>
+                                            <button onClick={() => handleQuantityChange(opt, 1)} style={{ color: '#333', border: 'none', background: 'transparent' }}>+</button>
                                         </div>
                                     </div>
                                 ))}
                             </div>
                         ) : (
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'white' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#333' }}>
                                 <span>기본 옵션</span>
-                                <div className="quantity-control">
-                                    <button onClick={() => setDefaultQuantity(Math.max(1, defaultQuantity - 1))}>-</button>
-                                    <span>{defaultQuantity}</span>
-                                    <button onClick={() => setDefaultQuantity(defaultQuantity + 1)}>+</button>
+                                <div className="quantity-control" style={{ background: '#f1f3f5', borderRadius: '4px', padding: '2px' }}>
+                                    <button onClick={() => setDefaultQuantity(Math.max(1, defaultQuantity - 1))} style={{ color: '#333', border: 'none', background: 'transparent' }}>-</button>
+                                    <span style={{ minWidth: '20px', textAlign: 'center', display: 'inline-block', fontWeight: 'bold' }}>{defaultQuantity}</span>
+                                    <button onClick={() => setDefaultQuantity(defaultQuantity + 1)} style={{ color: '#333', border: 'none', background: 'transparent' }}>+</button>
                                 </div>
                             </div>
                         )}
                     </div>
                     <button
-                        className="btn-cart-hover"
+                        className="btn-add-cart-hover"
                         onClick={handleAddToCart}
                         style={{ width: '100%', marginTop: '5px' }}
                     >
