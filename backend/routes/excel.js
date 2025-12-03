@@ -62,23 +62,23 @@ router.post('/upload', upload.single('file'), async (req, res) => {
                 if (supplyPrice === 0 && b2bPrice > 0) {
                     supplyPrice = b2bPrice
                 }
-                const stockQuantity = parseInt(row['Stock'] || row['재고']) || 0
+                const stockQuantity = parsePrice(row['Stock'] || row['재고'])
                 const imageUrl = sanitize(row['ImageURL'] || row['이미지URL'])
                 const detailUrl = sanitize(row['DetailURL'] || row['상세페이지URL'])
                 const manufacturer = sanitize(row['Manufacturer'] || row['제조사'])
                 const origin = sanitize(row['Origin'] || row['원산지'])
                 const productSpec = sanitize(row['ProductSpec'] || row['제품규격'])
                 const productOptions = sanitize(row['ProductOptions'] || row['옵션'])
-                const quantityPerCarton = parseInt(row['QuantityPerCarton'] || row['카톤수량']) || 1
-                const shippingFee = parseInt(row['ShippingFee'] || row['배송비']) || 0
-                let shippingFeeIndividual = parseInt(row['ShippingFeeIndividual'] || row['개별배송비']) || 0
+                const quantityPerCarton = parsePrice(row['QuantityPerCarton'] || row['카톤수량']) || 1
+                const shippingFee = parsePrice(row['ShippingFee'] || row['배송비'])
+                let shippingFeeIndividual = parsePrice(row['ShippingFeeIndividual'] || row['개별배송비'])
 
                 // If individual shipping fee is missing, use general shipping fee
                 if (shippingFeeIndividual === 0 && shippingFee > 0) {
                     shippingFeeIndividual = shippingFee
                 }
 
-                const shippingFeeCarton = parseInt(row['ShippingFeeCarton'] || row['카톤배송비']) || 0
+                const shippingFeeCarton = parsePrice(row['ShippingFeeCarton'] || row['카톤배송비'])
                 const isTaxFree = (row['IsTaxFree'] || row['면세여부']) === 'TRUE' || (row['IsTaxFree'] || row['면세여부']) === '면세'
                 const remarks = sanitize(row['Remark'] || row['remark'] || row['비고'])
 
@@ -255,6 +255,60 @@ router.post('/swap-prices', async (req, res) => {
         await client.query('ROLLBACK')
         console.error('Swap prices error:', error)
         res.status(500).json({ error: 'Failed to swap prices' })
+    } finally {
+        client.release()
+    }
+})
+
+// Comprehensive data fix
+router.post('/fix-data', async (req, res) => {
+    const client = await pool.connect()
+    try {
+        await client.query('BEGIN')
+
+        // 1. Swap b2b_price and consumer_price where b2b_price > consumer_price
+        const swapResult = await client.query(`
+            UPDATE products 
+            SET b2b_price = consumer_price, consumer_price = b2b_price 
+            WHERE b2b_price > consumer_price AND consumer_price > 0
+        `)
+
+        // 2. Sync supply_price with b2b_price (Actual Sales Price)
+        const supplyResult = await client.query(`
+            UPDATE products 
+            SET supply_price = b2b_price 
+            WHERE (supply_price = 0 OR supply_price IS NULL) 
+            AND b2b_price > 0
+        `)
+
+        // 3. Fix shipping_fee_individual (assuming < 100 is a parsing error like 3 -> 3000)
+        const shippingResult = await client.query(`
+            UPDATE products 
+            SET shipping_fee_individual = shipping_fee_individual * 1000 
+            WHERE shipping_fee_individual > 0 AND shipping_fee_individual < 100
+        `)
+
+        // 4. Also ensure shipping_fee_individual is set from shipping_fee if 0
+        const shippingSyncResult = await client.query(`
+            UPDATE products 
+            SET shipping_fee_individual = shipping_fee 
+            WHERE (shipping_fee_individual = 0 OR shipping_fee_individual IS NULL) 
+            AND shipping_fee > 0
+        `)
+
+        await client.query('COMMIT')
+
+        res.json({
+            message: 'Data fix completed',
+            swapped: swapResult.rowCount,
+            syncedSupply: supplyResult.rowCount,
+            fixedShipping: shippingResult.rowCount,
+            syncedShipping: shippingSyncResult.rowCount
+        })
+    } catch (error) {
+        await client.query('ROLLBACK')
+        console.error('Data fix error:', error)
+        res.status(500).json({ error: 'Failed to fix data' })
     } finally {
         client.release()
     }
