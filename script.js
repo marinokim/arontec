@@ -14,6 +14,15 @@ document.addEventListener('DOMContentLoaded', () => {
         ? 'http://localhost:5000'
         : 'https://arontec-backend.onrender.com';
 
+    // Helper to get full image URL
+    function getImageUrl(url) {
+        if (!url) return '';
+        const cleanUrl = url.trim();
+        if (cleanUrl.startsWith('http') || cleanUrl.startsWith('data:')) return cleanUrl;
+        if (cleanUrl.startsWith('/')) return `${API_BASE_URL}${cleanUrl}`;
+        return cleanUrl;
+    }
+
     // Render Notices
     const noticeList = document.getElementById('notice-list');
     if (noticeList) {
@@ -70,11 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 newProductList.innerHTML = products.map(product => {
                     // Normalize image URL
-                    let imageUrl = product.image_url;
-                    if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
-                        // If it's just a filename, assume it's in uploads or assets
-                        // For now, let's assume it's a full URL or relative path from API
-                    }
+                    const imageUrl = getImageUrl(product.image_url);
 
                     // Check if image is an emoji (legacy support)
                     const isEmoji = !imageUrl.includes('/') && !imageUrl.includes('.');
@@ -260,12 +265,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         productGrid.innerHTML = filteredProducts.map(product => {
+            // Normalize image URL
+            const imageUrl = getImageUrl(product.image);
+
             // Check if image is an emoji or a URL
-            const isEmoji = !product.image.includes('/') && !product.image.includes('.');
+            const isEmoji = !imageUrl.includes('/') && !imageUrl.includes('.');
             const imageHtml = isEmoji
-                ? `<div class="product-icon" style="font-size: 3rem; padding: 2rem; background: #fff; display: flex; align-items: center; justify-content: center; height: 200px;">${product.image}</div>`
+                ? `<div class="product-icon" style="font-size: 3rem; padding: 2rem; background: #fff; display: flex; align-items: center; justify-content: center; height: 200px;">${imageUrl}</div>`
                 : `<div class="product-image-container" style="height: 200px; overflow: hidden; background: #fff; display: flex; align-items: center; justify-content: center; padding: 10px;">
-                     <img src="${product.image}" alt="${product.model}" class="product-thumb" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                     <img src="${imageUrl}" alt="${product.model}" class="product-thumb" style="max-width: 100%; max-height: 100%; object-fit: contain;">
                    </div>`;
 
             return `
@@ -344,7 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderProductDetail(product) {
         // Normalize properties (API returns snake_case, static data returns camelCase)
-        const imageUrl = product.image_url || product.image;
+        const imageUrl = getImageUrl(product.image_url || product.image);
         const detailUrl = product.detail_url || product.detailUrl;
         const modelName = product.model_name || product.model;
 
