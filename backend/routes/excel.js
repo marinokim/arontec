@@ -68,6 +68,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
                 const shippingFeeIndividual = parseInt(row['ShippingFeeIndividual'] || row['개별배송비']) || 0
                 const shippingFeeCarton = parseInt(row['ShippingFeeCarton'] || row['카톤배송비']) || 0
                 const isTaxFree = (row['IsTaxFree'] || row['면세여부']) === 'TRUE' || (row['IsTaxFree'] || row['면세여부']) === '면세'
+                const remarks = sanitize(row['Remark'] || row['remark'] || row['비고'])
 
                 if (!modelName) {
                     throw new Error('Model Name is required')
@@ -126,13 +127,14 @@ router.post('/upload', upload.single('file'), async (req, res) => {
                             product_options = $17,
                             model_no = $18,
                             product_spec = $19,
+                            remarks = $20,
                             updated_at = CURRENT_TIMESTAMP
-                        WHERE id = $20`,
+                        WHERE id = $21`,
                         [
                             categoryId, brand, description, imageUrl, b2bPrice, stockQuantity, detailUrl,
                             consumerPrice, supplyPrice, quantityPerCarton, shippingFee, manufacturer, origin,
                             isTaxFree, shippingFeeIndividual, shippingFeeCarton, productOptions, modelNo, productSpec,
-                            existingProduct.id
+                            remarks, existingProduct.id
                         ]
                     )
                 } else {
@@ -142,13 +144,13 @@ router.post('/upload', upload.single('file'), async (req, res) => {
                             category_id, brand, model_name, description, image_url, b2b_price, stock_quantity,
                             detail_url, consumer_price, supply_price, quantity_per_carton, shipping_fee,
                             manufacturer, origin, is_tax_free, shipping_fee_individual, shipping_fee_carton,
-                            product_options, model_no, product_spec, is_available
-                        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, true)`,
+                            product_options, model_no, product_spec, remarks, is_available
+                        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, true)`,
                         [
                             categoryId, brand, modelName, description, imageUrl, b2bPrice, stockQuantity,
                             detailUrl, consumerPrice, supplyPrice, quantityPerCarton, shippingFee,
                             manufacturer, origin, isTaxFree, shippingFeeIndividual, shippingFeeCarton,
-                            productOptions, modelNo, productSpec
+                            productOptions, modelNo, productSpec, remarks
                         ]
                     )
                 }
