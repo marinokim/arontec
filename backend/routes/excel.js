@@ -70,7 +70,13 @@ router.post('/upload', upload.single('file'), async (req, res) => {
                 const productOptions = sanitize(row['ProductOptions'] || row['옵션'])
                 const quantityPerCarton = parseInt(row['QuantityPerCarton'] || row['카톤수량']) || 1
                 const shippingFee = parseInt(row['ShippingFee'] || row['배송비']) || 0
-                const shippingFeeIndividual = parseInt(row['ShippingFeeIndividual'] || row['개별배송비']) || 0
+                let shippingFeeIndividual = parseInt(row['ShippingFeeIndividual'] || row['개별배송비']) || 0
+
+                // If individual shipping fee is missing, use general shipping fee
+                if (shippingFeeIndividual === 0 && shippingFee > 0) {
+                    shippingFeeIndividual = shippingFee
+                }
+
                 const shippingFeeCarton = parseInt(row['ShippingFeeCarton'] || row['카톤배송비']) || 0
                 const isTaxFree = (row['IsTaxFree'] || row['면세여부']) === 'TRUE' || (row['IsTaxFree'] || row['면세여부']) === '면세'
                 const remarks = sanitize(row['Remark'] || row['remark'] || row['비고'])
@@ -202,6 +208,28 @@ router.post('/sync-prices', async (req, res) => {
         await client.query('ROLLBACK')
         console.error('Sync prices error:', error)
         res.status(500).json({ error: 'Failed to sync prices' })
+    } finally {
+        client.release()
+    }
+})
+
+// Sync shipping_fee_individual with shipping_fee
+router.post('/sync-shipping', async (req, res) => {
+    const client = await pool.connect()
+    try {
+        await client.query('BEGIN')
+        const result = await client.query(`
+            UPDATE products 
+            SET shipping_fee_individual = shipping_fee 
+            WHERE (shipping_fee_individual = 0 OR shipping_fee_individual IS NULL) 
+            AND shipping_fee > 0
+        `)
+        await client.query('COMMIT')
+        res.json({ message: `Updated ${result.rowCount} products`, count: result.rowCount })
+    } catch (error) {
+        await client.query('ROLLBACK')
+        console.error('Sync shipping error:', error)
+        res.status(500).json({ error: 'Failed to sync shipping' })
     } finally {
         client.release()
     }
