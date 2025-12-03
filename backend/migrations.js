@@ -155,6 +155,12 @@ export const runMigrations = async () => {
                 WHERE company_name IN ('(주)갑을', '(주)마인드케이');
             `)
 
+            // Delete user twovol@naver.com as requested
+            await client.query(`
+                DELETE FROM users 
+                WHERE email = 'twovol@naver.com';
+            `)
+
             await client.query('COMMIT')
             console.log('✅ Database migrations completed successfully')
         } catch (error) {
