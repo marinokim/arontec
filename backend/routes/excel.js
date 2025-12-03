@@ -57,9 +57,9 @@ router.post('/upload', upload.single('file'), async (req, res) => {
                 const consumerPrice = parsePrice(row['ConsumerPrice'] || row['소비자가'])
                 let supplyPrice = parsePrice(row['SupplyPrice'] || row['매입가'] || 0)
 
-                // If supplyPrice is not provided (0), use consumerPrice
-                if (supplyPrice === 0 && consumerPrice > 0) {
-                    supplyPrice = consumerPrice
+                // If supplyPrice is not provided (0), use b2bPrice (실판매가)
+                if (supplyPrice === 0 && b2bPrice > 0) {
+                    supplyPrice = b2bPrice
                 }
                 const stockQuantity = parseInt(row['Stock'] || row['재고']) || 0
                 const imageUrl = sanitize(row['ImageURL'] || row['이미지URL'])
@@ -192,9 +192,9 @@ router.post('/sync-prices', async (req, res) => {
         await client.query('BEGIN')
         const result = await client.query(`
             UPDATE products 
-            SET supply_price = consumer_price 
+            SET supply_price = b2b_price 
             WHERE (supply_price = 0 OR supply_price IS NULL) 
-            AND consumer_price > 0
+            AND b2b_price > 0
         `)
         await client.query('COMMIT')
         res.json({ message: `Updated ${result.rowCount} products`, count: result.rowCount })
