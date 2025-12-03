@@ -77,5 +77,6 @@ import { runMigrations } from './migrations.js'
 runMigrations().then(() => {
     app.listen(PORT, () => {
         console.log(`🚀 Server running on http://localhost:${PORT}`)
+        console.log(`📅 Server started at ${new Date().toISOString()}`)
     })
 })
