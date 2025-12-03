@@ -15,6 +15,7 @@ function AdminProducts({ user }) {
     const [showCategoryModal, setShowCategoryModal] = useState(false)
     const [newCategoryName, setNewCategoryName] = useState('')
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [isUploading, setIsUploading] = useState(false)
     const scrollPosition = useRef(0)
 
     const categoryColors = {
@@ -330,6 +331,9 @@ function AdminProducts({ user }) {
         const file = e.target.files[0]
         if (!file) return
 
+        if (isUploading) return
+        setIsUploading(true)
+
         const formData = new FormData()
         formData.append('image', file)
 
@@ -361,6 +365,10 @@ function AdminProducts({ user }) {
         } catch (error) {
             console.error('Error uploading image:', error)
             alert('이미지 업로드 중 오류 발생')
+        } finally {
+            setIsUploading(false)
+            // Reset file input
+            e.target.value = ''
         }
     }
 
@@ -966,13 +974,14 @@ function AdminProducts({ user }) {
                                             }
                                         }}
                                     />
-                                    <label className="btn btn-secondary" style={{ cursor: 'pointer', margin: 0, display: 'flex', alignItems: 'center' }}>
-                                        파일 선택
+                                    <label className={`btn btn-secondary ${isUploading ? 'disabled' : ''}`} style={{ cursor: isUploading ? 'not-allowed' : 'pointer', margin: 0, display: 'flex', alignItems: 'center', opacity: isUploading ? 0.6 : 1 }}>
+                                        {isUploading ? '업로드 중...' : '파일 선택'}
                                         <input
                                             type="file"
                                             accept="image/*"
                                             onChange={(e) => handleImageUpload(e, 'imageUrl')}
                                             style={{ display: 'none' }}
+                                            disabled={isUploading}
                                         />
                                     </label>
                                 </div>
@@ -997,13 +1006,14 @@ function AdminProducts({ user }) {
                                             }
                                         }}
                                     />
-                                    <label className="btn btn-secondary" style={{ cursor: 'pointer', margin: 0, display: 'flex', alignItems: 'center' }}>
-                                        파일 선택
+                                    <label className={`btn btn-secondary ${isUploading ? 'disabled' : ''}`} style={{ cursor: isUploading ? 'not-allowed' : 'pointer', margin: 0, display: 'flex', alignItems: 'center', opacity: isUploading ? 0.6 : 1 }}>
+                                        {isUploading ? '업로드 중...' : '파일 선택'}
                                         <input
                                             type="file"
                                             accept="image/*"
                                             onChange={(e) => handleImageUpload(e, 'detailUrl')}
                                             style={{ display: 'none' }}
+                                            disabled={isUploading}
                                         />
                                     </label>
                                 </div>
