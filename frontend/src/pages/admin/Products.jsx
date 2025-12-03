@@ -343,8 +343,14 @@ function AdminProducts({ user }) {
             if (res.ok) {
                 const data = await res.json()
                 // Prepend API URL if needed, or just use the relative path if serving from same domain
-                // For now, let's assume we store the full URL or relative path that works with <img> src
-                const fullUrl = (import.meta.env.VITE_API_URL || '') + data.url
+                let apiUrl = import.meta.env.VITE_API_URL || ''
+
+                // Ensure API URL has protocol if it's not empty and not just a path
+                if (apiUrl && !apiUrl.startsWith('http') && !apiUrl.startsWith('/')) {
+                    apiUrl = 'https://' + apiUrl
+                }
+
+                const fullUrl = apiUrl + data.url
                 setFormData(prev => ({ ...prev, [field]: fullUrl }))
                 alert('이미지 업로드 성공')
             } else {
