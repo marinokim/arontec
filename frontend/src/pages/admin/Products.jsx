@@ -574,8 +574,8 @@ function AdminProducts({ user }) {
 
     const downloadTemplate = () => {
         // Create a CSV template
-        const headers = ['Brand', 'ModelName', 'ModelNo', 'Category', 'Description', 'B2BPrice', 'ConsumerPrice', 'Stock', 'ImageURL', 'DetailURL', 'Manufacturer', 'Origin', 'ProductSpec', 'ProductOptions', 'IsTaxFree', 'QuantityPerCarton', 'ShippingFeeIndividual', 'ShippingFeeCarton']
-        const example = ['Samsung', 'Galaxy S24', 'SM-S921', 'Mobile', 'Latest smartphone', '1000000', '1200000', '100', 'https://example.com/image.jpg', 'https://example.com/detail.jpg', 'Samsung Electronics', 'Vietnam', '256GB, 8GB RAM', 'Phantom Black, Cream', 'FALSE', '20', '3000', '0']
+        const headers = ['Brand', 'ModelName', 'ModelNo', 'Category', 'Description', 'B2BPrice', 'ConsumerPrice', 'Stock', 'ImageURL', 'DetailURL', 'Manufacturer', 'Origin', 'ProductSpec', 'ProductOptions', 'IsTaxFree', 'QuantityPerCarton', 'ShippingFeeIndividual', 'ShippingFeeCarton', 'Remark']
+        const example = ['Samsung', 'Galaxy S24', 'SM-S921', 'Mobile', 'Latest smartphone', '1000000', '1200000', '100', 'https://example.com/image.jpg', 'https://example.com/detail.jpg', 'Samsung Electronics', 'Vietnam', '256GB, 8GB RAM', 'Phantom Black, Cream', 'FALSE', '20', '3000', '0', 'Special Offer']
 
         const csvContent = [
             headers.join(','),
