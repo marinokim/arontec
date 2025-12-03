@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchNewProducts() {
         try {
-            const res = await fetch(`${API_BASE_URL}/api/products?isNew=true&limit=4`);
+            const res = await fetch(`${API_BASE_URL}/api/products?isNew=true&limit=30`);
             if (res.ok) {
                 const data = await res.json();
                 const products = data.products;
