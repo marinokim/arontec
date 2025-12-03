@@ -143,7 +143,12 @@ router.get('/', async (req, res) => {
             query += ` AND (p.brand ILIKE $${params.length} OR p.model_name ILIKE $${params.length})`
         }
 
-        query += ' ORDER BY p.display_order DESC, p.created_at DESC'
+        const { sort } = req.query
+        if (sort === 'display_order') {
+            query += ' ORDER BY p.display_order DESC, p.created_at DESC'
+        } else {
+            query += ' ORDER BY p.created_at DESC'
+        }
 
         const result = await pool.query(query, params)
         res.json({ products: result.rows })
