@@ -491,9 +491,8 @@ function AdminProducts() {
                         <table className="table" style={{ fontSize: '0.85rem', width: '100%' }}>
                             <thead>
                                 <tr>
-                                    <th style={{ textAlign: 'center', width: '60px' }}>No.</th>
+                                    <th style={{ textAlign: 'center', width: '80px' }}>No.</th>
                                     <th style={{ width: '100px', textAlign: 'center' }}>IMG</th>
-                                    <th style={{ width: '100px', textAlign: 'center' }}>노출순위</th>
                                     <th style={{ minWidth: '100px' }}>브랜드</th>
                                     <th style={{ minWidth: '250px' }}>상품명/모델명/옵션</th>
                                     <th style={{ textAlign: 'right' }}>실판매가</th>
@@ -509,19 +508,18 @@ function AdminProducts() {
                                     .filter(p => selectedCategory === 'All' || p.category_id === parseInt(selectedCategory))
                                     .map(product => (
                                         <tr key={product.id}>
-                                            <td style={{ textAlign: 'center' }}>{product.id}</td>
-                                            <td style={{ padding: 0, width: '100px' }}>
-                                                {product.image_url ? (
-                                                    <img src={product.image_url} alt={product.model_name} style={{ width: '100%', height: '100px', objectFit: 'cover', display: 'block' }} />
-                                                ) : (
-                                                    <div style={{ width: '100%', height: '100px', background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem' }}>No Img</div>
-                                                )}
-                                            </td>
                                             <td style={{ textAlign: 'center' }}>
+                                                <div style={{ marginBottom: '4px' }}>{product.id}</div>
                                                 <select
                                                     value={product.display_order || 0}
                                                     onChange={(e) => handleDisplayOrderChange(product.id, e.target.value)}
-                                                    style={{ padding: '0.25rem', fontSize: '0.8rem', borderRadius: '4px', border: '1px solid #ddd' }}
+                                                    style={{
+                                                        padding: '0.1rem',
+                                                        fontSize: '0.7rem',
+                                                        borderRadius: '4px',
+                                                        border: '1px solid #ddd',
+                                                        width: '100%'
+                                                    }}
                                                 >
                                                     {rankingOptions.map(option => (
                                                         <option key={option.value} value={option.value}>
@@ -531,10 +529,17 @@ function AdminProducts() {
                                                     {/* If current value is not in options, show it as custom */}
                                                     {!rankingOptions.some(o => o.value === (product.display_order || 0)) && (
                                                         <option value={product.display_order || 0}>
-                                                            직접입력 ({product.display_order || 0})
+                                                            {product.display_order || 0}
                                                         </option>
                                                     )}
                                                 </select>
+                                            </td>
+                                            <td style={{ padding: 0, width: '100px' }}>
+                                                {product.image_url ? (
+                                                    <img src={product.image_url} alt={product.model_name} style={{ width: '100%', height: '100px', objectFit: 'cover', display: 'block' }} />
+                                                ) : (
+                                                    <div style={{ width: '100%', height: '100px', background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem' }}>No Img</div>
+                                                )}
                                             </td>
                                             <td>
                                                 <div style={{
