@@ -527,7 +527,7 @@ function AdminProducts({ user }) {
 
     return (
         <div className="dashboard">
-            <Navbar user={user} />
+            <Navbar user={user} isAdminMode={true} />
 
             <div className="dashboard-content container" style={{ maxWidth: '100%' }}>
                 <div className="dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

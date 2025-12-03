@@ -77,7 +77,7 @@ function AdminQuotes({ user }) {
 
     return (
         <div className="dashboard">
-            <Navbar user={user} />
+            <Navbar user={user} isAdminMode={true} />
 
             <div className="dashboard-content container">
                 <h1>견적 관리</h1>

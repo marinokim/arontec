@@ -54,7 +54,7 @@ function Members({ user }) {
 
     return (
         <div className="dashboard">
-            <Navbar user={user} />
+            <Navbar user={user} isAdminMode={true} />
 
             <div className="dashboard-content container">
                 <h1>회원 관리</h1>

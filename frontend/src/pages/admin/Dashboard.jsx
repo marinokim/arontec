@@ -34,7 +34,7 @@ function AdminDashboard({ user }) {
 
     return (
         <div className="dashboard">
-            <Navbar user={user} />
+            <Navbar user={user} isAdminMode={true} />
 
             <div className="dashboard-content container">
                 <div className="dashboard-header">
