@@ -8,8 +8,20 @@ function Login({ setUser }) {
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
 
+    const formatBusinessNumber = (value) => {
+        const numbers = value.replace(/[^0-9]/g, '')
+        if (numbers.length <= 3) return numbers
+        if (numbers.length <= 5) return `${numbers.slice(0, 3)}-${numbers.slice(3)}`
+        return `${numbers.slice(0, 3)}-${numbers.slice(3, 5)}-${numbers.slice(5, 10)}`
+    }
+
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value })
+        const { name, value } = e.target
+        if (name === 'businessNumber') {
+            setFormData({ ...formData, [name]: formatBusinessNumber(value) })
+        } else {
+            setFormData({ ...formData, [name]: value })
+        }
     }
 
     const handleSubmit = async (e) => {
@@ -22,7 +34,10 @@ function Login({ setUser }) {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
-                body: JSON.stringify(formData)
+                body: JSON.stringify({
+                    ...formData,
+                    businessNumber: formData.businessNumber.replace(/-/g, '')
+                })
             })
 
             const data = await res.json()
@@ -144,7 +159,8 @@ function Login({ setUser }) {
                             value={formData.businessNumber}
                             onChange={handleChange}
                             required
-                            placeholder="사업자번호를 입력하세요"
+                            placeholder="000-00-00000"
+                            maxLength="12"
                         />
                     </div>
 

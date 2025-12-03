@@ -7,7 +7,8 @@ const router = express.Router()
 // Register
 router.post('/register', async (req, res) => {
     try {
-        const { email, password, companyName, contactPerson, phone, businessNumber } = req.body
+        const { email, password, companyName, contactPerson, phone, businessNumber: rawBusinessNumber } = req.body
+        const businessNumber = rawBusinessNumber.replace(/-/g, '')
 
         // Check if user exists (by business number)
         const userCheck = await pool.query('SELECT * FROM users WHERE business_number = $1', [businessNumber])
@@ -38,7 +39,8 @@ router.post('/register', async (req, res) => {
 // Login
 router.post('/login', async (req, res) => {
     try {
-        const { businessNumber, password } = req.body
+        const { businessNumber: rawBusinessNumber, password } = req.body
+        const businessNumber = rawBusinessNumber.replace(/-/g, '')
 
         // Get user
         let result = await pool.query('SELECT * FROM users WHERE business_number = $1', [businessNumber])
