@@ -349,4 +349,29 @@ router.delete('/range', async (req, res) => {
     }
 })
 
+// Reset product ID sequence
+router.post('/reset-sequence', async (req, res) => {
+    const client = await pool.connect()
+    try {
+        await client.query('BEGIN')
+
+        // Get max ID
+        const maxIdRes = await client.query('SELECT MAX(id) as max_id FROM products')
+        const maxId = maxIdRes.rows[0].max_id || 0
+
+        // Reset sequence
+        // setval sets the current value, nextval will be maxId + 1
+        await client.query("SELECT setval('products_id_seq', $1)", [maxId])
+
+        await client.query('COMMIT')
+        res.json({ message: `Sequence reset to ${maxId}. Next ID will be ${maxId + 1}.` })
+    } catch (error) {
+        await client.query('ROLLBACK')
+        console.error('Reset sequence error:', error)
+        res.status(500).json({ error: 'Failed to reset sequence' })
+    } finally {
+        client.release()
+    }
+})
+
 export default router
