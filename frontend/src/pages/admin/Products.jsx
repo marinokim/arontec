@@ -564,6 +564,22 @@ function AdminProducts() {
                                         <tr key={product.id}>
                                             <td style={{ textAlign: 'center' }}>
                                                 <div style={{ marginBottom: '4px' }}>{product.id}</div>
+                                                <div
+                                                    onClick={() => handleToggleNew(product.id, product.is_new)}
+                                                    style={{
+                                                        marginBottom: '5px',
+                                                        cursor: 'pointer',
+                                                        fontSize: '0.7rem',
+                                                        padding: '2px 4px',
+                                                        borderRadius: '4px',
+                                                        backgroundColor: product.is_new ? '#ff4444' : '#e0e0e0',
+                                                        color: 'white',
+                                                        display: 'inline-block',
+                                                        fontWeight: 'bold'
+                                                    }}
+                                                >
+                                                    NEW
+                                                </div>
                                                 <select
                                                     value={product.display_order || 0}
                                                     onChange={(e) => handleDisplayOrderChange(product.id, e.target.value)}
