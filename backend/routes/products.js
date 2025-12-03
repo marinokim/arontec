@@ -176,7 +176,7 @@ router.get('/', async (req, res) => {
         if (sort === 'display_order') {
             query += ' ORDER BY p.display_order DESC, p.created_at DESC'
         } else {
-            query += ' ORDER BY p.created_at DESC'
+            query += ' ORDER BY p.id DESC'
         }
 
         const result = await pool.query(query, params)
