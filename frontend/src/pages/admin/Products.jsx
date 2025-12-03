@@ -491,7 +491,7 @@ function AdminProducts() {
                         <table className="table" style={{ fontSize: '0.85rem', width: '100%' }}>
                             <thead>
                                 <tr>
-                                    <th style={{ textAlign: 'center', width: '80px' }}>No.</th>
+                                    <th style={{ textAlign: 'center', width: '100px' }}>No.</th>
                                     <th style={{ width: '100px', textAlign: 'center' }}>IMG</th>
                                     <th style={{ minWidth: '100px' }}>브랜드</th>
                                     <th style={{ minWidth: '250px' }}>상품명/모델명/옵션</th>
