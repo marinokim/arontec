@@ -598,6 +598,32 @@ function AdminProducts({ user }) {
         document.body.removeChild(link)
     }
 
+    const handleDeleteRecent = async () => {
+        const hours = prompt('최근 몇 시간 내에 등록된 상품을 삭제하시겠습니까? (숫자만 입력)', '1')
+        if (!hours) return
+
+        if (!confirm(`정말 최근 ${hours}시간 내에 등록된 모든 상품을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.`)) return
+
+        try {
+            const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/products/recent?hours=${hours}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            })
+
+            const data = await res.json()
+
+            if (res.ok) {
+                alert(data.message)
+                fetchProducts()
+            } else {
+                alert('삭제 실패: ' + (data.error || '알 수 없는 오류'))
+            }
+        } catch (error) {
+            console.error('Delete recent error:', error)
+            alert('오류가 발생했습니다')
+        }
+    }
+
     return (
         <div className="dashboard">
             <Navbar user={user} isAdminMode={true} />
@@ -623,6 +649,9 @@ function AdminProducts({ user }) {
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <button onClick={downloadTemplate} className="btn btn-secondary" style={{ background: '#28a745', border: 'none' }}>
                             <i className="fas fa-download"></i> 양식 다운로드
+                        </button>
+                        <button onClick={handleDeleteRecent} className="btn btn-secondary" style={{ background: '#dc3545', border: 'none' }}>
+                            <i className="fas fa-trash"></i> 최근 업로드 삭제
                         </button>
                         <label className={`btn btn-secondary ${isExcelUploading ? 'disabled' : ''}`} style={{ background: isExcelUploading ? '#6c757d' : '#17a2b8', border: 'none', margin: 0, display: 'flex', alignItems: 'center', cursor: isExcelUploading ? 'not-allowed' : 'pointer' }}>
                             {isExcelUploading ? (
