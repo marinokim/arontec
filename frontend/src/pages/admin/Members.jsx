@@ -15,11 +15,11 @@ function Members() {
     }
 
     const toggleApproval = async (id, isApproved) => {
-        const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/admin/members/${id}/approval`, {
-            method: 'PUT',
+        const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/admin/members/${id}/approve`, {
+            method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
-            body: JSON.stringify({ approved: isApproved })
+            body: JSON.stringify({ isApproved })
         })
 
         if (res.ok) {
@@ -37,8 +37,8 @@ function Members() {
     const handleDelete = async (id) => {
         if (!window.confirm('정말로 이 회원을 삭제하시겠습니까? 연관된 모든 데이터(견적서 등)가 함께 삭제됩니다.')) return
 
-        const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/admin/members/${id}`, {
-            method: 'DELETE',
+        const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/admin/members/${id}/delete`, {
+            method: 'POST',
             credentials: 'include'
         })
 

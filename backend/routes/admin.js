@@ -40,7 +40,7 @@ router.get('/members', requireAdmin, async (req, res) => {
 })
 
 // Approve/reject member
-router.put('/members/:id/approval', requireAdmin, async (req, res) => {
+router.post('/members/:id/approve', requireAdmin, async (req, res) => {
     try {
         const { isApproved } = req.body
 
@@ -59,7 +59,7 @@ router.put('/members/:id/approval', requireAdmin, async (req, res) => {
 })
 
 // Delete member
-router.delete('/members/:id', requireAdmin, async (req, res) => {
+router.post('/members/:id/delete', requireAdmin, async (req, res) => {
     const client = await pool.connect()
     try {
         await client.query('BEGIN')
