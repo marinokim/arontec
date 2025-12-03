@@ -53,8 +53,9 @@ router.post('/upload', upload.single('file'), async (req, res) => {
                 const modelNo = sanitize(row['ModelNo'] || row['모델번호'])
                 const categoryName = sanitize(row['Category'] || row['카테고리'])
                 const description = sanitize(row['Description'] || row['상세설명'])
-                const b2bPrice = parsePrice(row['B2BPrice'] || row['공급가'] || row['B2B가'])
-                const consumerPrice = parsePrice(row['ConsumerPrice'] || row['소비자가'])
+                // Swapped mapping based on user feedback
+                const b2bPrice = parsePrice(row['B2BPrice'] || row['소비자가'] || row['B2B가'])
+                const consumerPrice = parsePrice(row['ConsumerPrice'] || row['공급가'])
                 let supplyPrice = parsePrice(row['SupplyPrice'] || row['매입가'] || 0)
 
                 // If supplyPrice is not provided (0), use b2bPrice (실판매가)
@@ -230,6 +231,33 @@ router.post('/sync-shipping', async (req, res) => {
         await client.query('ROLLBACK')
         console.error('Sync shipping error:', error)
         res.status(500).json({ error: 'Failed to sync shipping' })
+    } finally {
+        client.release()
+    }
+})
+
+    } finally {
+    client.release()
+}
+})
+
+// Swap b2b_price and consumer_price
+router.post('/swap-prices', async (req, res) => {
+    const client = await pool.connect()
+    try {
+        await client.query('BEGIN')
+        // Swap where b2b_price > consumer_price (assuming this indicates a swap error)
+        const result = await client.query(`
+            UPDATE products 
+            SET b2b_price = consumer_price, consumer_price = b2b_price 
+            WHERE b2b_price > consumer_price AND consumer_price > 0
+        `)
+        await client.query('COMMIT')
+        res.json({ message: `Swapped prices for ${result.rowCount} products`, count: result.rowCount })
+    } catch (error) {
+        await client.query('ROLLBACK')
+        console.error('Swap prices error:', error)
+        res.status(500).json({ error: 'Failed to swap prices' })
     } finally {
         client.release()
     }
