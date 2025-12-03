@@ -342,15 +342,17 @@ function AdminProducts({ user }) {
 
             if (res.ok) {
                 const data = await res.json()
-                // Prepend API URL if needed, or just use the relative path if serving from same domain
-                let apiUrl = import.meta.env.VITE_API_URL || ''
 
-                // Ensure API URL has protocol if it's not empty and not just a path
-                if (apiUrl && !apiUrl.startsWith('http') && !apiUrl.startsWith('/')) {
-                    apiUrl = 'https://' + apiUrl
+                let fullUrl = data.url
+                // Only prepend API URL if the returned URL is relative (starts with /)
+                if (fullUrl.startsWith('/')) {
+                    let apiUrl = import.meta.env.VITE_API_URL || ''
+                    if (apiUrl && !apiUrl.startsWith('http') && !apiUrl.startsWith('/')) {
+                        apiUrl = 'https://' + apiUrl
+                    }
+                    fullUrl = apiUrl + fullUrl
                 }
 
-                const fullUrl = apiUrl + data.url
                 setFormData(prev => ({ ...prev, [field]: fullUrl }))
                 alert('이미지 업로드 성공')
             } else {
