@@ -151,32 +151,53 @@ router.put('/profile', async (req, res) => {
     }
 
     try {
-        const { companyName, contactPerson, phone, password } = req.body
+        const { companyName, contactPerson, phone, password, email, businessNumber: rawBusinessNumber } = req.body
+        const businessNumber = rawBusinessNumber ? rawBusinessNumber.replace(/-/g, '') : null
 
         // Start transaction
         const client = await pool.connect()
         try {
             await client.query('BEGIN')
 
+            // Check for duplicates if email or businessNumber changed
+            // We need to check against other users, excluding the current user
+            if (email) {
+                const emailCheck = await client.query('SELECT id FROM users WHERE email = $1 AND id != $2', [email, req.session.userId])
+                if (emailCheck.rows.length > 0) {
+                    throw new Error('이미 사용 중인 이메일입니다')
+                }
+            }
+
+            if (businessNumber) {
+                const bnCheck = await client.query('SELECT id FROM users WHERE business_number = $1 AND id != $2', [businessNumber, req.session.userId])
+                if (bnCheck.rows.length > 0) {
+                    throw new Error('이미 사용 중인 사업자번호입니다')
+                }
+            }
+
             let query = `
                 UPDATE users 
-                SET company_name = $1, contact_person = $2, phone = $3, updated_at = NOW()
+                SET company_name = $1, contact_person = $2, phone = $3, email = $4, business_number = $5, updated_at = NOW()
             `
-            const params = [companyName, contactPerson, phone]
+            const params = [companyName, contactPerson, phone, email, businessNumber]
 
             if (password) {
                 const passwordHash = await bcrypt.hash(password, 10)
-                query += `, password_hash = $4`
+                query += `, password_hash = $6`
                 params.push(passwordHash)
             }
 
-            query += ` WHERE id = $${params.length + 1} RETURNING id, email, company_name, contact_person, is_admin`
+            query += ` WHERE id = $${params.length + 1} RETURNING id, email, company_name, contact_person, is_admin, business_number`
             params.push(req.session.userId)
 
             const result = await client.query(query, params)
             await client.query('COMMIT')
 
             const user = result.rows[0]
+
+            // Update session if email changed
+            req.session.email = user.email
+
             res.json({
                 message: '프로필이 수정되었습니다',
                 user: {
@@ -184,11 +205,15 @@ router.put('/profile', async (req, res) => {
                     email: user.email,
                     companyName: user.company_name,
                     contactPerson: user.contact_person,
-                    isAdmin: user.is_admin
+                    isAdmin: user.is_admin,
+                    businessNumber: user.business_number
                 }
             })
         } catch (error) {
             await client.query('ROLLBACK')
+            if (error.message === '이미 사용 중인 이메일입니다' || error.message === '이미 사용 중인 사업자번호입니다') {
+                return res.status(400).json({ error: error.message })
+            }
             throw error
         } finally {
             client.release()

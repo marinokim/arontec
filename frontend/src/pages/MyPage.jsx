@@ -58,6 +58,8 @@ function MyPage({ user }) {
         companyName: '',
         contactPerson: '',
         phone: '',
+        email: '',
+        businessNumber: '',
         password: '',
         confirmPassword: ''
     })
@@ -68,10 +70,19 @@ function MyPage({ user }) {
                 ...prev,
                 companyName: user.companyName || '',
                 contactPerson: user.contactPerson || '',
-                phone: user.phone || ''
+                phone: user.phone || '',
+                email: user.email || '',
+                businessNumber: user.businessNumber || ''
             }))
         }
     }, [user])
+
+    const formatBusinessNumber = (value) => {
+        const numbers = value.replace(/[^0-9]/g, '')
+        if (numbers.length <= 3) return numbers
+        if (numbers.length <= 5) return `${numbers.slice(0, 3)}-${numbers.slice(3)}`
+        return `${numbers.slice(0, 3)}-${numbers.slice(3, 5)}-${numbers.slice(5, 10)}`
+    }
 
     const handleEditSubmit = async (e) => {
         e.preventDefault()
@@ -89,6 +100,8 @@ function MyPage({ user }) {
                     companyName: editForm.companyName,
                     contactPerson: editForm.contactPerson,
                     phone: editForm.phone,
+                    email: editForm.email,
+                    businessNumber: editForm.businessNumber,
                     password: editForm.password || undefined
                 })
             })
@@ -218,6 +231,28 @@ function MyPage({ user }) {
                                     value={editForm.phone}
                                     onChange={e => setEditForm({ ...editForm, phone: e.target.value })}
                                     className="form-control"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>이메일</label>
+                                <input
+                                    type="email"
+                                    value={editForm.email}
+                                    onChange={e => setEditForm({ ...editForm, email: e.target.value })}
+                                    required
+                                    className="form-control"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>사업자번호</label>
+                                <input
+                                    type="text"
+                                    value={editForm.businessNumber}
+                                    onChange={e => setEditForm({ ...editForm, businessNumber: formatBusinessNumber(e.target.value) })}
+                                    required
+                                    className="form-control"
+                                    placeholder="000-00-00000"
+                                    maxLength="12"
                                 />
                             </div>
                             <div className="form-group" style={{ marginTop: '1.5rem', borderTop: '1px solid #eee', paddingTop: '1.5rem' }}>
