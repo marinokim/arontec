@@ -236,10 +236,7 @@ router.post('/sync-shipping', async (req, res) => {
     }
 })
 
-    } finally {
-    client.release()
-}
-})
+
 
 // Swap b2b_price and consumer_price
 router.post('/swap-prices', async (req, res) => {
