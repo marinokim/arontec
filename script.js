@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchAndRenderProducts() {
         try {
             // Try to fetch from SCM API
-            const res = await fetch(`${API_BASE_URL}/api/products`);
+            const res = await fetch(`${API_BASE_URL}/api/products?sort=display_order`);
             if (res.ok) {
                 const data = await res.json();
                 // Map SCM data to Homepage format
