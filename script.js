@@ -10,11 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // API Configuration
-    // const API_BASE_URL = 'http://localhost:5001'; // Localhost
-    // const API_BASE_URL = 'http://192.168.0.7:5001'; // Local Network
-    // const API_BASE_URL = 'http://localhost:5001'; // Localhost
-    // const API_BASE_URL = 'http://192.168.0.7:5001'; // Local Network
-    const API_BASE_URL = 'https://arontec-backend.onrender.com'; // Production
+    const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+        ? 'http://localhost:5000'
+        : 'https://arontec-backend.onrender.com';
 
     // Render Notices
     const noticeList = document.getElementById('notice-list');
@@ -49,6 +47,58 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error('Fetch notices error:', error);
             noticeList.innerHTML = '<p style="text-align: center; color: #666;">공지사항을 불러오는 중 오류가 발생했습니다.</p>';
+        }
+    }
+
+    // Render New Arrivals
+    const newProductList = document.getElementById('new-product-list');
+    if (newProductList) {
+        fetchNewProducts();
+    }
+
+    async function fetchNewProducts() {
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/products?isNew=true&limit=4`);
+            if (res.ok) {
+                const data = await res.json();
+                const products = data.products;
+
+                if (products.length === 0) {
+                    newProductList.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #666;">등록된 신상품이 없습니다.</p>';
+                    return;
+                }
+
+                newProductList.innerHTML = products.map(product => {
+                    // Normalize image URL
+                    let imageUrl = product.image_url;
+                    if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+                        // If it's just a filename, assume it's in uploads or assets
+                        // For now, let's assume it's a full URL or relative path from API
+                    }
+
+                    // Check if image is an emoji (legacy support)
+                    const isEmoji = !imageUrl.includes('/') && !imageUrl.includes('.');
+                    const imageHtml = isEmoji
+                        ? `<div class="product-icon" style="font-size: 3rem; padding: 2rem; background: #f8f9fa; display: flex; align-items: center; justify-content: center; height: 200px;">${imageUrl}</div>`
+                        : `<div class="product-image-container" style="height: 200px; overflow: hidden; background: #f8f9fa;">
+                             <img src="${imageUrl}" alt="${product.model_name}" style="width: 100%; height: 100%; objectFit: cover;">
+                           </div>`;
+
+                    return `
+                    <div class="card product-card" onclick="window.location.href='product_detail.html?id=${product.id}'" style="cursor: pointer; padding: 0; overflow: hidden;">
+                        ${imageHtml}
+                        <div style="padding: 1.5rem;">
+                            <h3 style="font-size: 1rem; color: #666; margin-bottom: 0.5rem;">${product.brand}</h3>
+                            <h4 style="font-size: 1.1rem; margin-bottom: 0.5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${product.model_name}</h4>
+                        </div>
+                    </div>
+                `}).join('');
+            } else {
+                newProductList.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #666;">신상품 목록을 불러올 수 없습니다.</p>';
+            }
+        } catch (error) {
+            console.error('Fetch new products error:', error);
+            newProductList.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #666;">신상품 목록을 불러오는 중 오류가 발생했습니다.</p>';
         }
     }
 
