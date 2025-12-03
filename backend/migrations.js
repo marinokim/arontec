@@ -175,26 +175,26 @@ export const runMigrations = async () => {
                 WHERE company_name IN ('(주)갑을', '(주)마인드케이');
             `)
 
-            // Force delete test accounts and related data
-            const targetEmails = ['twovol@naver.com', 'twovol@gmail.com']
+            // Force delete test accounts and related data - REMOVED
+            // const targetEmails = ['twovol@naver.com', 'twovol@gmail.com']
 
-            for (const email of targetEmails) {
-                // Get user ID
-                const userRes = await client.query("SELECT id FROM users WHERE LOWER(email) = LOWER($1)", [email])
-                if (userRes.rows.length > 0) {
-                    const userId = userRes.rows[0].id
+            // for (const email of targetEmails) {
+            //     // Get user ID
+            //     const userRes = await client.query("SELECT id FROM users WHERE LOWER(email) = LOWER($1)", [email])
+            //     if (userRes.rows.length > 0) {
+            //         const userId = userRes.rows[0].id
 
-                    // Delete related data
-                    await client.query("DELETE FROM quote_items WHERE quote_id IN (SELECT id FROM quotes WHERE user_id = $1)", [userId])
-                    await client.query("DELETE FROM quotes WHERE user_id = $1", [userId])
-                    await client.query("DELETE FROM carts WHERE user_id = $1", [userId])
-                    await client.query("DELETE FROM notifications WHERE user_id = $1", [userId])
+            //         // Delete related data
+            //         await client.query("DELETE FROM quote_items WHERE quote_id IN (SELECT id FROM quotes WHERE user_id = $1)", [userId])
+            //         await client.query("DELETE FROM quotes WHERE user_id = $1", [userId])
+            //         await client.query("DELETE FROM carts WHERE user_id = $1", [userId])
+            //         await client.query("DELETE FROM notifications WHERE user_id = $1", [userId])
 
-                    // Delete user
-                    await client.query("DELETE FROM users WHERE id = $1", [userId])
-                    console.log(`Deleted user ${email} and related data`)
-                }
-            }
+            //         // Delete user
+            //         await client.query("DELETE FROM users WHERE id = $1", [userId])
+            //         console.log(`Deleted user ${email} and related data`)
+            //     }
+            // }
 
             await client.query('COMMIT')
             console.log('✅ Database migrations completed successfully')
