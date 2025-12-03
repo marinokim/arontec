@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 
 function AdminProducts() {
@@ -13,6 +13,7 @@ function AdminProducts() {
     const [showCategoryModal, setShowCategoryModal] = useState(false)
     const [newCategoryName, setNewCategoryName] = useState('')
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const scrollPosition = useRef(0)
 
     const categoryColors = {
         'Audio': '#4e73df',   // Blue
@@ -43,7 +44,6 @@ function AdminProducts() {
         isAvailable: true,
         isTaxFree: false,
         detailUrl: '',
-        detailUrl: '',
         remarks: '',
         displayOrder: '0'
     }
@@ -57,6 +57,13 @@ function AdminProducts() {
         fetchManufacturers()
         fetchOrigins()
     }, [])
+
+    useEffect(() => {
+        if (scrollPosition.current > 0) {
+            window.scrollTo(0, scrollPosition.current)
+            scrollPosition.current = 0
+        }
+    }, [products])
 
     const fetchBrands = async () => {
         try {
@@ -257,6 +264,10 @@ function AdminProducts() {
 
             if (res.ok) {
                 alert(editingProduct ? '상품이 수정되었습니다' : '상품이 등록되었습니다')
+
+                // Save scroll position
+                scrollPosition.current = window.scrollY
+
                 setShowModal(false)
                 setEditingProduct(null)
                 setFormData(initialFormState)
