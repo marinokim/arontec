@@ -146,6 +146,43 @@ router.delete('/:id', requireAdmin, async (req, res) => {
     }
 })
 
+// Delete recent products (Admin only)
+router.delete('/recent', requireAdmin, async (req, res) => {
+    const client = await pool.connect()
+    try {
+        const { hours = 1 } = req.query
+
+        await client.query('BEGIN')
+
+        // Get IDs to delete first (for logging or related cleanup)
+        const productsToDelete = await client.query(
+            `SELECT id FROM products WHERE created_at > NOW() - INTERVAL '${hours} hours'`
+        )
+
+        if (productsToDelete.rows.length === 0) {
+            await client.query('ROLLBACK')
+            return res.json({ message: 'No recent products found to delete', count: 0 })
+        }
+
+        const ids = productsToDelete.rows.map(row => row.id)
+
+        // Delete related quote items
+        await client.query('DELETE FROM quote_items WHERE product_id = ANY($1)', [ids])
+
+        // Delete products
+        const result = await client.query('DELETE FROM products WHERE id = ANY($1)', [ids])
+
+        await client.query('COMMIT')
+        res.json({ message: `Deleted ${result.rowCount} products created in the last ${hours} hours`, count: result.rowCount })
+    } catch (error) {
+        await client.query('ROLLBACK')
+        console.error('Delete recent products error:', error)
+        res.status(500).json({ error: 'Failed to delete recent products' })
+    } finally {
+        client.release()
+    }
+})
+
 // Get all products with optional category filter (Public)
 router.get('/', async (req, res) => {
     try {
