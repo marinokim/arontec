@@ -285,7 +285,35 @@ function Catalog({ user }) {
         <div className="catalog-page">
             <Navbar user={user} />
             <div className="catalog-header">
-                <h1>상품 카탈로그</h1>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
+                    <h1>상품 카탈로그</h1>
+                    <label style={{
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        background: showNewOnly ? '#ff4444' : '#fff',
+                        padding: '8px 16px',
+                        borderRadius: '25px',
+                        border: '2px solid #ff4444',
+                        transition: 'all 0.2s ease',
+                        boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
+                    }}>
+                        <input
+                            type="checkbox"
+                            checked={showNewOnly}
+                            onChange={(e) => setShowNewOnly(e.target.checked)}
+                            style={{ display: 'none' }}
+                        />
+                        <span style={{
+                            fontWeight: 'bold',
+                            color: showNewOnly ? '#fff' : '#ff4444',
+                            fontSize: '1rem'
+                        }}>
+                            {showNewOnly ? '✓ NEW 신상품 모아보기' : 'NEW 신상품만 보기'}
+                        </span>
+                    </label>
+                </div>
                 <button onClick={() => navigate('/dashboard')} className="btn btn-secondary">← 대시보드</button>
             </div>
 
@@ -298,18 +326,6 @@ function Catalog({ user }) {
                             <option key={cat.id} value={cat.slug}>{cat.name}</option>
                         ))}
                     </select>
-                </div>
-
-                <div className="filter-group" style={{ display: 'flex', alignItems: 'center' }}>
-                    <label style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <input
-                            type="checkbox"
-                            checked={showNewOnly}
-                            onChange={(e) => setShowNewOnly(e.target.checked)}
-                            style={{ width: 'auto', margin: 0 }}
-                        />
-                        <span style={{ fontWeight: 'bold', color: '#ff4444' }}>NEW 신상품만 보기</span>
-                    </label>
                 </div>
 
                 <div className="filter-group">
