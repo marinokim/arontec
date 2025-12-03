@@ -100,6 +100,16 @@ export const runMigrations = async () => {
                 END $$;
             `)
 
+            // Add product_spec column
+            await client.query(`
+                DO $$ 
+                BEGIN 
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'products' AND column_name = 'product_spec') THEN 
+                        ALTER TABLE products ADD COLUMN product_spec TEXT; 
+                    END IF; 
+                END $$;
+            `)
+
             // Sanitize existing text fields (remove double quotes)
             await client.query(`
                 UPDATE products 

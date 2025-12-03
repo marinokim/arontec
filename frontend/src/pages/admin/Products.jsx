@@ -40,6 +40,7 @@ function AdminProducts() {
         modelName: '', // This is now "Product Name"
         modelNo: '',   // This is the new "Model Name"
         description: '',
+        productSpec: '', // New field
         imageUrl: '',
         consumerPrice: '',
         supplyPrice: '',
@@ -262,6 +263,7 @@ function AdminProducts() {
                 productOptions: formData.productOptions ? formData.productOptions.replace(/"/g, '') : '',
                 productOptions: formData.productOptions ? formData.productOptions.replace(/"/g, '') : '',
                 description: formData.description ? formData.description.replace(/"/g, '') : '',
+                productSpec: formData.productSpec ? formData.productSpec.replace(/"/g, '') : '',
                 displayOrder: formData.displayOrder ? parseInt(formData.displayOrder) : 0
             }
 
@@ -400,7 +402,9 @@ function AdminProducts() {
             isTaxFree: product.is_tax_free || false,
             detailUrl: product.detail_url || '',
             detailUrl: product.detail_url || '',
+            detailUrl: product.detail_url || '',
             remarks: product.remarks || '',
+            productSpec: product.product_spec || '',
             displayOrder: product.display_order || '0'
         })
         setShowModal(true)
@@ -720,21 +724,49 @@ function AdminProducts() {
                             </div>
 
                             <div className="form-group">
-                                <label>노출 순위 (높을수록 상단 노출)</label>
-                                <input
-                                    type="number"
-                                    value={formData.displayOrder}
-                                    onChange={e => setFormData({ ...formData, displayOrder: e.target.value })}
-                                    placeholder="0"
-                                />
-                            </div>
-
-                            <div className="form-group">
                                 <label>모델명</label>
                                 <input
                                     type="text"
                                     value={formData.modelNo}
                                     onChange={e => setFormData({ ...formData, modelNo: e.target.value })}
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>상세 설명</label>
+                                <textarea
+                                    value={formData.description}
+                                    onChange={e => setFormData({ ...formData, description: e.target.value })}
+                                    rows="3"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>제품규격</label>
+                                <textarea
+                                    value={formData.productSpec}
+                                    onChange={e => setFormData({ ...formData, productSpec: e.target.value })}
+                                    rows="3"
+                                    placeholder="제품 규격을 입력하세요"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>옵션 (선택사항)</label>
+                                <textarea
+                                    value={formData.productOptions}
+                                    onChange={e => setFormData({ ...formData, productOptions: e.target.value })}
+                                    rows="2"
+                                    placeholder="예: 블랙, 화이트, 레드 (쉼표로 구분)"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>카톤별 수량</label>
+                                <input
+                                    type="number"
+                                    value={formData.quantityPerCarton}
+                                    onChange={e => setFormData({ ...formData, quantityPerCarton: e.target.value })}
                                 />
                             </div>
 
@@ -809,15 +841,6 @@ function AdminProducts() {
                             </div>
 
                             <div className="form-group">
-                                <label>카톤별 수량</label>
-                                <input
-                                    type="number"
-                                    value={formData.quantityPerCarton}
-                                    onChange={e => setFormData({ ...formData, quantityPerCarton: e.target.value })}
-                                />
-                            </div>
-
-                            <div className="form-group">
                                 <label>배송비 (개별)</label>
                                 <input
                                     type="text"
@@ -834,16 +857,6 @@ function AdminProducts() {
                                     value={formData.shippingFeeCarton}
                                     onChange={e => handlePriceChange('shippingFeeCarton', e.target.value)}
                                     placeholder="카톤 배송비"
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label>옵션 (선택사항)</label>
-                                <textarea
-                                    value={formData.productOptions}
-                                    onChange={e => setFormData({ ...formData, productOptions: e.target.value })}
-                                    rows="2"
-                                    placeholder="예: 블랙, 화이트, 레드 (쉼표로 구분)"
                                 />
                             </div>
 
@@ -893,21 +906,22 @@ function AdminProducts() {
                             </div>
 
                             <div className="form-group">
-                                <label>상세 설명</label>
-                                <textarea
-                                    value={formData.description}
-                                    onChange={e => setFormData({ ...formData, description: e.target.value })}
-                                    rows="3"
-                                />
-                            </div>
-
-                            <div className="form-group">
                                 <label>비고</label>
                                 <textarea
                                     value={formData.remarks}
                                     onChange={e => setFormData({ ...formData, remarks: e.target.value })}
                                     rows="2"
                                     placeholder="비고 사항을 입력하세요"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>노출 순위 (높을수록 상단 노출)</label>
+                                <input
+                                    type="number"
+                                    value={formData.displayOrder}
+                                    onChange={e => setFormData({ ...formData, displayOrder: e.target.value })}
+                                    placeholder="0"
                                 />
                             </div>
 
