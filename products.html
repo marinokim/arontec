@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>제품 - Arontec Korea</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700&family=Open+Sans:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">ARONTEC KOREA</a>
+                <ul class="nav-links">
+                    <li><a href="index.html">홈</a></li>
+                    <li><a href="about.html">회사소개</a></li>
+                    <li><a href="products.html" class="active">제품</a></li>
+                    <li><a href="contact.html">문의하기</a></li>
+                    <li><a href="https://scm.arontec.co.kr" target="_blank" class="btn-nav"
+                            style="background-color: var(--secondary-color); padding: 5px 15px; border-radius: 20px; color: white;">SCM</a>
+                    </li>
+                </ul>
+                <div class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="section" style="background-color: var(--primary-color); color: white; padding: 120px 0 60px;">
+        <div class="container" style="text-align: center;">
+            <h1 style="font-size: 3rem; font-weight: 700;">제품 (Products)</h1>
+            <p>아론텍코리아가 공급하는 최고의 제품들을 만나보세요.</p>
+        </div>
+    </section>
+
+    <!-- Products Grid -->
+    <section class="section">
+        <div class="container">
+            <section class="section">
+                <div class="container">
+                    <!-- New Arrivals Section -->
+                    <div style="margin-bottom: 60px;">
+                        <h2 class="section-title text-left" style="text-align: left;">New Arrivals</h2>
+                        <div id="new-product-list" class="grid grid-4">
+                            <!-- New products will be loaded here -->
+                            <p style="grid-column: 1/-1; text-align: center; color: #666;">Loading new arrivals...</p>
+                        </div>
+                    </div>
+
+                    <!-- Category Filter Section -->
+                    <div style="margin-bottom: 40px;">
+                        <h2 class="section-title text-left" style="text-align: left;">제품 카테고리</h2>
+                        <p style="margin-bottom: 2rem;">원하시는 카테고리를 선택하여 제품을 확인하세요.</p>
+
+                        <div class="category-filters" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button class="category-btn active" data-category="All">All</button>
+                            <button class="category-btn" data-category="Audio">Audio</button>
+                            <button class="category-btn" data-category="Living">Living</button>
+                            <button class="category-btn" data-category="Mobile">Mobile</button>
+                            <button class="category-btn" data-category="Food">Food</button>
+                            <button class="category-btn" data-category="Beauty">Beauty</button>
+                            <button class="category-btn" data-category="Other">Other</button>
+                        </div>
+                    </div>
+
+                    <div class="product-grid" id="product-grid">
+                        <!-- Products will be loaded dynamically via script.js -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer>
+                <div class="container">
+                    <div class="footer-content">
+                        <div class="footer-col">
+                            <h4>ARONTEC KOREA</h4>
+                            <p>고객의 삶을 풍요롭게 하는 글로벌 유통 전문 기업<br>아론텍코리아입니다.</p>
+                        </div>
+                        <div class="footer-col">
+                            <h4>Quick Links</h4>
+                            <ul>
+                                <li><a href="index.html">홈</a></li>
+                                <li><a href="about.html">회사소개</a></li>
+                                <li><a href="products.html">제품</a></li>
+                                <li><a href="contact.html">문의하기</a></li>
+                            </ul>
+                        </div>
+                        <div class="footer-col">
+                            <h4>Contact Info</h4>
+                            <ul>
+                                <li><i class="fas fa-map-marker-alt"></i> 경기도 파주시 회동길 521-1 202호</li>
+                                <li><i class="fas fa-phone"></i> 031-947-4938</li>
+                                <li><i class="fas fa-envelope"></i> info@arontec.co.kr</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="footer-bottom">
+                        <p>&copy; 2025 Arontec Korea Co., Ltd. All Rights Reserved.</p>
+                    </div>
+                </div>
+            </footer>
+
+
+            <script src="script.js"></script>
+</body>
+
+</html>

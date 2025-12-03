@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arontec B2B SCM - 프리뷰</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #003366;
+            --secondary-color: #17a2b8;
+            --accent-color: #ffc107;
+            --text-color: #333333;
+            --text-light: #666666;
+            --bg-light: #f8f9fa;
+            --bg-white: #ffffff;
+            --border-color: #e9ecef;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            color: var(--text-color);
+            background-color: var(--bg-light);
+        }
+
+        .preview-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .page-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .page-preview {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .page-content {
+            padding: 2rem;
+        }
+
+        /* Login Page Styles */
+        .login-preview {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            padding: 3rem;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-title {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .login-subtitle {
+            color: var(--text-light);
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            background: #00254d;
+        }
+
+        /* Dashboard Styles */
+        .dashboard-nav {
+            background: white;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        /* Product Card */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-image {
+            height: 150px;
+            background: var(--bg-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .product-info {
+            padding: 1rem;
+        }
+
+        .product-brand {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .product-model {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-price {
+            color: var(--secondary-color);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-add {
+            width: 100%;
+            padding: 0.5rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.75rem;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-pending {
+            background: var(--accent-color);
+            color: #333;
+        }
+
+        .badge-approved {
+            background: #28a745;
+            color: white;
+        }
+
+        .info-text {
+            background: #e3f2fd;
+            padding: 1rem;
+            border-left: 4px solid var(--primary-color);
+            margin: 2rem 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="preview-container">
+        <h1>🚀 Arontec B2B SCM 시스템 프리뷰</h1>
+
+        <div class="info-text">
+            <strong>📌 시스템 개요:</strong> 파트너사 전용 B2B 온라인 주문 및 견적 관리 시스템<br>
+            <strong>🔐 인증:</strong> 관리자 승인 기반 회원제 시스템<br>
+            <strong>🎯 주요 기능:</strong> 상품 카탈로그, 장바구니, 견적 요청, 관리자 승인
+        </div>
+
+        <h2 style="margin: 2rem 0 1rem; color: var(--primary-color);">📱 주요 페이지 미리보기</h2>
+
+        <div class="page-grid">
+            <!-- Login Page -->
+            <div class="page-preview">
+                <div class="page-header">1. 로그인 페이지</div>
+                <div class="login-preview">
+                    <div class="login-box">
+                        <h2 class="login-title">ARONTEC B2B SCM</h2>
+                        <p class="login-subtitle">파트너사 전용 시스템</p>
+                        <form>
+                            <div class="form-group">
+                                <label>이메일</label>
+                                <input type="email" placeholder="이메일을 입력하세요" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label>비밀번호</label>
+                                <input type="password" placeholder="비밀번호를 입력하세요" disabled>
+                            </div>
+                            <button class="btn" type="button">로그인</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard -->
+            <div class="page-preview">
+                <div class="page-header">2. 대시보드</div>
+                <div class="page-content">
+                    <div class="dashboard-nav">
+                        <div class="nav-brand">ARONTEC B2B SCM</div>
+                        <div class="nav-links">
+                            <a href="#">대시보드</a>
+                            <a href="#">카탈로그</a>
+                            <a href="#">장바구니</a>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>📢 공지사항</h3>
+                        <p style="color: var(--text-light);">B2B SCM 시스템이 오픈되었습니다.</p>
+                    </div>
+                    <div class="card">
+                        <h3>📋 최근 견적 요청</h3>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>견적번호</th>
+                                    <th>금액</th>
+                                    <th>상태</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Q1732676000</td>
+                                    <td>250,000원</td>
+                                    <td><span class="badge badge-pending">대기중</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Catalog -->
+            <div class="page-preview">
+                <div class="page-header">3. 상품 카탈로그</div>
+                <div class="page-content">
+                    <h3 style="margin-bottom: 1rem; color: var(--primary-color);">상품 목록</h3>
+                    <div class="product-grid">
+                        <div class="product-card">
+                            <div class="product-image">🎧</div>
+                            <div class="product-info">
+                                <div class="product-brand">INKEL</div>
+                                <div class="product-model">INKEL-SP100</div>
+                                <div class="product-price">45,000원</div>
+                                <button class="btn-add">담기</button>
+                            </div>
+                        </div>
+                        <div class="product-card">
+                            <div class="product-image">🔊</div>
+                            <div class="product-info">
+                                <div class="product-brand">IRIVER</div>
+                                <div class="product-model">IRIVER-HP200</div>
+                                <div class="product-price">89,000원</div>
+                                <button class="btn-add">담기</button>
+                            </div>
+                        </div>
+                        <div class="product-card">
+                            <div class="product-image">📱</div>
+                            <div class="product-info">
+                                <div class="product-brand">MobiFren</div>
+                                <div class="product-model">MF-CASE-01</div>
+                                <div class="product-price">15,000원</div>
+                                <button class="btn-add">담기</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cart -->
+            <div class="page-preview">
+                <div class="page-header">4. 장바구니</div>
+                <div class="page-content">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>상품</th>
+                                <th>단가</th>
+                                <th>수량</th>
+                                <th>소계</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>INKEL</strong><br>스피커</td>
+                                <td>45,000원</td>
+                                <td>2</td>
+                                <td>90,000원</td>
+                            </tr>
+                            <tr>
+                                <td><strong>IRIVER</strong><br>헤드폰</td>
+                                <td>89,000원</td>
+                                <td>1</td>
+                                <td>89,000원</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div style="text-align: right; margin-top: 1rem;">
+                        <h3 style="color: var(--primary-color);">총 금액: 179,000원</h3>
+                        <button class="btn" style="width: auto; margin-top: 1rem; padding: 0.75rem 2rem;">견적
+                            요청하기</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin -->
+            <div class="page-preview">
+                <div class="page-header">5. 관리자 - 회원 관리</div>
+                <div class="page-content">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>회사명</th>
+                                <th>담당자</th>
+                                <th>상태</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>(주)테스트유통</td>
+                                <td>홍길동</td>
+                                <td><span class="badge badge-pending">대기중</span></td>
+                                <td><button class="btn" style="width: auto; padding: 0.5rem 1rem;">승인</button></td>
+                            </tr>
+                            <tr>
+                                <td>ABC 무역</td>
+                                <td>김철수</td>
+                                <td><span class="badge badge-approved">승인</span></td>
+                                <td>-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Quote Request -->
+            <div class="page-preview">
+                <div class="page-header">6. 견적 요청</div>
+                <div class="page-content">
+                    <form>
+                        <div class="form-group">
+                            <label>희망 납기일 *</label>
+                            <input type="date" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>비고</label>
+                            <textarea
+                                style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 5px;"
+                                rows="4" placeholder="요청사항을 입력해주세요" disabled></textarea>
+                        </div>
+                        <button class="btn" type="button">견적 요청</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 3rem;">
+            <h3>🛠️ 실제 실행을 위한 요구사항</h3>
+            <ol style="line-height: 2; color: var(--text-color);">
+                <li><strong>Node.js 업그레이드:</strong> Node.js v16 이상 필요 (현재: v12)</li>
+                <li><strong>PostgreSQL 설치:</strong> 데이터베이스 설정 필요</li>
+                <li><strong>패키지 설치:</strong> <code>npm install</code> (frontend + backend)</li>
+                <li><strong>환경 설정:</strong> .env 파일 구성</li>
+                <li><strong>서버 실행:</strong> Backend (포트 5000) + Frontend (포트 3000)</li>
+            </ol>
+        </div>
+
+        <div class="info-text">
+            <strong>💡 참고:</strong> 이 페이지는 실제 시스템의 디자인과 레이아웃을 보여주는 정적 프리뷰입니다.
+            실제 시스템은 React + Node.js + PostgreSQL로 구현되어 있으며, 위의 요구사항을 충족하면 완전히 동작하는 B2B SCM 시스템으로 실행됩니다.
+        </div>
+    </div>
+</body>
+
+</html>
