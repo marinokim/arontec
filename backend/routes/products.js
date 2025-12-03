@@ -183,6 +183,41 @@ router.delete('/recent', requireAdmin, async (req, res) => {
     }
 })
 
+// Delete products by ID range (Admin only)
+router.delete('/range', requireAdmin, async (req, res) => {
+    const client = await pool.connect()
+    try {
+        const { startId, endId } = req.query
+
+        if (!startId || !endId) {
+            return res.status(400).json({ error: 'Start ID and End ID are required' })
+        }
+
+        await client.query('BEGIN')
+
+        // Delete related quote items
+        await client.query(`
+            DELETE FROM quote_items 
+            WHERE product_id IN (SELECT id FROM products WHERE id BETWEEN $1 AND $2)
+        `, [startId, endId])
+
+        // Delete products
+        const result = await client.query(`
+            DELETE FROM products 
+            WHERE id BETWEEN $1 AND $2
+        `, [startId, endId])
+
+        await client.query('COMMIT')
+        res.json({ message: `Deleted ${result.rowCount} products with ID between ${startId} and ${endId}`, count: result.rowCount })
+    } catch (error) {
+        await client.query('ROLLBACK')
+        console.error('Delete product range error:', error)
+        res.status(500).json({ error: 'Failed to delete product range' })
+    } finally {
+        client.release()
+    }
+})
+
 // Get all products with optional category filter (Public)
 router.get('/', async (req, res) => {
     try {
