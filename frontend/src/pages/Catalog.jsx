@@ -23,7 +23,7 @@ function Catalog({ user }) {
     }, [selectedCategory, search])
 
     const fetchCategories = async () => {
-        const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/products/categories', { credentials: 'include' })
+        const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/products/categories?sort=display_order', { credentials: 'include' })
         const data = await res.json()
         setCategories(data.categories)
     }
