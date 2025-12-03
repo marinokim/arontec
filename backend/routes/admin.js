@@ -67,13 +67,11 @@ const handleDelete = async (req, res) => {
     const client = await pool.connect()
     try {
         await client.query('BEGIN')
-        const userId = req.params.id
+        const userId = parseInt(req.params.id)
 
-        // Delete related data first
-        await client.query("DELETE FROM quote_items WHERE quote_id IN (SELECT id FROM quotes WHERE user_id = $1)", [userId])
+        // Delete quotes (will cascade to quote_items)
+        // Note: carts and notifications have ON DELETE CASCADE in schema
         await client.query("DELETE FROM quotes WHERE user_id = $1", [userId])
-        await client.query("DELETE FROM carts WHERE user_id = $1", [userId])
-        await client.query("DELETE FROM notifications WHERE user_id = $1", [userId])
 
         // Delete user
         const result = await client.query('DELETE FROM users WHERE id = $1 AND is_admin = false RETURNING id', [userId])
@@ -88,7 +86,8 @@ const handleDelete = async (req, res) => {
     } catch (error) {
         await client.query('ROLLBACK')
         console.error('Delete member error:', error)
-        res.status(500).json({ error: 'Failed to delete member' })
+        // Return detailed error for debugging
+        res.status(500).json({ error: 'Failed to delete member: ' + error.message })
     } finally {
         client.release()
     }
