@@ -142,11 +142,11 @@ export const runMigrations = async () => {
                 END $$;
             `)
 
-            // Set default business number for admin if missing
+            // Set default business number for admin if missing or incorrect format
             await client.query(`
                 UPDATE users 
-                SET business_number = '000-00-00000' 
-                WHERE email = 'admin@arontec.com' AND (business_number IS NULL OR business_number = '');
+                SET business_number = '0000000000' 
+                WHERE email = 'admin@arontec.com';
             `)
 
             await client.query('COMMIT')
