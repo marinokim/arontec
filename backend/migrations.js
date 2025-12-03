@@ -142,6 +142,13 @@ export const runMigrations = async () => {
                 END $$;
             `)
 
+            // Set default business number for admin if missing
+            await client.query(`
+                UPDATE users 
+                SET business_number = '000-00-00000' 
+                WHERE email = 'admin@arontec.com' AND (business_number IS NULL OR business_number = '');
+            `)
+
             await client.query('COMMIT')
             console.log('✅ Database migrations completed successfully')
         } catch (error) {
