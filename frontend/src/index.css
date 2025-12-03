@@ -224,3 +224,9 @@ body {
         margin: 1rem;
     }
 }
+
+/* Disable IME for password inputs */
+input[type="password"] {
+    ime-mode: disabled !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
