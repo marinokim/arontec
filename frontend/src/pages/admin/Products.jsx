@@ -16,6 +16,7 @@ function AdminProducts({ user }) {
     const [newCategoryName, setNewCategoryName] = useState('')
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isUploading, setIsUploading] = useState(false)
+    const [isExcelUploading, setIsExcelUploading] = useState(false)
     const scrollPosition = useRef(0)
 
     const categoryColors = {
@@ -544,6 +545,9 @@ function AdminProducts({ user }) {
             return
         }
 
+        if (isExcelUploading) return
+        setIsExcelUploading(true)
+
         const formData = new FormData()
         formData.append('file', file)
 
@@ -569,6 +573,7 @@ function AdminProducts({ user }) {
             alert('업로드 중 오류가 발생했습니다.')
         } finally {
             e.target.value = ''
+            setIsExcelUploading(false)
         }
     }
 
@@ -619,13 +624,22 @@ function AdminProducts({ user }) {
                         <button onClick={downloadTemplate} className="btn btn-secondary" style={{ background: '#28a745', border: 'none' }}>
                             <i className="fas fa-download"></i> 양식 다운로드
                         </button>
-                        <label className="btn btn-secondary" style={{ background: '#17a2b8', border: 'none', margin: 0, display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-                            <i className="fas fa-file-excel"></i> 엑셀 업로드
+                        <label className={`btn btn-secondary ${isExcelUploading ? 'disabled' : ''}`} style={{ background: isExcelUploading ? '#6c757d' : '#17a2b8', border: 'none', margin: 0, display: 'flex', alignItems: 'center', cursor: isExcelUploading ? 'not-allowed' : 'pointer' }}>
+                            {isExcelUploading ? (
+                                <>
+                                    <i className="fas fa-spinner fa-spin" style={{ marginRight: '5px' }}></i> 업로드 중...
+                                </>
+                            ) : (
+                                <>
+                                    <i className="fas fa-file-excel"></i> 엑셀 업로드
+                                </>
+                            )}
                             <input
                                 type="file"
                                 accept=".xlsx, .xls, .csv"
                                 onChange={handleExcelUpload}
                                 style={{ display: 'none' }}
+                                disabled={isExcelUploading}
                             />
                         </label>
                         <button onClick={openAddModal} className="btn btn-primary">
