@@ -39,8 +39,8 @@ router.get('/members', requireAdmin, async (req, res) => {
     }
 })
 
-// Approve/reject member
-router.post('/members/:id/approve', requireAdmin, async (req, res) => {
+// Approve/reject member handler
+const handleApproval = async (req, res) => {
     try {
         const { isApproved } = req.body
 
@@ -56,10 +56,14 @@ router.post('/members/:id/approve', requireAdmin, async (req, res) => {
         console.error('Update approval error:', error)
         res.status(500).json({ error: 'Failed to update approval' })
     }
-})
+}
 
-// Delete member
-router.post('/members/:id/delete', requireAdmin, async (req, res) => {
+// Register both POST and PUT for approval (for backward compatibility)
+router.post('/members/:id/approve', requireAdmin, handleApproval)
+router.put('/members/:id/approval', requireAdmin, handleApproval)
+
+// Delete member handler
+const handleDelete = async (req, res) => {
     const client = await pool.connect()
     try {
         await client.query('BEGIN')
@@ -88,7 +92,11 @@ router.post('/members/:id/delete', requireAdmin, async (req, res) => {
     } finally {
         client.release()
     }
-})
+}
+
+// Register both POST and DELETE for deletion (for backward compatibility)
+router.post('/members/:id/delete', requireAdmin, handleDelete)
+router.delete('/members/:id', requireAdmin, handleDelete)
 
 // Get all quotes
 router.get('/quotes', requireAdmin, async (req, res) => {
