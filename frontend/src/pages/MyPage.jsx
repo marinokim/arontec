@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 
+import Navbar from '../components/Navbar'
+
 function MyPage({ user }) {
     const [selectedQuote, setSelectedQuote] = useState(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -121,6 +123,7 @@ function MyPage({ user }) {
 
     return (
         <div className="catalog-page">
+            <Navbar user={user} />
             <div className="catalog-header">
                 <h1>내 정보</h1>
                 <button onClick={() => navigate('/dashboard')} className="btn btn-secondary">← 대시보드</button>

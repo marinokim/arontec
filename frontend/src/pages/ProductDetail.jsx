@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import './Catalog.css' // Reuse catalog styles or create new ones
 
+import Navbar from '../components/Navbar'
+
 function ProductDetail({ user }) {
     const { id } = useParams()
     const navigate = useNavigate()
@@ -73,16 +75,7 @@ function ProductDetail({ user }) {
 
     return (
         <div className="dashboard">
-            <nav className="dashboard-nav">
-                <div className="nav-brand">ARONTEC KOREA SCM</div>
-                <div className="nav-links">
-                    <button onClick={() => navigate('/dashboard')} className="nav-link">대시보드</button>
-                    <button onClick={() => navigate('/catalog')} className="nav-link active">상품 카탈로그</button>
-                    <button onClick={() => navigate('/cart')} className="nav-link">장바구니</button>
-                    <button onClick={() => navigate('/quote-request')} className="nav-link">견적 요청</button>
-                    <button onClick={() => navigate('/mypage')} className="nav-link">마이페이지</button>
-                </div>
-            </nav>
+            <Navbar user={user} />
 
             <div className="dashboard-content container">
                 <div className="dashboard-header">

@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import Navbar from '../components/Navbar'
+
 function Cart({ user }) {
     const [cartItems, setCartItems] = useState([])
     const navigate = useNavigate()
@@ -24,7 +26,7 @@ function Cart({ user }) {
     const updateQuantity = async (id, quantity) => {
         if (quantity < 1) return
 
-        await fetch((import.meta.env.VITE_API_URL || '') + `/ api / cart / ${id} `, {
+        await fetch((import.meta.env.VITE_API_URL || '') + `/api/cart/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
@@ -37,7 +39,7 @@ function Cart({ user }) {
     const removeItem = async (id) => {
         if (!confirm('삭제하시겠습니까?')) return
 
-        await fetch((import.meta.env.VITE_API_URL || '') + `/ api / cart / ${id} `, { method: 'DELETE', credentials: 'include' })
+        await fetch((import.meta.env.VITE_API_URL || '') + `/api/cart/${id}`, { method: 'DELETE', credentials: 'include' })
         fetchCart()
     }
 
@@ -45,6 +47,7 @@ function Cart({ user }) {
 
     return (
         <div className="catalog-page">
+            <Navbar user={user} />
             <div className="catalog-header">
                 <h1>장바구니</h1>
                 <button onClick={() => navigate('/dashboard')} className="btn btn-secondary">← 대시보드</button>

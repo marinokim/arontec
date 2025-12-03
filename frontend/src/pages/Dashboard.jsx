@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import './Dashboard.css'
 
+import Navbar from '../components/Navbar'
+
 function Dashboard({ user }) {
     const [data, setData] = useState({ notifications: [], recentQuotes: [], newProducts: [] })
     const [loading, setLoading] = useState(true)
@@ -34,26 +36,11 @@ function Dashboard({ user }) {
         }
     }
 
-    const handleLogout = async () => {
-        await fetch((import.meta.env.VITE_API_URL || '') + '/api/auth/logout', { method: 'POST', credentials: 'include' })
-        window.location.reload()
-    }
-
     if (loading) return <div className="loading">로딩중...</div>
 
     return (
         <div className="dashboard">
-            <nav className="dashboard-nav">
-                <div className="nav-brand">ARONTEC KOREA B2B SCM</div>
-                <div className="nav-links">
-                    <Link to="/dashboard">대시보드</Link>
-                    <Link to="/catalog">상품 카탈로그</Link>
-                    <Link to="/cart">장바구니</Link>
-                    <Link to="/mypage">내 정보</Link>
-                    {user?.isAdmin && <Link to="/admin">관리자</Link>}
-                    <button onClick={handleLogout} className="btn-logout">로그아웃</button>
-                </div>
-            </nav>
+            <Navbar user={user} />
 
             <div className="dashboard-content container">
                 <div className="dashboard-header">

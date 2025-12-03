@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-function QuoteRequest() {
+import Navbar from '../components/Navbar'
+
+function QuoteRequest({ user }) {
     const [formData, setFormData] = useState({ deliveryDate: '', notes: '' })
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
@@ -35,6 +37,7 @@ function QuoteRequest() {
 
     return (
         <div className="catalog-page">
+            <Navbar user={user} />
             <div className="catalog-header">
                 <h1>견적 요청</h1>
                 <button onClick={() => navigate('/cart')} className="btn btn-secondary">← 장바구니</button>

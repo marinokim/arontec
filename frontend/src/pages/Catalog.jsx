@@ -4,6 +4,8 @@ import ExcelJS from 'exceljs'
 import { saveAs } from 'file-saver'
 import './Catalog.css'
 
+import Navbar from '../components/Navbar'
+
 function Catalog({ user }) {
     const [products, setProducts] = useState([])
     const [categories, setCategories] = useState([])
@@ -18,9 +20,6 @@ function Catalog({ user }) {
         fetchCategories()
         fetchProducts()
         const savedProposal = localStorage.getItem('proposalItems')
-        if (savedProposal) {
-            setProposalItems(JSON.parse(savedProposal))
-        }
         if (savedProposal) {
             setProposalItems(JSON.parse(savedProposal))
         }
@@ -284,6 +283,7 @@ function Catalog({ user }) {
 
     return (
         <div className="catalog-page">
+            <Navbar user={user} />
             <div className="catalog-header">
                 <h1>상품 카탈로그</h1>
                 <button onClick={() => navigate('/dashboard')} className="btn btn-secondary">← 대시보드</button>
