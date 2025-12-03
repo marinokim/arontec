@@ -142,11 +142,17 @@ export const runMigrations = async () => {
                 END $$;
             `)
 
-            // Set default business number for admin if missing or incorrect format
+            // Set correct business number for admin
             await client.query(`
                 UPDATE users 
-                SET business_number = '0000000000' 
+                SET business_number = '1078660486' 
                 WHERE email = 'admin@arontec.com';
+            `)
+
+            // Delete specific users as requested
+            await client.query(`
+                DELETE FROM users 
+                WHERE company_name IN ('(주)갑을', '(주)마인드케이');
             `)
 
             await client.query('COMMIT')
