@@ -58,6 +58,38 @@ router.put('/members/:id/approval', requireAdmin, async (req, res) => {
     }
 })
 
+// Delete member
+router.delete('/members/:id', requireAdmin, async (req, res) => {
+    const client = await pool.connect()
+    try {
+        await client.query('BEGIN')
+        const userId = req.params.id
+
+        // Delete related data first
+        await client.query("DELETE FROM quote_items WHERE quote_id IN (SELECT id FROM quotes WHERE user_id = $1)", [userId])
+        await client.query("DELETE FROM quotes WHERE user_id = $1", [userId])
+        await client.query("DELETE FROM carts WHERE user_id = $1", [userId])
+        await client.query("DELETE FROM notifications WHERE user_id = $1", [userId])
+
+        // Delete user
+        const result = await client.query('DELETE FROM users WHERE id = $1 AND is_admin = false RETURNING id', [userId])
+
+        if (result.rows.length === 0) {
+            await client.query('ROLLBACK')
+            return res.status(404).json({ error: 'User not found or is admin' })
+        }
+
+        await client.query('COMMIT')
+        res.json({ message: 'User deleted successfully' })
+    } catch (error) {
+        await client.query('ROLLBACK')
+        console.error('Delete member error:', error)
+        res.status(500).json({ error: 'Failed to delete member' })
+    } finally {
+        client.release()
+    }
+})
+
 // Get all quotes
 router.get('/quotes', requireAdmin, async (req, res) => {
     try {
