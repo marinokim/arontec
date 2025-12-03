@@ -505,6 +505,17 @@ function AdminProducts({ user }) {
         }
     }
 
+    const getImageUrl = (url) => {
+        if (!url) return ''
+        if (url.startsWith('http') || url.startsWith('data:')) return url
+        if (url.startsWith('/')) return (import.meta.env.VITE_API_URL || '') + url
+        // If it looks like a domain (has dot, no slash at start), prepend https://
+        if (url.includes('.') && !url.startsWith('/')) {
+            return 'https://' + url
+        }
+        return url
+    }
+
     return (
         <div className="dashboard">
             <Navbar user={user} />
@@ -598,7 +609,7 @@ function AdminProducts({ user }) {
                                             </td>
                                             <td style={{ padding: 0, width: '100px' }}>
                                                 {product.image_url ? (
-                                                    <img src={product.image_url} alt={product.model_name} style={{ width: '100%', height: '100px', objectFit: 'cover', display: 'block' }} />
+                                                    <img src={getImageUrl(product.image_url)} alt={product.model_name} style={{ width: '100%', height: '100px', objectFit: 'cover', display: 'block' }} />
                                                 ) : (
                                                     <div style={{ width: '100%', height: '100px', background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem' }}>No Img</div>
                                                 )}
