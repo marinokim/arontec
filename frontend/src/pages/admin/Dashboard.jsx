@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import '../Dashboard.css'
 
-function AdminDashboard() {
+import Navbar from '../../components/Navbar'
+
+function AdminDashboard({ user }) {
     const [stats, setStats] = useState({
         pendingMembers: 0,
         pendingQuotes: 0,
@@ -28,27 +30,11 @@ function AdminDashboard() {
         }
     }
 
-    const handleLogout = async () => {
-        await fetch((import.meta.env.VITE_API_URL || '') + '/api/auth/logout', { method: 'POST', credentials: 'include' })
-        window.location.href = '/login'
-    }
-
     if (loading) return <div className="loading">로딩중...</div>
 
     return (
         <div className="dashboard">
-            <nav className="dashboard-nav">
-                <div className="nav-brand">ARONTEC KOREA ADMIN</div>
-                <div className="nav-links">
-                    <Link to="/admin">대시보드</Link>
-                    <Link to="/admin/members">회원 관리</Link>
-                    <Link to="/admin/products">상품 관리</Link>
-                    <Link to="/admin/quotes">견적 관리</Link>
-                    <Link to="/admin/notifications">공지사항</Link>
-                    <Link to="/dashboard">사용자 모드</Link>
-                    <button onClick={handleLogout} className="btn-logout">로그아웃</button>
-                </div>
-            </nav>
+            <Navbar user={user} />
 
             <div className="dashboard-content container">
                 <div className="dashboard-header">

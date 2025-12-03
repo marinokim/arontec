@@ -73,11 +73,11 @@ function App() {
                     <Route path="/mypage" element={user ? <MyPage user={user} /> : <Navigate to="/login" />} />
 
                     {/* Protected Routes - Admin Only */}
-                    <Route path="/admin" element={user?.isAdmin ? <AdminDashboard /> : <Navigate to="/dashboard" />} />
-                    <Route path="/admin/members" element={<ProtectedRoute requireAdmin user={user}><AdminMembers /></ProtectedRoute>} />
-                    <Route path="/admin/products" element={<ProtectedRoute requireAdmin user={user}><AdminProducts /></ProtectedRoute>} />
-                    <Route path="/admin/quotes" element={<ProtectedRoute requireAdmin user={user}><AdminQuotes /></ProtectedRoute>} />
-                    <Route path="/admin/notifications" element={<ProtectedRoute requireAdmin user={user}><AdminNotifications /></ProtectedRoute>} />
+                    <Route path="/admin" element={user?.isAdmin ? <AdminDashboard user={user} /> : <Navigate to="/dashboard" />} />
+                    <Route path="/admin/members" element={<ProtectedRoute requireAdmin user={user}><AdminMembers user={user} /></ProtectedRoute>} />
+                    <Route path="/admin/products" element={<ProtectedRoute requireAdmin user={user}><AdminProducts user={user} /></ProtectedRoute>} />
+                    <Route path="/admin/quotes" element={<ProtectedRoute requireAdmin user={user}><AdminQuotes user={user} /></ProtectedRoute>} />
+                    <Route path="/admin/notifications" element={<ProtectedRoute requireAdmin user={user}><AdminNotifications user={user} /></ProtectedRoute>} />
 
                     <Route path="/" element={<Navigate to="/dashboard" />} />
                 </Routes>

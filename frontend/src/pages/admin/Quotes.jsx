@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
-function AdminQuotes() {
+import Navbar from '../../components/Navbar'
+
+function AdminQuotes({ user }) {
     const [quotes, setQuotes] = useState([])
     const [shippingModal, setShippingModal] = useState({ open: false, quoteId: null })
     const [shippingInfo, setShippingInfo] = useState({ carrier: '', trackingNumber: '' })
@@ -73,25 +75,9 @@ function AdminQuotes() {
         }
     }
 
-    const handleLogout = async () => {
-        await fetch((import.meta.env.VITE_API_URL || '') + '/api/auth/logout', { method: 'POST', credentials: 'include' })
-        window.location.href = '/login'
-    }
-
     return (
         <div className="dashboard">
-            <nav className="dashboard-nav">
-                <div className="nav-brand">ARONTEC KOREA ADMIN</div>
-                <div className="nav-links">
-                    <Link to="/admin">대시보드</Link>
-                    <Link to="/admin/members">회원 관리</Link>
-                    <Link to="/admin/products">상품 관리</Link>
-                    <Link to="/admin/quotes" className="active">견적 관리</Link>
-                    <Link to="/admin/notifications">공지사항</Link>
-                    <Link to="/dashboard">사용자 모드</Link>
-                    <button onClick={handleLogout} className="btn-logout">로그아웃</button>
-                </div>
-            </nav>
+            <Navbar user={user} />
 
             <div className="dashboard-content container">
                 <h1>견적 관리</h1>

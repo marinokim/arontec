@@ -2,7 +2,9 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
-function AdminNotifications() {
+import Navbar from '../../components/Navbar'
+
+function AdminNotifications({ user }) {
     const [notifications, setNotifications] = useState([])
     const [showModal, setShowModal] = useState(false)
     const [editingNotice, setEditingNotice] = useState(null)
@@ -95,25 +97,9 @@ function AdminNotifications() {
         setShowModal(true)
     }
 
-    const handleLogout = async () => {
-        await fetch((import.meta.env.VITE_API_URL || '') + '/api/auth/logout', { method: 'POST', credentials: 'include' })
-        window.location.href = '/login'
-    }
-
     return (
         <div className="dashboard">
-            <nav className="dashboard-nav">
-                <div className="nav-brand">ARONTEC KOREA ADMIN</div>
-                <div className="nav-links">
-                    <Link to="/admin">대시보드</Link>
-                    <Link to="/admin/members">회원 관리</Link>
-                    <Link to="/admin/products">상품 관리</Link>
-                    <Link to="/admin/quotes">견적 관리</Link>
-                    <Link to="/admin/notifications" className="active">공지사항</Link>
-                    <Link to="/dashboard">사용자 모드</Link>
-                    <button onClick={handleLogout} className="btn-logout">로그아웃</button>
-                </div>
-            </nav>
+            <Navbar user={user} />
 
             <div className="dashboard-content container" style={{ maxWidth: '1200px' }}>
                 <div className="dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
