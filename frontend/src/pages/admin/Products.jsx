@@ -43,7 +43,9 @@ function AdminProducts() {
         isAvailable: true,
         isTaxFree: false,
         detailUrl: '',
-        remarks: ''
+        detailUrl: '',
+        remarks: '',
+        displayOrder: '0'
     }
 
     const [formData, setFormData] = useState(initialFormState)
@@ -241,7 +243,9 @@ function AdminProducts() {
                 isTaxFree: formData.isTaxFree,
                 remarks: formData.remarks ? formData.remarks.replace(/"/g, '') : '',
                 productOptions: formData.productOptions ? formData.productOptions.replace(/"/g, '') : '',
-                description: formData.description ? formData.description.replace(/"/g, '') : ''
+                productOptions: formData.productOptions ? formData.productOptions.replace(/"/g, '') : '',
+                description: formData.description ? formData.description.replace(/"/g, '') : '',
+                displayOrder: formData.displayOrder ? parseInt(formData.displayOrder) : 0
             }
 
             const res = await fetch(url, {
@@ -347,7 +351,9 @@ function AdminProducts() {
             isAvailable: product.is_available,
             isTaxFree: product.is_tax_free || false,
             detailUrl: product.detail_url || '',
-            remarks: product.remarks || ''
+            detailUrl: product.detail_url || '',
+            remarks: product.remarks || '',
+            displayOrder: product.display_order || '0'
         })
         setShowModal(true)
     }
@@ -637,6 +643,16 @@ function AdminProducts() {
                                     value={formData.modelName}
                                     onChange={e => setFormData({ ...formData, modelName: e.target.value })}
                                     required
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>노출 순위 (높을수록 상단 노출)</label>
+                                <input
+                                    type="number"
+                                    value={formData.displayOrder}
+                                    onChange={e => setFormData({ ...formData, displayOrder: e.target.value })}
+                                    placeholder="0"
                                 />
                             </div>
 
