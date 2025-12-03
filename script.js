@@ -79,9 +79,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Check if image is an emoji (legacy support)
                     const isEmoji = !imageUrl.includes('/') && !imageUrl.includes('.');
                     const imageHtml = isEmoji
-                        ? `<div class="product-icon" style="font-size: 3rem; padding: 2rem; background: #f8f9fa; display: flex; align-items: center; justify-content: center; height: 200px;">${imageUrl}</div>`
-                        : `<div class="product-image-container" style="height: 200px; overflow: hidden; background: #f8f9fa;">
-                             <img src="${imageUrl}" alt="${product.model_name}" style="width: 100%; height: 100%; objectFit: cover;">
+                        ? `<div class="product-icon" style="font-size: 3rem; padding: 2rem; background: #fff; display: flex; align-items: center; justify-content: center; height: 200px;">${imageUrl}</div>`
+                        : `<div class="product-image-container" style="height: 200px; overflow: hidden; background: #fff; display: flex; align-items: center; justify-content: center; padding: 10px;">
+                             <img src="${imageUrl}" alt="${product.model_name}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
                            </div>`;
 
                     return `
@@ -263,9 +263,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Check if image is an emoji or a URL
             const isEmoji = !product.image.includes('/') && !product.image.includes('.');
             const imageHtml = isEmoji
-                ? `<div class="product-icon" style="font-size: 3rem; padding: 2rem;">${product.image}</div>`
-                : `<div class="product-image-container">
-                     <img src="${product.image}" alt="${product.model}" class="product-thumb">
+                ? `<div class="product-icon" style="font-size: 3rem; padding: 2rem; background: #fff; display: flex; align-items: center; justify-content: center; height: 200px;">${product.image}</div>`
+                : `<div class="product-image-container" style="height: 200px; overflow: hidden; background: #fff; display: flex; align-items: center; justify-content: center; padding: 10px;">
+                     <img src="${product.image}" alt="${product.model}" class="product-thumb" style="max-width: 100%; max-height: 100%; object-fit: contain;">
                    </div>`;
 
             return `
