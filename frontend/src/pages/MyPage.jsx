@@ -139,6 +139,7 @@ function MyPage({ user }) {
                 </div>
                 <div style={{ marginTop: '1rem' }}>
                     <p><strong>이메일:</strong> {user?.email}</p>
+                    <p><strong>사업자번호:</strong> {user?.businessNumber}</p>
                     <p><strong>회사명:</strong> {user?.companyName}</p>
                     <p><strong>담당자:</strong> {user?.contactPerson}</p>
                 </div>

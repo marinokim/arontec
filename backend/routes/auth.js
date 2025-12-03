@@ -120,7 +120,7 @@ router.get('/me', async (req, res) => {
 
     try {
         const result = await pool.query(
-            'SELECT id, email, company_name, contact_person, is_admin FROM users WHERE id = $1',
+            'SELECT id, email, company_name, contact_person, is_admin, business_number FROM users WHERE id = $1',
             [req.session.userId]
         )
 
@@ -135,7 +135,8 @@ router.get('/me', async (req, res) => {
                 email: user.email,
                 companyName: user.company_name,
                 contactPerson: user.contact_person,
-                isAdmin: user.is_admin
+                isAdmin: user.is_admin,
+                businessNumber: user.business_number
             }
         })
     } catch (error) {
