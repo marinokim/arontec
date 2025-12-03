@@ -55,7 +55,12 @@ router.post('/upload', upload.single('file'), async (req, res) => {
                 const description = sanitize(row['Description'] || row['상세설명'])
                 const b2bPrice = parsePrice(row['B2BPrice'] || row['공급가'] || row['B2B가'])
                 const consumerPrice = parsePrice(row['ConsumerPrice'] || row['소비자가'])
-                const supplyPrice = parsePrice(row['SupplyPrice'] || row['매입가'] || 0) // Optional
+                let supplyPrice = parsePrice(row['SupplyPrice'] || row['매입가'] || 0)
+
+                // If supplyPrice is not provided (0), use consumerPrice
+                if (supplyPrice === 0 && consumerPrice > 0) {
+                    supplyPrice = consumerPrice
+                }
                 const stockQuantity = parseInt(row['Stock'] || row['재고']) || 0
                 const imageUrl = sanitize(row['ImageURL'] || row['이미지URL'])
                 const detailUrl = sanitize(row['DetailURL'] || row['상세페이지URL'])
@@ -175,6 +180,28 @@ router.post('/upload', upload.single('file'), async (req, res) => {
         await client.query('ROLLBACK')
         console.error('Excel upload error:', error)
         res.status(500).json({ error: 'Failed to process Excel file' })
+    } finally {
+        client.release()
+    }
+})
+
+// Sync supply_price with consumer_price for existing products
+router.post('/sync-prices', async (req, res) => {
+    const client = await pool.connect()
+    try {
+        await client.query('BEGIN')
+        const result = await client.query(`
+            UPDATE products 
+            SET supply_price = consumer_price 
+            WHERE (supply_price = 0 OR supply_price IS NULL) 
+            AND consumer_price > 0
+        `)
+        await client.query('COMMIT')
+        res.json({ message: `Updated ${result.rowCount} products`, count: result.rowCount })
+    } catch (error) {
+        await client.query('ROLLBACK')
+        console.error('Sync prices error:', error)
+        res.status(500).json({ error: 'Failed to sync prices' })
     } finally {
         client.release()
     }
