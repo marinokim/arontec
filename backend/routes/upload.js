@@ -1,48 +1,31 @@
 import express from 'express'
 import multer from 'multer'
-import path from 'path'
-import fs from 'fs'
-import { fileURLToPath } from 'url'
+import { v2 as cloudinary } from 'cloudinary'
+import { CloudinaryStorage } from 'multer-storage-cloudinary'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const router = express.Router()
 
-// Ensure uploads directory exists
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-const uploadDir = path.join(__dirname, '../uploads')
-
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true })
-}
+// Configure Cloudinary
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+})
 
 // Configure storage
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, uploadDir)
-    },
-    filename: function (req, file, cb) {
-        // Generate unique filename: timestamp + random + extension
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-        cb(null, uniqueSuffix + path.extname(file.originalname))
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'arontec-products', // Folder name in Cloudinary
+        allowed_formats: ['jpg', 'png', 'jpeg', 'gif', 'webp'],
+        transformation: [{ width: 1000, height: 1000, crop: 'limit' }] // Resize large images
     }
 })
 
-// File filter (allow images only)
-const fileFilter = (req, file, cb) => {
-    if (file.mimetype.startsWith('image/')) {
-        cb(null, true)
-    } else {
-        cb(new Error('Not an image! Please upload an image.'), false)
-    }
-}
-
-const upload = multer({
-    storage: storage,
-    fileFilter: fileFilter,
-    limits: {
-        fileSize: 5 * 1024 * 1024 // 5MB limit
-    }
-})
+const upload = multer({ storage: storage })
 
 // Upload endpoint
 router.post('/', upload.single('image'), (req, res) => {
@@ -50,12 +33,9 @@ router.post('/', upload.single('image'), (req, res) => {
         return res.status(400).json({ error: 'No file uploaded' })
     }
 
-    // Return the URL path to the file
-    // Assuming server serves 'uploads' directory at '/uploads'
-    const fileUrl = `/uploads/${req.file.filename}`
-
+    // Cloudinary returns the URL in req.file.path
     res.json({
-        url: fileUrl,
+        url: req.file.path,
         filename: req.file.filename,
         originalName: req.file.originalname
     })
