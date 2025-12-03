@@ -8,13 +8,13 @@ const router = express.Router()
 // Create product (Admin only)
 router.post('/', requireAdmin, async (req, res) => {
     try {
-        const { categoryId, brand, modelName, description, imageUrl, b2bPrice, stockQuantity, detailUrl, isAvailable, consumerPrice, supplyPrice, quantityPerCarton, shippingFee, manufacturer, origin, isTaxFree, shippingFeeIndividual, shippingFeeCarton, productOptions, modelNo, remarks, displayOrder, productSpec } = req.body
+        const { categoryId, brand, modelName, description, imageUrl, b2bPrice, stockQuantity, detailUrl, isAvailable, consumerPrice, supplyPrice, quantityPerCarton, shippingFee, manufacturer, origin, isTaxFree, shippingFeeIndividual, shippingFeeCarton, productOptions, modelNo, remarks, displayOrder, productSpec, isNew } = req.body
 
         const result = await pool.query(
-            `INSERT INTO products (category_id, brand, model_name, description, image_url, b2b_price, stock_quantity, detail_url, is_available, consumer_price, supply_price, quantity_per_carton, shipping_fee, manufacturer, origin, is_tax_free, shipping_fee_individual, shipping_fee_carton, product_options, model_no, remarks, display_order, product_spec)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23)
+            `INSERT INTO products (category_id, brand, model_name, description, image_url, b2b_price, stock_quantity, detail_url, is_available, consumer_price, supply_price, quantity_per_carton, shipping_fee, manufacturer, origin, is_tax_free, shipping_fee_individual, shipping_fee_carton, product_options, model_no, remarks, display_order, product_spec, is_new)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24)
        RETURNING *`,
-            [categoryId, brand, modelName, description, imageUrl, b2bPrice, stockQuantity, detailUrl, isAvailable !== undefined ? isAvailable : true, consumerPrice, supplyPrice, quantityPerCarton, shippingFee, manufacturer, origin, isTaxFree || false, shippingFeeIndividual || 0, shippingFeeCarton || 0, productOptions || '', modelNo || '', remarks || '', displayOrder || 0, productSpec || '']
+            [categoryId, brand, modelName, description, imageUrl, b2bPrice, stockQuantity, detailUrl, isAvailable !== undefined ? isAvailable : true, consumerPrice, supplyPrice, quantityPerCarton, shippingFee, manufacturer, origin, isTaxFree || false, shippingFeeIndividual || 0, shippingFeeCarton || 0, productOptions || '', modelNo || '', remarks || '', displayOrder || 0, productSpec || '', isNew || false]
         )
 
         res.status(201).json({ product: result.rows[0] })
@@ -27,7 +27,7 @@ router.post('/', requireAdmin, async (req, res) => {
 // Update product (Admin only)
 router.put('/:id', requireAdmin, async (req, res) => {
     try {
-        const { categoryId, brand, modelName, description, imageUrl, b2bPrice, stockQuantity, isAvailable, detailUrl, consumerPrice, supplyPrice, quantityPerCarton, shippingFee, manufacturer, origin, isTaxFree, shippingFeeIndividual, shippingFeeCarton, productOptions, modelNo, remarks, displayOrder, productSpec } = req.body
+        const { categoryId, brand, modelName, description, imageUrl, b2bPrice, stockQuantity, isAvailable, detailUrl, consumerPrice, supplyPrice, quantityPerCarton, shippingFee, manufacturer, origin, isTaxFree, shippingFeeIndividual, shippingFeeCarton, productOptions, modelNo, remarks, displayOrder, productSpec, isNew } = req.body
 
         const result = await pool.query(
             `UPDATE products 
@@ -36,11 +36,11 @@ router.put('/:id', requireAdmin, async (req, res) => {
            consumer_price = $10, supply_price = $11, quantity_per_carton = $12, shipping_fee = $13,
            manufacturer = $14, origin = $15, is_tax_free = $16,
            shipping_fee_individual = $17, shipping_fee_carton = $18, product_options = $19, model_no = $20,
-           remarks = $21, display_order = $22, product_spec = $23,
+           remarks = $21, display_order = $22, product_spec = $23, is_new = $24,
            updated_at = CURRENT_TIMESTAMP
-       WHERE id = $24
+       WHERE id = $25
        RETURNING *`,
-            [categoryId, brand, modelName, description, imageUrl, b2bPrice, stockQuantity, isAvailable, detailUrl, consumerPrice, supplyPrice, quantityPerCarton, shippingFee, manufacturer, origin, isTaxFree, shippingFeeIndividual, shippingFeeCarton, productOptions, modelNo, remarks, displayOrder || 0, productSpec || '', req.params.id]
+            [categoryId, brand, modelName, description, imageUrl, b2bPrice, stockQuantity, isAvailable, detailUrl, consumerPrice, supplyPrice, quantityPerCarton, shippingFee, manufacturer, origin, isTaxFree, shippingFeeIndividual, shippingFeeCarton, productOptions, modelNo, remarks, displayOrder || 0, productSpec || '', isNew !== undefined ? isNew : false, req.params.id]
         )
 
         if (result.rows.length === 0) {
@@ -92,6 +92,26 @@ router.patch('/:id/display-order', requireAdmin, async (req, res) => {
     }
 })
 
+// Toggle New Status (Admin only)
+router.patch('/:id/new-status', requireAdmin, async (req, res) => {
+    try {
+        const { isNew } = req.body
+        const result = await pool.query(
+            'UPDATE products SET is_new = $1 WHERE id = $2 RETURNING *',
+            [isNew, req.params.id]
+        )
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Product not found' })
+        }
+
+        res.json({ product: result.rows[0] })
+    } catch (error) {
+        console.error('Error updating product new status:', error)
+        res.status(500).json({ error: 'Internal server error' })
+    }
+})
+
 // Delete product (Admin only)
 router.delete('/:id', requireAdmin, async (req, res) => {
     const client = await pool.connect()
@@ -123,10 +143,10 @@ router.delete('/:id', requireAdmin, async (req, res) => {
 // Get all products with optional category filter (Public)
 router.get('/', async (req, res) => {
     try {
-        const { category, search } = req.query
+        const { category, search, sort, isNew } = req.query
 
         let query = `
-      SELECT p.*, c.name as category_name 
+      SELECT p.*, c.name as category_name
       FROM products p
       LEFT JOIN categories c ON p.category_id = c.id
       WHERE p.is_available = true
@@ -138,12 +158,15 @@ router.get('/', async (req, res) => {
             query += ` AND c.slug = $${params.length}`
         }
 
-        if (search) {
-            params.push(`%${search}%`)
-            query += ` AND (p.brand ILIKE $${params.length} OR p.model_name ILIKE $${params.length})`
+        if (isNew === 'true') {
+            query += ` AND p.is_new = true`
         }
 
-        const { sort } = req.query
+        if (search) {
+            params.push(`%${search}%`)
+            query += ` AND (p.brand ILIKE $${params.length} OR p.model_name ILIKE $${params.length} OR p.model_no ILIKE $${params.length})`
+        }
+
         if (sort === 'display_order') {
             query += ' ORDER BY p.display_order DESC, p.created_at DESC'
         } else {

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import './Dashboard.css'
 
 function Dashboard({ user }) {
-    const [data, setData] = useState({ notifications: [], recentQuotes: [] })
+    const [data, setData] = useState({ notifications: [], recentQuotes: [], newProducts: [] })
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -15,7 +15,12 @@ function Dashboard({ user }) {
             const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/dashboard', { credentials: 'include' })
             if (res.ok) {
                 const data = await res.json()
-                setData(data)
+
+                // Fetch new products
+                const productRes = await fetch((import.meta.env.VITE_API_URL || '') + '/api/products?isNew=true&limit=5', { credentials: 'include' })
+                const productData = await productRes.json()
+
+                setData({ ...data, newProducts: productData.products || [] })
             } else {
                 // If session expired or invalid, redirect to login
                 if (res.status === 401) {
@@ -105,6 +110,39 @@ function Dashboard({ user }) {
                             </table>
                         )}
                     </div>
+                </div>
+
+                {/* New Products Section */}
+                <div className="dashboard-card" style={{ marginTop: '2rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                        <h3>✨ 신상품</h3>
+                        <Link to="/catalog?filter=new" style={{ fontSize: '0.9rem', color: '#007bff', textDecoration: 'none' }}>더보기 &gt;</Link>
+                    </div>
+
+                    {data.newProducts && data.newProducts.length > 0 ? (
+                        <div className="new-products-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
+                            {data.newProducts.map(product => (
+                                <Link to={`/product/${product.id}`} key={product.id} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                    <div style={{ border: '1px solid #eee', borderRadius: '8px', overflow: 'hidden', transition: 'transform 0.2s' }}>
+                                        <div style={{ height: '150px', overflow: 'hidden', background: '#f8f9fa' }}>
+                                            {product.image_url ? (
+                                                <img src={product.image_url} alt={product.model_name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            ) : (
+                                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#999' }}>No Image</div>
+                                            )}
+                                        </div>
+                                        <div style={{ padding: '1rem' }}>
+                                            <div style={{ fontSize: '0.8rem', color: '#666', marginBottom: '0.2rem' }}>{product.brand}</div>
+                                            <div style={{ fontWeight: 'bold', marginBottom: '0.5rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{product.model_name}</div>
+                                            <div style={{ color: '#007bff', fontWeight: 'bold' }}>{parseInt(product.b2b_price).toLocaleString()}원</div>
+                                        </div>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-muted">등록된 신상품이 없습니다.</p>
+                    )}
                 </div>
 
                 <div className="quick-actions">

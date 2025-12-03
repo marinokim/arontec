@@ -304,6 +304,26 @@ function AdminProducts() {
         }
     }
 
+    const handleToggleNew = async (productId, currentStatus) => {
+        try {
+            const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/products/${productId}/new-status`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ isNew: !currentStatus })
+            })
+
+            if (res.ok) {
+                fetchProducts()
+            } else {
+                alert('상태 변경 실패')
+            }
+        } catch (error) {
+            console.error('Error toggling new status:', error)
+            alert('상태 변경 중 오류 발생')
+        }
+    }
+
     const handleDelete = async (id) => {
         if (!confirm('정말 삭제하시겠습니까?')) return
 

@@ -8,6 +8,7 @@ function Catalog({ user }) {
     const [products, setProducts] = useState([])
     const [categories, setCategories] = useState([])
     const [selectedCategory, setSelectedCategory] = useState('')
+    const [showNewOnly, setShowNewOnly] = useState(false)
     const [search, setSearch] = useState('')
     const [proposalItems, setProposalItems] = useState([])
     const [showProposalModal, setShowProposalModal] = useState(false)
@@ -20,7 +21,10 @@ function Catalog({ user }) {
         if (savedProposal) {
             setProposalItems(JSON.parse(savedProposal))
         }
-    }, [selectedCategory, search])
+        if (savedProposal) {
+            setProposalItems(JSON.parse(savedProposal))
+        }
+    }, [selectedCategory, search, showNewOnly])
 
     const fetchCategories = async () => {
         const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/products/categories?sort=display_order', { credentials: 'include' })
@@ -32,6 +36,7 @@ function Catalog({ user }) {
         const params = new URLSearchParams()
         if (selectedCategory) params.append('category', selectedCategory)
         if (search) params.append('search', search)
+        if (showNewOnly) params.append('isNew', 'true')
         params.append('sort', 'display_order')
 
         const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/products?${params}`, { credentials: 'include' })
@@ -293,6 +298,18 @@ function Catalog({ user }) {
                             <option key={cat.id} value={cat.slug}>{cat.name}</option>
                         ))}
                     </select>
+                </div>
+
+                <div className="filter-group" style={{ display: 'flex', alignItems: 'center' }}>
+                    <label style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <input
+                            type="checkbox"
+                            checked={showNewOnly}
+                            onChange={(e) => setShowNewOnly(e.target.checked)}
+                            style={{ width: 'auto', margin: 0 }}
+                        />
+                        <span style={{ fontWeight: 'bold', color: '#ff4444' }}>NEW 신상품만 보기</span>
+                    </label>
                 </div>
 
                 <div className="filter-group">
