@@ -24,6 +24,16 @@ function AdminProducts() {
         'Other': '#858796'    // Gray
     }
 
+    const rankingOptions = [
+        { label: '최상단', value: 100 },
+        { label: '상단', value: 80 },
+        { label: '중상단', value: 60 },
+        { label: '중간', value: 40 },
+        { label: '중하단', value: 20 },
+        { label: '하단', value: 10 },
+        { label: '최하단', value: 0 }
+    ]
+
     const initialFormState = {
         categoryId: '',
         brand: '',
@@ -340,6 +350,33 @@ function AdminProducts() {
         }
     }
 
+    const handleDisplayOrderChange = async (productId, newOrder) => {
+        try {
+            const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/products/${productId}/display-order`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ displayOrder: parseInt(newOrder) })
+            })
+
+            if (res.ok) {
+                // Save scroll position
+                scrollPosition.current = window.scrollY
+                fetchProducts() // Refetch to re-sort
+            } else {
+                if (res.status === 401) {
+                    alert('세션이 만료되었습니다. 다시 로그인해주세요.')
+                    window.location.href = '/login'
+                    return
+                }
+                alert('순위 변경 실패')
+            }
+        } catch (error) {
+            console.error('Change display order error:', error)
+            alert('오류가 발생했습니다')
+        }
+    }
+
     const openEditModal = (product) => {
         setEditingProduct(product)
         setFormData({
@@ -456,6 +493,7 @@ function AdminProducts() {
                                 <tr>
                                     <th style={{ textAlign: 'center', width: '60px' }}>No.</th>
                                     <th style={{ width: '100px', textAlign: 'center' }}>IMG</th>
+                                    <th style={{ width: '100px', textAlign: 'center' }}>노출순위</th>
                                     <th style={{ minWidth: '100px' }}>브랜드</th>
                                     <th style={{ minWidth: '250px' }}>상품명/모델명/옵션</th>
                                     <th style={{ textAlign: 'right' }}>실판매가</th>
@@ -478,6 +516,25 @@ function AdminProducts() {
                                                 ) : (
                                                     <div style={{ width: '100%', height: '100px', background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem' }}>No Img</div>
                                                 )}
+                                            </td>
+                                            <td style={{ textAlign: 'center' }}>
+                                                <select
+                                                    value={product.display_order || 0}
+                                                    onChange={(e) => handleDisplayOrderChange(product.id, e.target.value)}
+                                                    style={{ padding: '0.25rem', fontSize: '0.8rem', borderRadius: '4px', border: '1px solid #ddd' }}
+                                                >
+                                                    {rankingOptions.map(option => (
+                                                        <option key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </option>
+                                                    ))}
+                                                    {/* If current value is not in options, show it as custom */}
+                                                    {!rankingOptions.some(o => o.value === (product.display_order || 0)) && (
+                                                        <option value={product.display_order || 0}>
+                                                            직접입력 ({product.display_order || 0})
+                                                        </option>
+                                                    )}
+                                                </select>
                                             </td>
                                             <td>
                                                 <div style={{

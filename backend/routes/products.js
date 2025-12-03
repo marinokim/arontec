@@ -70,8 +70,25 @@ router.patch('/:id/availability', requireAdmin, async (req, res) => {
 
         res.json({ product: result.rows[0] })
     } catch (error) {
-        console.error('Toggle availability error:', error)
-        res.status(500).json({ error: 'Failed to update availability' })
+        res.status(500).json({ error: error.message })
+    }
+})
+
+// Update product display order (Admin only)
+router.patch('/:id/display-order', requireAdmin, async (req, res) => {
+    try {
+        const { displayOrder } = req.body
+        const result = await pool.query(
+            'UPDATE products SET display_order = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *',
+            [displayOrder, req.params.id]
+        )
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Product not found' })
+        }
+        res.json({ product: result.rows[0] })
+    } catch (error) {
+        console.error('Update display order error:', error)
+        res.status(500).json({ error: 'Failed to update display order' })
     }
 })
 
