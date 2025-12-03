@@ -20,8 +20,7 @@ const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
         folder: 'arontec-products', // Folder name in Cloudinary
-        allowed_formats: ['jpg', 'png', 'jpeg', 'gif', 'webp'],
-        transformation: [{ width: 1000, height: 1000, crop: 'limit' }] // Resize large images
+        allowed_formats: ['jpg', 'png', 'jpeg', 'gif', 'webp']
     }
 })
 
