@@ -81,6 +81,11 @@ function Register() {
                     {error && <div className="error-message">{error}</div>}
 
                     <div className="form-group">
+                        <label>사업자번호 (아이디) *</label>
+                        <input type="text" name="businessNumber" value={formData.businessNumber} onChange={handleChange} required placeholder="'-' 없이 숫자만 입력" />
+                    </div>
+
+                    <div className="form-group">
                         <label>이메일 *</label>
                         <input type="email" name="email" value={formData.email} onChange={handleChange} required />
                     </div>
@@ -110,10 +115,7 @@ function Register() {
                         <input type="tel" name="phone" value={formData.phone} onChange={handleChange} />
                     </div>
 
-                    <div className="form-group">
-                        <label>사업자번호</label>
-                        <input type="text" name="businessNumber" value={formData.businessNumber} onChange={handleChange} />
-                    </div>
+
 
                     <button type="submit" className="btn btn-primary" disabled={loading}>
                         {loading ? '가입 신청 중...' : '가입 신청'}

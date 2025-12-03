@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import './Login.css'
 
 function Login({ setUser }) {
-    const [formData, setFormData] = useState({ email: '', password: '' })
+    const [formData, setFormData] = useState({ businessNumber: '', password: '' })
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
@@ -137,14 +137,14 @@ function Login({ setUser }) {
                     {error && <div className="error-message">{error}</div>}
 
                     <div className="form-group">
-                        <label>이메일</label>
+                        <label>사업자번호</label>
                         <input
-                            type="email"
-                            name="email"
-                            value={formData.email}
+                            type="text"
+                            name="businessNumber"
+                            value={formData.businessNumber}
                             onChange={handleChange}
                             required
-                            placeholder="이메일을 입력하세요"
+                            placeholder="사업자번호를 입력하세요"
                         />
                     </div>
 

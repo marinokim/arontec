@@ -9,10 +9,10 @@ router.post('/register', async (req, res) => {
     try {
         const { email, password, companyName, contactPerson, phone, businessNumber } = req.body
 
-        // Check if user exists
-        const userCheck = await pool.query('SELECT * FROM users WHERE email = $1', [email])
+        // Check if user exists (by business number)
+        const userCheck = await pool.query('SELECT * FROM users WHERE business_number = $1', [businessNumber])
         if (userCheck.rows.length > 0) {
-            return res.status(400).json({ error: '이미 등록된 이메일입니다' })
+            return res.status(400).json({ error: '이미 등록된 사업자번호입니다' })
         }
 
         // Hash password
@@ -38,20 +38,20 @@ router.post('/register', async (req, res) => {
 // Login
 router.post('/login', async (req, res) => {
     try {
-        const { email, password } = req.body
+        const { businessNumber, password } = req.body
 
         // Get user
-        const result = await pool.query('SELECT * FROM users WHERE email = $1', [email])
+        const result = await pool.query('SELECT * FROM users WHERE business_number = $1', [businessNumber])
         const user = result.rows[0]
 
         if (!user) {
-            return res.status(401).json({ error: '이메일 또는 비밀번호가 잘못되었습니다' })
+            return res.status(401).json({ error: '사업자번호 또는 비밀번호가 잘못되었습니다' })
         }
 
         // Check password
         const validPassword = await bcrypt.compare(password, user.password_hash)
         if (!validPassword) {
-            return res.status(401).json({ error: '이메일 또는 비밀번호가 잘못되었습니다' })
+            return res.status(401).json({ error: '사업자번호 또는 비밀번호가 잘못되었습니다' })
         }
 
         // Check if approved
