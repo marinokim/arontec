@@ -535,6 +535,64 @@ function AdminProducts({ user }) {
         return cleanUrl
     }
 
+    const handleExcelUpload = async (e) => {
+        const file = e.target.files[0]
+        if (!file) return
+
+        if (!confirm('엑셀 파일로 상품을 일괄 등록하시겠습니까? 기존 데이터가 업데이트될 수 있습니다.')) {
+            e.target.value = ''
+            return
+        }
+
+        const formData = new FormData()
+        formData.append('file', file)
+
+        try {
+            const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/excel/upload', {
+                method: 'POST',
+                body: formData,
+                credentials: 'include'
+            })
+
+            const data = await res.json()
+
+            if (res.ok) {
+                alert(`처리 완료\n성공: ${data.success}건\n실패: ${data.failed}건\n${data.errors.length > 0 ? '\n오류 목록:\n' + data.errors.slice(0, 5).join('\n') + (data.errors.length > 5 ? `\n...외 ${data.errors.length - 5}건` : '') : ''}`)
+                fetchProducts()
+                fetchCategories()
+                fetchBrands()
+            } else {
+                alert('업로드 실패: ' + (data.error || '알 수 없는 오류'))
+            }
+        } catch (error) {
+            console.error('Excel upload error:', error)
+            alert('업로드 중 오류가 발생했습니다.')
+        } finally {
+            e.target.value = ''
+        }
+    }
+
+    const downloadTemplate = () => {
+        // Create a CSV template
+        const headers = ['Brand', 'ModelName', 'ModelNo', 'Category', 'Description', 'B2BPrice', 'ConsumerPrice', 'Stock', 'ImageURL', 'DetailURL', 'Manufacturer', 'Origin', 'ProductSpec', 'ProductOptions', 'IsTaxFree', 'QuantityPerCarton', 'ShippingFeeIndividual', 'ShippingFeeCarton']
+        const example = ['Samsung', 'Galaxy S24', 'SM-S921', 'Mobile', 'Latest smartphone', '1000000', '1200000', '100', 'https://example.com/image.jpg', 'https://example.com/detail.jpg', 'Samsung Electronics', 'Vietnam', '256GB, 8GB RAM', 'Phantom Black, Cream', 'FALSE', '20', '3000', '0']
+
+        const csvContent = [
+            headers.join(','),
+            example.join(',')
+        ].join('\n')
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+        const link = document.createElement('a')
+        const url = URL.createObjectURL(blob)
+        link.setAttribute('href', url)
+        link.setAttribute('download', 'product_upload_template.csv')
+        link.style.visibility = 'hidden'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+    }
+
     return (
         <div className="dashboard">
             <Navbar user={user} isAdminMode={true} />
@@ -557,9 +615,23 @@ function AdminProducts({ user }) {
                             + 카테고리 추가
                         </button>
                     </div>
-                    <button onClick={openAddModal} className="btn btn-primary">
-                        + 신규 상품 등록
-                    </button>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <button onClick={downloadTemplate} className="btn btn-secondary" style={{ background: '#28a745', border: 'none' }}>
+                            <i className="fas fa-download"></i> 양식 다운로드
+                        </button>
+                        <label className="btn btn-secondary" style={{ background: '#17a2b8', border: 'none', margin: 0, display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                            <i className="fas fa-file-excel"></i> 엑셀 업로드
+                            <input
+                                type="file"
+                                accept=".xlsx, .xls, .csv"
+                                onChange={handleExcelUpload}
+                                style={{ display: 'none' }}
+                            />
+                        </label>
+                        <button onClick={openAddModal} className="btn btn-primary">
+                            + 신규 상품 등록
+                        </button>
+                    </div>
                 </div>
 
                 <div className="card">
