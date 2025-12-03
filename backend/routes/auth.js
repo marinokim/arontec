@@ -8,12 +8,23 @@ const router = express.Router()
 router.post('/register', async (req, res) => {
     try {
         const { email, password, companyName, contactPerson, phone, businessNumber: rawBusinessNumber } = req.body
+
+        if (!rawBusinessNumber) {
+            return res.status(400).json({ error: '사업자번호를 입력해주세요' })
+        }
+
         const businessNumber = rawBusinessNumber.replace(/-/g, '')
 
         // Check if user exists (by business number)
-        const userCheck = await pool.query('SELECT * FROM users WHERE business_number = $1', [businessNumber])
-        if (userCheck.rows.length > 0) {
+        const bnCheck = await pool.query('SELECT id FROM users WHERE business_number = $1', [businessNumber])
+        if (bnCheck.rows.length > 0) {
             return res.status(400).json({ error: '이미 등록된 사업자번호입니다' })
+        }
+
+        // Check if user exists (by email)
+        const emailCheck = await pool.query('SELECT id FROM users WHERE email = $1', [email])
+        if (emailCheck.rows.length > 0) {
+            return res.status(400).json({ error: '이미 등록된 이메일입니다' })
         }
 
         // Hash password
