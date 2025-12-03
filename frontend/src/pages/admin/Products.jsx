@@ -324,6 +324,36 @@ function AdminProducts() {
         }
     }
 
+    const handleImageUpload = async (e, field) => {
+        const file = e.target.files[0]
+        if (!file) return
+
+        const formData = new FormData()
+        formData.append('image', file)
+
+        try {
+            const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/upload', {
+                method: 'POST',
+                body: formData,
+                credentials: 'include'
+            })
+
+            if (res.ok) {
+                const data = await res.json()
+                // Prepend API URL if needed, or just use the relative path if serving from same domain
+                // For now, let's assume we store the full URL or relative path that works with <img> src
+                const fullUrl = (import.meta.env.VITE_API_URL || '') + data.url
+                setFormData(prev => ({ ...prev, [field]: fullUrl }))
+                alert('이미지 업로드 성공')
+            } else {
+                alert('이미지 업로드 실패')
+            }
+        } catch (error) {
+            console.error('Error uploading image:', error)
+            alert('이미지 업로드 중 오류 발생')
+        }
+    }
+
     const handleDelete = async (id) => {
         if (!confirm('정말 삭제하시겠습니까?')) return
 
@@ -882,47 +912,71 @@ function AdminProducts() {
 
                             <div className="form-group">
                                 <label>이미지 URL</label>
-                                <input
-                                    type="text"
-                                    value={formData.imageUrl}
-                                    onChange={e => setFormData({ ...formData, imageUrl: e.target.value })}
-                                    placeholder="https://example.com/image.jpg"
-                                    onBlur={async (e) => {
-                                        const url = e.target.value
-                                        // Check for <img src="..."> tag
-                                        const imgTagMatch = url.match(/<img[^>]+src=['"]([^'"]+)['"]/i)
-                                        if (imgTagMatch && imgTagMatch[1]) {
-                                            setFormData(prev => ({ ...prev, imageUrl: imgTagMatch[1] }))
-                                            alert('이미지 태그에서 URL을 추출했습니다.')
-                                            return
-                                        }
+                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                    <input
+                                        type="text"
+                                        value={formData.imageUrl}
+                                        onChange={e => setFormData({ ...formData, imageUrl: e.target.value })}
+                                        placeholder="https://example.com/image.jpg"
+                                        style={{ flex: 1 }}
+                                        onBlur={async (e) => {
+                                            const url = e.target.value
+                                            // Check for <img src="..."> tag
+                                            const imgTagMatch = url.match(/<img[^>]+src=['"]([^'"]+)['"]/i)
+                                            if (imgTagMatch && imgTagMatch[1]) {
+                                                setFormData(prev => ({ ...prev, imageUrl: imgTagMatch[1] }))
+                                                alert('이미지 태그에서 URL을 추출했습니다.')
+                                                return
+                                            }
 
-                                        const extractedUrl = await extractImageFromHtml(url)
-                                        if (extractedUrl) {
-                                            setFormData(prev => ({ ...prev, imageUrl: extractedUrl }))
-                                            alert('HTML에서 이미지 URL을 추출했습니다.')
-                                        }
-                                    }}
-                                />
+                                            const extractedUrl = await extractImageFromHtml(url)
+                                            if (extractedUrl) {
+                                                setFormData(prev => ({ ...prev, imageUrl: extractedUrl }))
+                                                alert('HTML에서 이미지 URL을 추출했습니다.')
+                                            }
+                                        }}
+                                    />
+                                    <label className="btn btn-secondary" style={{ cursor: 'pointer', margin: 0, display: 'flex', alignItems: 'center' }}>
+                                        파일 선택
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={(e) => handleImageUpload(e, 'imageUrl')}
+                                            style={{ display: 'none' }}
+                                        />
+                                    </label>
+                                </div>
                             </div>
 
                             <div className="form-group">
                                 <label>상세페이지 URL</label>
-                                <input
-                                    type="text"
-                                    value={formData.detailUrl}
-                                    onChange={e => setFormData({ ...formData, detailUrl: e.target.value })}
-                                    placeholder="https://example.com/product/123"
-                                    onBlur={async (e) => {
-                                        const url = e.target.value
-                                        const extractedHtml = await extractAllImagesFromHtml(url)
-                                        if (extractedHtml) {
-                                            setFormData(prev => ({ ...prev, detailUrl: extractedHtml }))
-                                            const count = (extractedHtml.match(/<img/g) || []).length
-                                            alert(`HTML에서 ${count}장의 이미지를 추출하여 태그로 변환했습니다.`)
-                                        }
-                                    }}
-                                />
+                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                    <input
+                                        type="text"
+                                        value={formData.detailUrl}
+                                        onChange={e => setFormData({ ...formData, detailUrl: e.target.value })}
+                                        placeholder="https://example.com/product/123"
+                                        style={{ flex: 1 }}
+                                        onBlur={async (e) => {
+                                            const url = e.target.value
+                                            const extractedHtml = await extractAllImagesFromHtml(url)
+                                            if (extractedHtml) {
+                                                setFormData(prev => ({ ...prev, detailUrl: extractedHtml }))
+                                                const count = (extractedHtml.match(/<img/g) || []).length
+                                                alert(`HTML에서 ${count}장의 이미지를 추출하여 태그로 변환했습니다.`)
+                                            }
+                                        }}
+                                    />
+                                    <label className="btn btn-secondary" style={{ cursor: 'pointer', margin: 0, display: 'flex', alignItems: 'center' }}>
+                                        파일 선택
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={(e) => handleImageUpload(e, 'detailUrl')}
+                                            style={{ display: 'none' }}
+                                        />
+                                    </label>
+                                </div>
                             </div>
 
                             <div className="form-group">

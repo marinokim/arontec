@@ -9,6 +9,9 @@ import quoteRoutes from './routes/quotes.js'
 import dashboardRoutes from './routes/dashboard.js'
 import notificationRoutes from './routes/notifications.js'
 import adminRoutes from './routes/admin.js'
+import uploadRoutes from './routes/upload.js'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
 dotenv.config()
 
@@ -56,7 +59,14 @@ app.use('/api/cart', cartRoutes)
 app.use('/api/quotes', quoteRoutes)
 app.use('/api/dashboard', dashboardRoutes)
 app.use('/api/notifications', notificationRoutes)
+app.use('/api/notifications', notificationRoutes)
 app.use('/api/admin', adminRoutes)
+app.use('/api/upload', uploadRoutes)
+
+// Serve uploads directory
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 
 // Health check
 app.get('/api/health', (req, res) => {
