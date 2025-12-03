@@ -508,11 +508,23 @@ function AdminProducts({ user }) {
     const getImageUrl = (url) => {
         if (!url) return ''
         if (url.startsWith('http') || url.startsWith('data:')) return url
-        if (url.startsWith('/')) return (import.meta.env.VITE_API_URL || '') + url
-        // If it looks like a domain (has dot, no slash at start), prepend https://
-        if (url.includes('.') && !url.startsWith('/')) {
+
+        // Handle relative paths (starting with /)
+        if (url.startsWith('/')) {
+            let apiUrl = import.meta.env.VITE_API_URL || ''
+            // Ensure API URL has protocol
+            if (apiUrl && !apiUrl.startsWith('http')) {
+                apiUrl = 'https://' + apiUrl
+            }
+            return apiUrl + url
+        }
+
+        // If it has a slash but no protocol, assume it's domain/path -> prepend https://
+        if (url.includes('/')) {
             return 'https://' + url
         }
+
+        // Just a filename or other format - return as is to avoid ERR_NAME_NOT_RESOLVED
         return url
     }
 
