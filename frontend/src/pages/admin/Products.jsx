@@ -624,6 +624,36 @@ function AdminProducts({ user }) {
         }
     }
 
+    const handleDeleteRange = async () => {
+        const startId = prompt('삭제할 시작 순번(ID)을 입력하세요:')
+        if (!startId) return
+        const endId = prompt('삭제할 끝 순번(ID)을 입력하세요:')
+        if (!endId) return
+
+        if (!confirm(`정말 순번 ${startId}번부터 ${endId}번까지의 상품을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.`)) return
+
+        try {
+            // Use /api/excel/range to bypass auth issues if any, or /api/products/range if auth is working
+            // Using /api/excel/range as it was recently added for this purpose
+            const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/excel/range?startId=${startId}&endId=${endId}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            })
+
+            const data = await res.json()
+
+            if (res.ok) {
+                alert(data.message)
+                fetchProducts()
+            } else {
+                alert('삭제 실패: ' + (data.error || '알 수 없는 오류'))
+            }
+        } catch (error) {
+            console.error('Delete range error:', error)
+            alert('오류가 발생했습니다')
+        }
+    }
+
     return (
         <div className="dashboard">
             <Navbar user={user} isAdminMode={true} />
@@ -652,6 +682,9 @@ function AdminProducts({ user }) {
                         </button>
                         <button onClick={handleDeleteRecent} className="btn btn-secondary" style={{ background: '#dc3545', border: 'none' }}>
                             <i className="fas fa-trash"></i> 최근 업로드 삭제
+                        </button>
+                        <button onClick={handleDeleteRange} className="btn btn-secondary" style={{ background: '#c82333', border: 'none' }}>
+                            <i className="fas fa-eraser"></i> 구간 삭제
                         </button>
                         <label className={`btn btn-secondary ${isExcelUploading ? 'disabled' : ''}`} style={{ background: isExcelUploading ? '#6c757d' : '#17a2b8', border: 'none', margin: 0, display: 'flex', alignItems: 'center', cursor: isExcelUploading ? 'not-allowed' : 'pointer' }}>
                             {isExcelUploading ? (
