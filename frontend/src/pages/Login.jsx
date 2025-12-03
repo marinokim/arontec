@@ -6,6 +6,7 @@ function Login({ setUser }) {
     const [formData, setFormData] = useState({ businessNumber: '', password: '' })
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
+    const [passwordWarning, setPasswordWarning] = useState('')
     const navigate = useNavigate()
 
     const formatBusinessNumber = (value) => {
@@ -19,6 +20,15 @@ function Login({ setUser }) {
         const { name, value } = e.target
         if (name === 'businessNumber') {
             setFormData({ ...formData, [name]: formatBusinessNumber(value) })
+        } else if (name === 'password') {
+            // Check for Korean characters
+            const hasKorean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(value)
+            if (hasKorean) {
+                setPasswordWarning('한영키를 전환하여 영문으로 입력해주세요.')
+            } else {
+                setPasswordWarning('')
+            }
+            setFormData({ ...formData, [name]: value })
         } else {
             setFormData({ ...formData, [name]: value })
         }
@@ -173,7 +183,13 @@ function Login({ setUser }) {
                             onChange={handleChange}
                             required
                             placeholder="비밀번호를 입력하세요"
+                            autoComplete="current-password"
                         />
+                        {passwordWarning && (
+                            <div style={{ color: '#dc3545', fontSize: '0.8rem', marginTop: '4px' }}>
+                                {passwordWarning}
+                            </div>
+                        )}
                     </div>
 
                     <button type="submit" className="btn btn-primary" disabled={loading}>
