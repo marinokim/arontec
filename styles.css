@@ -486,7 +486,7 @@ footer {
 /* Product Detail Content */
 .product-detail-content img {
     width: 100%;
-    max-width: 800px;
+    max-width: 100%;
     display: block;
     margin: 0 auto;
 }
