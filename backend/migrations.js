@@ -196,6 +196,18 @@ export const runMigrations = async () => {
             //     }
             // }
 
+            // Create notifications table
+            await client.query(`
+                CREATE TABLE IF NOT EXISTS notifications (
+                    id SERIAL PRIMARY KEY,
+                    title VARCHAR(255) NOT NULL,
+                    content TEXT,
+                    is_active BOOLEAN DEFAULT TRUE,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+            `)
+
             await client.query('COMMIT')
             console.log('✅ Database migrations completed successfully')
         } catch (error) {
