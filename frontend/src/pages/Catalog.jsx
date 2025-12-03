@@ -32,6 +32,7 @@ function Catalog({ user }) {
         const params = new URLSearchParams()
         if (selectedCategory) params.append('category', selectedCategory)
         if (search) params.append('search', search)
+        params.append('sort', 'display_order')
 
         const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/products?${params}`, { credentials: 'include' })
         const data = await res.json()
