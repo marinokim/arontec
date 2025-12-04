@@ -335,10 +335,8 @@ function Catalog({ user }) {
                 <div className="category-list" style={{
                     display: 'flex',
                     gap: '10px',
-                    overflowX: 'auto',
-                    paddingBottom: '5px',
-                    scrollbarWidth: 'none', /* Firefox */
-                    msOverflowStyle: 'none'  /* IE/Edge */
+                    flexWrap: 'wrap',
+                    paddingBottom: '5px'
                 }}>
                     <style>
                         {`
@@ -391,16 +389,22 @@ function Catalog({ user }) {
                         전체
                         <span className="category-count">{totalCount}</span>
                     </button>
-                    {categories.map(cat => (
-                        <button
-                            key={cat.id}
-                            className={`category-btn ${selectedCategory === cat.slug ? 'active' : ''}`}
-                            onClick={() => setSelectedCategory(cat.slug)}
-                        >
-                            {cat.name}
-                            <span className="category-count">{cat.product_count || 0}</span>
-                        </button>
-                    ))}
+                    {[...categories]
+                        .sort((a, b) => {
+                            if (a.name === 'Other') return 1;
+                            if (b.name === 'Other') return -1;
+                            return 0;
+                        })
+                        .map(cat => (
+                            <button
+                                key={cat.id}
+                                className={`category-btn ${selectedCategory === cat.slug ? 'active' : ''}`}
+                                onClick={() => setSelectedCategory(cat.slug)}
+                            >
+                                {cat.name}
+                                <span className="category-count">{cat.product_count || 0}</span>
+                            </button>
+                        ))}
                 </div>
             </div>
 
