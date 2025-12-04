@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
+import { getCategoryColor } from '../../constants/categories'
 
 import Navbar from '../../components/Navbar'
 
@@ -19,14 +20,7 @@ function AdminProducts({ user }) {
     const [isExcelUploading, setIsExcelUploading] = useState(false)
     const scrollPosition = useRef(0)
 
-    const categoryColors = {
-        'Audio': '#4e73df',   // Blue
-        'Living': '#1cc88a',  // Green
-        'Mobile': '#f6c23e',  // Yellow/Orange
-        'Food': '#e74a3b',    // Red
-        'Beauty': '#e83e8c',  // Pink
-        'Other': '#858796'    // Gray
-    }
+
 
     const rankingOptions = [
         { label: '최상단', value: 100 },
@@ -789,7 +783,7 @@ function AdminProducts({ user }) {
                                                 }}>
                                                     {product.brand}
                                                 </div>
-                                                <div style={{ fontSize: '0.8rem', color: categoryColors[product.category_name] || '#666', marginTop: '4px' }}>
+                                                <div style={{ fontSize: '0.8rem', color: getCategoryColor(product.category_name), marginTop: '4px' }}>
                                                     {product.category_name}
                                                 </div>
                                             </td>

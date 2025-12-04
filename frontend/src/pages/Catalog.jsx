@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import ExcelJS from 'exceljs'
 import { saveAs } from 'file-saver'
 import './Catalog.css'
+import { sortCategories, getCategoryColor } from '../constants/categories'
 
 import Navbar from '../components/Navbar'
 
@@ -383,47 +384,31 @@ function Catalog({ user }) {
                             color: selectedCategory === '' ? 'white' : 'inherit'
                         }}>{totalCount}</span>
                     </button>
-                    {[...categories]
-                        .sort((a, b) => {
-                            if (a.name === 'Other') return 1;
-                            if (b.name === 'Other') return -1;
-                            return 0;
-                        })
-                        .map(cat => {
-                            // Generate consistent color based on category name
-                            const colors = [
-                                '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEEAD',
-                                '#D4A5A5', '#9B59B6', '#3498DB', '#E67E22', '#2ECC71'
-                            ];
-                            let hash = 0;
-                            for (let i = 0; i < cat.name.length; i++) {
-                                hash = cat.name.charCodeAt(i) + ((hash << 5) - hash);
-                            }
-                            const colorIndex = Math.abs(hash) % colors.length;
-                            const catColor = colors[colorIndex];
-                            const isActive = selectedCategory === cat.slug;
+                    {sortCategories(categories).map(cat => {
+                        const catColor = getCategoryColor(cat.name);
+                        const isActive = selectedCategory === cat.slug;
 
-                            return (
-                                <button
-                                    key={cat.id}
-                                    className="category-btn"
-                                    onClick={() => setSelectedCategory(cat.slug)}
-                                    style={{
-                                        backgroundColor: isActive ? catColor : 'white',
-                                        color: isActive ? 'white' : catColor,
-                                        borderColor: catColor,
-                                        fontWeight: isActive ? 'bold' : 'normal',
-                                        boxShadow: isActive ? `0 4px 12px ${catColor}40` : 'none'
-                                    }}
-                                >
-                                    {cat.name}
-                                    <span className="category-count" style={{
-                                        background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.05)',
-                                        color: isActive ? 'white' : 'inherit'
-                                    }}>{cat.product_count || 0}</span>
-                                </button>
-                            )
-                        })}
+                        return (
+                            <button
+                                key={cat.id}
+                                className="category-btn"
+                                onClick={() => setSelectedCategory(cat.slug)}
+                                style={{
+                                    backgroundColor: isActive ? catColor : 'white',
+                                    color: isActive ? 'white' : catColor,
+                                    borderColor: catColor,
+                                    fontWeight: isActive ? 'bold' : 'normal',
+                                    boxShadow: isActive ? `0 4px 12px ${catColor}40` : 'none'
+                                }}
+                            >
+                                {cat.name}
+                                <span className="category-count" style={{
+                                    background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.05)',
+                                    color: isActive ? 'white' : 'inherit'
+                                }}>{cat.product_count || 0}</span>
+                            </button>
+                        )
+                    })}
                 </div>
             </div>
 
