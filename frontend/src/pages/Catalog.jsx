@@ -321,15 +321,14 @@ function Catalog({ user }) {
 
             <div className="catalog-filters" style={{
                 position: 'sticky',
-                top: '70px', // Adjusted for Navbar height
-                zIndex: 900, // Below Navbar (1000) but above content
+                top: '80px', // Adjusted for Navbar height + spacing
+                zIndex: 900,
                 background: 'rgba(255, 255, 255, 0.95)',
                 backdropFilter: 'blur(10px)',
-                padding: '1rem 0',
-                borderBottom: '1px solid #eee',
-                margin: '0 -2rem 2rem -2rem',
-                paddingLeft: '2rem',
-                paddingRight: '2rem',
+                padding: '1rem',
+                borderRadius: '8px',
+                border: '1px solid #eee',
+                marginBottom: '2rem',
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
             }}>
                 <div className="category-list" style={{
