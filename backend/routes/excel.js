@@ -118,6 +118,13 @@ router.post('/upload', upload.single('file'), async (req, res) => {
 
                 if (existingProduct) {
                     // Update
+                    // Check mode
+                    const mode = req.body.mode || 'all'
+                    if (mode === 'new') {
+                        // Skip update for existing product in 'new' mode
+                        continue
+                    }
+
                     await client.query(
                         `UPDATE products SET 
                             category_id = COALESCE($1, category_id),
@@ -151,6 +158,13 @@ router.post('/upload', upload.single('file'), async (req, res) => {
                     )
                 } else {
                     // Insert
+                    // Check mode
+                    const mode = req.body.mode || 'all'
+                    if (mode === 'update') {
+                        // Skip insert for new product in 'update' mode
+                        continue
+                    }
+
                     await client.query(
                         `INSERT INTO products (
                             category_id, brand, model_name, description, image_url, b2b_price, stock_quantity,

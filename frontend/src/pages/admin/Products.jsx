@@ -62,6 +62,8 @@ function AdminProducts({ user }) {
     const [showDownloadModal, setShowDownloadModal] = useState(false)
     const [downloadFilterType, setDownloadFilterType] = useState('all') // 'all', 'category', 'brand'
     const [downloadTarget, setDownloadTarget] = useState('')
+    const [showUploadModal, setShowUploadModal] = useState(false)
+    const [uploadMode, setUploadMode] = useState('all') // 'all', 'new', 'update'
 
     useEffect(() => {
         fetchProducts()
@@ -548,6 +550,7 @@ function AdminProducts({ user }) {
 
         const formData = new FormData()
         formData.append('file', file)
+        formData.append('mode', uploadMode) // Add mode to request
 
         try {
             const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/excel/upload', {
@@ -798,24 +801,22 @@ function AdminProducts({ user }) {
                         <button onClick={handleDeleteRange} className="btn btn-secondary" style={{ background: '#c82333', border: 'none' }}>
                             <i className="fas fa-eraser"></i> 구간 삭제
                         </button>
-                        <label className={`btn btn-secondary ${isExcelUploading ? 'disabled' : ''}`} style={{ background: isExcelUploading ? '#6c757d' : '#17a2b8', border: 'none', margin: 0, display: 'flex', alignItems: 'center', cursor: isExcelUploading ? 'not-allowed' : 'pointer' }}>
-                            {isExcelUploading ? (
-                                <>
-                                    <i className="fas fa-spinner fa-spin" style={{ marginRight: '5px' }}></i> 업로드 중...
-                                </>
-                            ) : (
-                                <>
-                                    <i className="fas fa-file-excel"></i> 엑셀 업로드
-                                </>
-                            )}
-                            <input
-                                type="file"
-                                accept=".xlsx, .xls, .csv"
-                                onChange={handleExcelUpload}
-                                style={{ display: 'none' }}
-                                disabled={isExcelUploading}
-                            />
-                        </label>
+                        {isExcelUploading ? (
+                            <button className="btn btn-secondary disabled" style={{ background: '#6c757d', border: 'none', margin: 0, display: 'flex', alignItems: 'center', cursor: 'not-allowed' }}>
+                                <i className="fas fa-spinner fa-spin" style={{ marginRight: '5px' }}></i> 업로드 중...
+                            </button>
+                        ) : (
+                            <button onClick={() => setShowUploadModal(true)} className="btn btn-info" style={{ background: '#17a2b8', border: 'none' }}>
+                                <i className="fas fa-file-excel"></i> 엑셀 업로드
+                            </button>
+                        )}
+                        <input
+                            type="file"
+                            accept=".xlsx, .xls"
+                            onChange={handleExcelUpload}
+                            style={{ display: 'none' }}
+                            id="excel-upload-input"
+                        />
                         <button onClick={openAddModal} className="btn btn-primary">
                             + 신규 상품 등록
                         </button>
@@ -1449,6 +1450,65 @@ function AdminProducts({ user }) {
                         <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
                             <button onClick={downloadAllProducts} className="btn btn-primary" style={{ flex: 1 }}>다운로드</button>
                             <button onClick={() => setShowDownloadModal(false)} className="btn btn-secondary" style={{ flex: 1, background: '#6c757d' }}>취소</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showUploadModal && (
+                <div className="modal-overlay" style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
+                }}>
+                    <div className="modal-content" style={{
+                        background: 'white', padding: '2rem', borderRadius: '8px', width: '90%', maxWidth: '400px'
+                    }}>
+                        <h3>엑셀 업로드 옵션</h3>
+                        <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                                <input
+                                    type="radio"
+                                    name="uploadMode"
+                                    checked={uploadMode === 'new'}
+                                    onChange={() => setUploadMode('new')}
+                                />
+                                신규 상품 등록 (기존 상품 건너뜀)
+                            </label>
+
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                                <input
+                                    type="radio"
+                                    name="uploadMode"
+                                    checked={uploadMode === 'update'}
+                                    onChange={() => setUploadMode('update')}
+                                />
+                                기존 상품 수정 (신규 상품 건너뜀)
+                            </label>
+
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                                <input
+                                    type="radio"
+                                    name="uploadMode"
+                                    checked={uploadMode === 'all'}
+                                    onChange={() => setUploadMode('all')}
+                                />
+                                전체 (신규 등록 + 수정)
+                            </label>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
+                            <label className="btn btn-primary" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 0, cursor: 'pointer' }}>
+                                파일 선택
+                                <input
+                                    type="file"
+                                    accept=".xlsx, .xls"
+                                    onChange={(e) => {
+                                        setShowUploadModal(false);
+                                        handleExcelUpload(e);
+                                    }}
+                                    style={{ display: 'none' }}
+                                />
+                            </label>
+                            <button onClick={() => setShowUploadModal(false)} className="btn btn-secondary" style={{ flex: 1, background: '#6c757d' }}>취소</button>
                         </div>
                     </div>
                 </div>
