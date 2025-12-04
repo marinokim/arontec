@@ -319,11 +319,11 @@ function Catalog({ user }) {
                 <button onClick={() => navigate('/dashboard')} className="btn btn-secondary">← 대시보드</button>
             </div>
 
-            <div className="catalog-filters" style={{ 
-                position: 'sticky', 
-                top: '0', 
-                zIndex: 100, 
-                background: 'rgba(255, 255, 255, 0.95)', 
+            <div className="catalog-filters" style={{
+                position: 'sticky',
+                top: '0',
+                zIndex: 100,
+                background: 'rgba(255, 255, 255, 0.95)',
                 backdropFilter: 'blur(10px)',
                 padding: '1rem 0',
                 borderBottom: '1px solid #eee',
@@ -332,10 +332,10 @@ function Catalog({ user }) {
                 paddingRight: '2rem',
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
             }}>
-                <div className="category-list" style={{ 
-                    display: 'flex', 
-                    gap: '10px', 
-                    overflowX: 'auto', 
+                <div className="category-list" style={{
+                    display: 'flex',
+                    gap: '10px',
+                    overflowX: 'auto',
                     paddingBottom: '5px',
                     scrollbarWidth: 'none', /* Firefox */
                     msOverflowStyle: 'none'  /* IE/Edge */
@@ -384,7 +384,7 @@ function Catalog({ user }) {
                             }
                         `}
                     </style>
-                    <button 
+                    <button
                         className={`category-btn ${selectedCategory === '' ? 'active' : ''}`}
                         onClick={() => setSelectedCategory('')}
                     >
@@ -392,8 +392,8 @@ function Catalog({ user }) {
                         <span className="category-count">{totalCount}</span>
                     </button>
                     {categories.map(cat => (
-                        <button 
-                            key={cat.id} 
+                        <button
+                            key={cat.id}
                             className={`category-btn ${selectedCategory === cat.slug ? 'active' : ''}`}
                             onClick={() => setSelectedCategory(cat.slug)}
                         >
@@ -404,15 +404,14 @@ function Catalog({ user }) {
                 </div>
             </div>
 
-                <div className="filter-group">
-                    <label>검색</label>
-                    <input
-                        type="text"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder="브랜드 또는 모델명 검색"
-                    />
-                </div>
+            <div className="filter-group" style={{ marginBottom: '2rem' }}>
+                <label>검색</label>
+                <input
+                    type="text"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="브랜드 또는 모델명 검색"
+                />
             </div>
 
             <div className="products-grid">
@@ -431,97 +430,97 @@ function Catalog({ user }) {
             </div>
 
             {
-        products.length === 0 && (
-            <div className="no-products">조회된 상품이 없습니다</div>
-        )
-    }
+                products.length === 0 && (
+                    <div className="no-products">조회된 상품이 없습니다</div>
+                )
+            }
 
-    {/* Proposal Floating Button */ }
-    <div
-        className="proposal-fab"
-        onClick={() => setShowProposalModal(true)}
-        style={{
-            position: 'fixed',
-            bottom: '2rem',
-            right: '2rem',
-            background: '#28a745',
-            color: 'white',
-            padding: '1rem 1.5rem',
-            borderRadius: '50px',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            zIndex: 100
-        }}
-    >
-        <span>📋 제안서 관리</span>
-        <span style={{ background: 'white', color: '#28a745', padding: '0.2rem 0.6rem', borderRadius: '12px', fontSize: '0.9rem', fontWeight: 'bold' }}>
-            {proposalItems.length}
-        </span>
-    </div>
-
-    {/* Proposal Modal */ }
-    {
-        showProposalModal && (
-            <div className="modal-overlay" style={{
-                position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-                background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
-            }}>
-                <div className="modal-content" style={{
-                    background: 'white', padding: '2rem', borderRadius: '8px', width: '90%', maxWidth: '800px',
-                    maxHeight: '80vh', overflowY: 'auto'
-                }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                        <h2>제안서 목록 ({proposalItems.length})</h2>
-                        <button onClick={() => setShowProposalModal(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>&times;</button>
-                    </div>
-
-                    {proposalItems.length === 0 ? (
-                        <p style={{ textAlign: 'center', color: '#666', padding: '2rem' }}>제안서 목록에 담긴 상품이 없습니다.</p>
-                    ) : (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                            {proposalItems.map(item => (
-                                <div key={item.id} style={{ display: 'flex', gap: '1rem', border: '1px solid #eee', padding: '1rem', borderRadius: '8px', alignItems: 'center' }}>
-                                    <img src={item.image_url} alt={item.model_name} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '4px' }} />
-                                    <div style={{ flex: 1 }}>
-                                        <div style={{ fontSize: '0.9rem', color: '#666' }}>{item.brand}</div>
-                                        <div style={{ fontWeight: 'bold' }}>{item.model_name}</div>
-                                        <div style={{ color: '#007bff' }}>{parseInt(item.b2b_price).toLocaleString()}원</div>
-                                    </div>
-                                    <button
-                                        onClick={() => removeFromProposal(item.id)}
-                                        className="btn btn-danger"
-                                        style={{ padding: '0.5rem', fontSize: '0.8rem' }}
-                                    >
-                                        삭제
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-
-                    <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
-                        <button
-                            onClick={() => setProposalItems([]) || localStorage.removeItem('proposalItems')}
-                            className="btn btn-secondary"
-                            style={{ background: '#dc3545' }}
-                        >
-                            전체 삭제
-                        </button>
-                        <button
-                            onClick={generateProposalExcel}
-                            className="btn btn-primary"
-                            style={{ background: '#28a745' }}
-                        >
-                            엑셀 다운로드 (.xlsx)
-                        </button>
-                    </div>
-                </div>
+            {/* Proposal Floating Button */}
+            <div
+                className="proposal-fab"
+                onClick={() => setShowProposalModal(true)}
+                style={{
+                    position: 'fixed',
+                    bottom: '2rem',
+                    right: '2rem',
+                    background: '#28a745',
+                    color: 'white',
+                    padding: '1rem 1.5rem',
+                    borderRadius: '50px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    zIndex: 100
+                }}
+            >
+                <span>📋 제안서 관리</span>
+                <span style={{ background: 'white', color: '#28a745', padding: '0.2rem 0.6rem', borderRadius: '12px', fontSize: '0.9rem', fontWeight: 'bold' }}>
+                    {proposalItems.length}
+                </span>
             </div>
-        )
-    }
+
+            {/* Proposal Modal */}
+            {
+                showProposalModal && (
+                    <div className="modal-overlay" style={{
+                        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                        background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
+                    }}>
+                        <div className="modal-content" style={{
+                            background: 'white', padding: '2rem', borderRadius: '8px', width: '90%', maxWidth: '800px',
+                            maxHeight: '80vh', overflowY: 'auto'
+                        }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                <h2>제안서 목록 ({proposalItems.length})</h2>
+                                <button onClick={() => setShowProposalModal(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>&times;</button>
+                            </div>
+
+                            {proposalItems.length === 0 ? (
+                                <p style={{ textAlign: 'center', color: '#666', padding: '2rem' }}>제안서 목록에 담긴 상품이 없습니다.</p>
+                            ) : (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                    {proposalItems.map(item => (
+                                        <div key={item.id} style={{ display: 'flex', gap: '1rem', border: '1px solid #eee', padding: '1rem', borderRadius: '8px', alignItems: 'center' }}>
+                                            <img src={item.image_url} alt={item.model_name} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '4px' }} />
+                                            <div style={{ flex: 1 }}>
+                                                <div style={{ fontSize: '0.9rem', color: '#666' }}>{item.brand}</div>
+                                                <div style={{ fontWeight: 'bold' }}>{item.model_name}</div>
+                                                <div style={{ color: '#007bff' }}>{parseInt(item.b2b_price).toLocaleString()}원</div>
+                                            </div>
+                                            <button
+                                                onClick={() => removeFromProposal(item.id)}
+                                                className="btn btn-danger"
+                                                style={{ padding: '0.5rem', fontSize: '0.8rem' }}
+                                            >
+                                                삭제
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
+                                <button
+                                    onClick={() => setProposalItems([]) || localStorage.removeItem('proposalItems')}
+                                    className="btn btn-secondary"
+                                    style={{ background: '#dc3545' }}
+                                >
+                                    전체 삭제
+                                </button>
+                                <button
+                                    onClick={generateProposalExcel}
+                                    className="btn btn-primary"
+                                    style={{ background: '#28a745' }}
+                                >
+                                    엑셀 다운로드 (.xlsx)
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
         </div >
     )
 }
