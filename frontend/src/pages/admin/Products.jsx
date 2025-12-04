@@ -599,19 +599,29 @@ function AdminProducts({ user }) {
         // Use setTimeout to allow UI to update before heavy processing
         setTimeout(() => {
             try {
-                // Sort products by category order
+                // Sort products by category order, then by brand
                 const sortedProducts = [...products].sort((a, b) => {
                     const indexA = CATEGORY_ORDER.indexOf(a.category_name);
                     const indexB = CATEGORY_ORDER.indexOf(b.category_name);
 
-                    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
-                    if (indexA !== -1) return -1;
-                    if (indexB !== -1) return 1;
+                    let comparison = 0;
 
-                    if (a.category_name === 'Other') return 1;
-                    if (b.category_name === 'Other') return -1;
+                    if (indexA !== -1 && indexB !== -1) {
+                        comparison = indexA - indexB;
+                    } else if (indexA !== -1) {
+                        comparison = -1;
+                    } else if (indexB !== -1) {
+                        comparison = 1;
+                    } else {
+                        if (a.category_name === 'Other') comparison = 1;
+                        else if (b.category_name === 'Other') comparison = -1;
+                        else comparison = (a.category_name || '').localeCompare(b.category_name || '');
+                    }
 
-                    return (a.category_name || '').localeCompare(b.category_name || '');
+                    if (comparison !== 0) return comparison;
+
+                    // Secondary Sort: Brand
+                    return (a.brand || '').localeCompare(b.brand || '');
                 });
 
                 const headers = ['No.', 'Brand', 'ModelName', 'ModelNo', 'Category', 'Description', 'B2BPrice', 'SupplyPrice', 'ConsumerPrice', 'Stock', 'ImageURL', 'DetailURL', 'Manufacturer', 'Origin', 'ProductSpec', 'ProductOptions', 'IsTaxFree', 'QuantityPerCarton', 'ShippingFeeIndividual', 'ShippingFeeCarton', 'remark']
