@@ -39,7 +39,7 @@ function Navbar({ user, isAdminMode = false }) {
                             <Link to="/catalog" onClick={() => setIsMenuOpen(false)}>상품 카탈로그</Link>
                             <Link to="/cart" onClick={() => setIsMenuOpen(false)}>장바구니</Link>
                             <Link to="/mypage" onClick={() => setIsMenuOpen(false)}>내 정보</Link>
-                            {user?.isAdmin && <Link to="/admin" onClick={() => setIsMenuOpen(false)}>관리자</Link>}
+                            {user?.isAdmin && <Link to="/admin" onClick={() => setIsMenuOpen(false)}>관리자모드</Link>}
                         </>
                     )}
                     <button onClick={handleLogout} className="btn-logout">로그아웃</button>
