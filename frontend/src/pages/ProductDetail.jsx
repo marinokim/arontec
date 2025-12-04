@@ -160,7 +160,7 @@ function ProductDetail({ user }) {
                                     onClick={addToProposal}
                                     style={{ width: '100%', background: '#28a745', padding: '10px', fontSize: '1.1rem' }}
                                 >
-                                    제안서 담기
+                                    제안서 다운로드
                                 </button>
                             </div>
                         </div>
