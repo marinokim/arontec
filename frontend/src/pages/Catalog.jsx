@@ -372,6 +372,70 @@ function Catalog({ user }) {
                 <button onClick={() => navigate('/dashboard')} className="btn btn-secondary">← 대시보드</button>
             </div>
 
+            {/* Proposal Guide */}
+            {(() => {
+                const [showGuide, setShowGuide] = useState(() => localStorage.getItem('catalog_showGuide') !== 'false')
+
+                if (!showGuide) return null
+
+                return (
+                    <div style={{
+                        background: '#e3f2fd',
+                        border: '1px solid #90caf9',
+                        borderRadius: '8px',
+                        padding: '1.5rem',
+                        marginBottom: '2rem',
+                        position: 'relative',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                    }}>
+                        <button
+                            onClick={() => {
+                                setShowGuide(false)
+                                localStorage.setItem('catalog_showGuide', 'false')
+                            }}
+                            style={{
+                                position: 'absolute',
+                                top: '10px',
+                                right: '10px',
+                                background: 'none',
+                                border: 'none',
+                                fontSize: '1.5rem',
+                                cursor: 'pointer',
+                                color: '#666'
+                            }}
+                        >
+                            &times;
+                        </button>
+                        <h3 style={{ marginTop: 0, color: '#1565c0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span>💡</span> 제안서 다운로드 기능 사용법
+                        </h3>
+                        <div style={{ display: 'flex', gap: '2rem', marginTop: '1rem', flexWrap: 'wrap' }}>
+                            <div style={{ flex: 1, minWidth: '200px' }}>
+                                <div style={{ fontWeight: 'bold', marginBottom: '0.5rem', color: '#1976d2' }}>STEP 1</div>
+                                <p style={{ margin: 0, lineHeight: '1.5' }}>
+                                    상품 카드의 <span style={{ color: '#e91e63', fontWeight: 'bold' }}>♥</span> 버튼을 클릭하여<br />
+                                    제안서 목록에 상품을 담으세요.
+                                </p>
+                            </div>
+                            <div style={{ flex: 1, minWidth: '200px' }}>
+                                <div style={{ fontWeight: 'bold', marginBottom: '0.5rem', color: '#1976d2' }}>STEP 2</div>
+                                <p style={{ margin: 0, lineHeight: '1.5' }}>
+                                    우측 하단의 <span style={{ background: '#28a745', color: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '0.9em' }}>📋 제안서 다운로드</span><br />
+                                    버튼을 확인하세요.
+                                </p>
+                            </div>
+                            <div style={{ flex: 1, minWidth: '200px' }}>
+                                <div style={{ fontWeight: 'bold', marginBottom: '0.5rem', color: '#1976d2' }}>STEP 3</div>
+                                <p style={{ margin: 0, lineHeight: '1.5' }}>
+                                    버튼을 클릭하여 목록을 확인하고<br />
+                                    <span style={{ fontWeight: 'bold' }}>엑셀 파일(.xlsx)</span>로 다운로드하세요.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )
+            })()}
+
             <div className="catalog-filters" style={{
                 position: 'sticky',
                 top: '80px', // Adjusted for Navbar height + spacing
