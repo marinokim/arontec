@@ -1,0 +1,135 @@
+.dashboard {
+    min-height: 100vh;
+    background-color: var(--bg-light);
+}
+
+.dashboard-nav {
+    background: white;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.nav-links a {
+    color: var(--text-color);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: var(--primary-color);
+}
+
+.btn-logout {
+    padding: 0.5rem 1rem;
+    background: var(--danger-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.dashboard-content {
+    padding: 3rem 1rem;
+}
+
+.dashboard-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.dashboard-header h1 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.dashboard-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-card h3 {
+    margin-bottom: 1.5rem;
+    color: var(--primary-color);
+}
+
+.notification-list {
+    list-style: none;
+}
+
+.notification-list li {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.notification-list li:last-child {
+    border-bottom: none;
+}
+
+.table-simple {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-simple th {
+    text-align: left;
+    padding: 0.75rem;
+    background: var(--bg-light);
+    font-weight: 600;
+}
+
+.table-simple td {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.text-muted {
+    color: var(--text-light);
+    font-style: italic;
+}
+
+.quick-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.badge-pending {
+    background: var(--warning-color);
+    color: #333;
+}
+
+.badge-approved {
+    background: var(--success-color);
+    color: white;
+}
+
+.badge-rejected {
+    background: var(--danger-color);
+    color: white;
+}
