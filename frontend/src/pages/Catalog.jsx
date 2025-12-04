@@ -321,8 +321,8 @@ function Catalog({ user }) {
 
             <div className="catalog-filters" style={{
                 position: 'sticky',
-                top: '0',
-                zIndex: 100,
+                top: '70px', // Adjusted for Navbar height
+                zIndex: 900, // Below Navbar (1000) but above content
                 background: 'rgba(255, 255, 255, 0.95)',
                 backdropFilter: 'blur(10px)',
                 padding: '1rem 0',
@@ -360,15 +360,6 @@ function Catalog({ user }) {
                             .category-btn:hover {
                                 transform: translateY(-2px);
                                 box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-                                border-color: #007bff;
-                                color: #007bff;
-                            }
-                            .category-btn.active {
-                                background: #007bff;
-                                color: white;
-                                border-color: #007bff;
-                                box-shadow: 0 4px 12px rgba(0,123,255,0.3);
-                                font-weight: bold;
                             }
                             .category-count {
                                 background: rgba(0,0,0,0.05);
@@ -376,18 +367,22 @@ function Catalog({ user }) {
                                 border-radius: 10px;
                                 font-size: 0.8rem;
                             }
-                            .category-btn.active .category-count {
-                                background: rgba(255,255,255,0.2);
-                                color: white;
-                            }
                         `}
                     </style>
                     <button
-                        className={`category-btn ${selectedCategory === '' ? 'active' : ''}`}
+                        className="category-btn"
                         onClick={() => setSelectedCategory('')}
+                        style={{
+                            backgroundColor: selectedCategory === '' ? '#007bff' : 'white',
+                            color: selectedCategory === '' ? 'white' : '#666',
+                            borderColor: '#007bff'
+                        }}
                     >
                         전체
-                        <span className="category-count">{totalCount}</span>
+                        <span className="category-count" style={{
+                            background: selectedCategory === '' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.05)',
+                            color: selectedCategory === '' ? 'white' : 'inherit'
+                        }}>{totalCount}</span>
                     </button>
                     {[...categories]
                         .sort((a, b) => {
@@ -395,16 +390,41 @@ function Catalog({ user }) {
                             if (b.name === 'Other') return -1;
                             return 0;
                         })
-                        .map(cat => (
-                            <button
-                                key={cat.id}
-                                className={`category-btn ${selectedCategory === cat.slug ? 'active' : ''}`}
-                                onClick={() => setSelectedCategory(cat.slug)}
-                            >
-                                {cat.name}
-                                <span className="category-count">{cat.product_count || 0}</span>
-                            </button>
-                        ))}
+                        .map(cat => {
+                            // Generate consistent color based on category name
+                            const colors = [
+                                '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEEAD',
+                                '#D4A5A5', '#9B59B6', '#3498DB', '#E67E22', '#2ECC71'
+                            ];
+                            let hash = 0;
+                            for (let i = 0; i < cat.name.length; i++) {
+                                hash = cat.name.charCodeAt(i) + ((hash << 5) - hash);
+                            }
+                            const colorIndex = Math.abs(hash) % colors.length;
+                            const catColor = colors[colorIndex];
+                            const isActive = selectedCategory === cat.slug;
+
+                            return (
+                                <button
+                                    key={cat.id}
+                                    className="category-btn"
+                                    onClick={() => setSelectedCategory(cat.slug)}
+                                    style={{
+                                        backgroundColor: isActive ? catColor : 'white',
+                                        color: isActive ? 'white' : catColor,
+                                        borderColor: catColor,
+                                        fontWeight: isActive ? 'bold' : 'normal',
+                                        boxShadow: isActive ? `0 4px 12px ${catColor}40` : 'none'
+                                    }}
+                                >
+                                    {cat.name}
+                                    <span className="category-count" style={{
+                                        background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.05)',
+                                        color: isActive ? 'white' : 'inherit'
+                                    }}>{cat.product_count || 0}</span>
+                                </button>
+                            )
+                        })}
                 </div>
             </div>
 
