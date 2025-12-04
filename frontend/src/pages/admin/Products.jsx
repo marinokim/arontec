@@ -1463,7 +1463,19 @@ function AdminProducts({ user }) {
                         background: 'white', padding: '2rem', borderRadius: '8px', width: '90%', maxWidth: '400px'
                     }}>
                         <h3>엑셀 업로드 옵션</h3>
-                        <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <div style={{ background: '#f8f9fa', padding: '1rem', borderRadius: '4px', fontSize: '0.9rem', color: '#666', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+                            <p style={{ margin: '0 0 0.5rem 0' }}><strong><i className="fas fa-info-circle"></i> 업로드 안내</strong></p>
+                            <ul style={{ paddingLeft: '1.2rem', margin: 0 }}>
+                                <li><strong>신규 상품 등록:</strong> 모델명/모델번호가 일치하는 상품이 <u>없는 경우에만</u> 등록합니다.</li>
+                                <li><strong>기존 상품 수정:</strong> 모델명/모델번호가 일치하는 상품이 <u>있는 경우에만</u> 정보를 업데이트합니다.</li>
+                                <li><strong>전체:</strong> 신규 상품은 등록하고, 기존 상품은 업데이트합니다.</li>
+                            </ul>
+                            <p style={{ margin: '0.5rem 0 0 0', color: '#dc3545', fontSize: '0.85rem' }}>
+                                * 엑셀 파일의 첫 번째 시트만 처리됩니다.<br />
+                                * '양식 다운로드'를 통해 최신 양식을 사용해 주세요.
+                            </p>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                             <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
                                 <input
                                     type="radio"
