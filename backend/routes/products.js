@@ -269,8 +269,19 @@ router.get('/', async (req, res) => {
 // Get all categories (Public)
 router.get('/categories', async (req, res) => {
     try {
-        const result = await pool.query('SELECT * FROM categories ORDER BY id')
-        res.json({ categories: result.rows })
+        const result = await pool.query(`
+            SELECT c.*, COUNT(p.id)::int as product_count 
+            FROM categories c 
+            LEFT JOIN products p ON c.id = p.category_id AND p.is_available = true 
+            GROUP BY c.id 
+            ORDER BY c.id
+        `)
+
+        // Get total count for "All" category
+        const totalRes = await pool.query('SELECT COUNT(*)::int as total FROM products WHERE is_available = true')
+        const totalCount = totalRes.rows[0].total
+
+        res.json({ categories: result.rows, totalCount })
     } catch (error) {
         console.error('Get categories error:', error)
         res.status(500).json({ error: 'Failed to fetch categories' })
