@@ -623,10 +623,10 @@ function AdminProducts({ user }) {
                     `"${(p.model_no || '').replace(/"/g, '""')}"`,
                     `"${(p.category_name || '').replace(/"/g, '""')}"`,
                     `"${(p.description || '').replace(/"/g, '""')}"`,
-                    p.b2b_price || 0,
-                    p.supply_price || 0,
-                    p.consumer_price || 0,
-                    p.stock_quantity || 0,
+                    parseInt(p.b2b_price || 0),
+                    parseInt(p.supply_price || 0),
+                    parseInt(p.consumer_price || 0),
+                    parseInt(p.stock_quantity || 0),
                     `"${(p.image_url || '').replace(/"/g, '""')}"`,
                     `"${(p.detail_url || '').replace(/"/g, '""')}"`,
                     `"${(p.manufacturer || '').replace(/"/g, '""')}"`,
@@ -634,9 +634,9 @@ function AdminProducts({ user }) {
                     `"${(p.product_spec || '').replace(/"/g, '""')}"`,
                     `"${(p.product_options || '').replace(/"/g, '""')}"`,
                     p.is_tax_free ? 'TRUE' : 'FALSE',
-                    p.quantity_per_carton || 1,
-                    p.shipping_fee_individual || 0,
-                    p.shipping_fee_carton || 0,
+                    parseInt(p.quantity_per_carton || 1),
+                    parseInt(p.shipping_fee_individual || 0),
+                    parseInt(p.shipping_fee_carton || 0),
                     `"${(p.remarks || '').replace(/"/g, '""')}"`
                 ]);
 
