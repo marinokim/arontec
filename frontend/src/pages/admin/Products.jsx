@@ -59,6 +59,9 @@ function AdminProducts({ user }) {
 
     const [formData, setFormData] = useState(initialFormState)
     const [isDownloading, setIsDownloading] = useState(false)
+    const [showDownloadModal, setShowDownloadModal] = useState(false)
+    const [downloadFilterType, setDownloadFilterType] = useState('all') // 'all', 'category', 'brand'
+    const [downloadTarget, setDownloadTarget] = useState('')
 
     useEffect(() => {
         fetchProducts()
@@ -595,12 +598,22 @@ function AdminProducts({ user }) {
 
     const downloadAllProducts = () => {
         setIsDownloading(true)
+        setShowDownloadModal(false) // Close modal
 
         // Use setTimeout to allow UI to update before heavy processing
         setTimeout(() => {
             try {
+                let productsToDownload = [...products];
+
+                // Filter based on selection
+                if (downloadFilterType === 'category' && downloadTarget) {
+                    productsToDownload = productsToDownload.filter(p => p.category_id === parseInt(downloadTarget));
+                } else if (downloadFilterType === 'brand' && downloadTarget) {
+                    productsToDownload = productsToDownload.filter(p => p.brand === downloadTarget);
+                }
+
                 // Sort products by category order, then by brand
-                const sortedProducts = [...products].sort((a, b) => {
+                const sortedProducts = productsToDownload.sort((a, b) => {
                     const indexA = CATEGORY_ORDER.indexOf(a.category_name);
                     const indexB = CATEGORY_ORDER.indexOf(b.category_name);
 
@@ -763,7 +776,11 @@ function AdminProducts({ user }) {
                     </div>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <button
-                            onClick={downloadAllProducts}
+                            onClick={() => {
+                                setDownloadFilterType('all');
+                                setDownloadTarget('');
+                                setShowDownloadModal(true);
+                            }}
                             className="btn btn-info"
                             style={{ color: 'white', background: isDownloading ? '#6c757d' : '#138496', border: 'none', cursor: isDownloading ? 'not-allowed' : 'pointer' }}
                             disabled={isDownloading}
@@ -1358,6 +1375,83 @@ function AdminProducts({ user }) {
                                 <button type="button" onClick={() => setShowCategoryModal(false)} className="btn btn-secondary" style={{ flex: 1, background: '#6c757d' }}>취소</button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {showDownloadModal && (
+                <div className="modal-overlay" style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
+                }}>
+                    <div className="modal-content" style={{
+                        background: 'white', padding: '2rem', borderRadius: '8px', width: '90%', maxWidth: '400px'
+                    }}>
+                        <h3>상품 다운로드 옵션</h3>
+                        <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                                <input
+                                    type="radio"
+                                    name="downloadType"
+                                    checked={downloadFilterType === 'all'}
+                                    onChange={() => setDownloadFilterType('all')}
+                                />
+                                전체 다운로드
+                            </label>
+
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                                <input
+                                    type="radio"
+                                    name="downloadType"
+                                    checked={downloadFilterType === 'category'}
+                                    onChange={() => {
+                                        setDownloadFilterType('category');
+                                        setDownloadTarget(categories.length > 0 ? categories[0].id : '');
+                                    }}
+                                />
+                                카테고리별 다운로드
+                            </label>
+                            {downloadFilterType === 'category' && (
+                                <select
+                                    value={downloadTarget}
+                                    onChange={(e) => setDownloadTarget(e.target.value)}
+                                    style={{ marginLeft: '1.5rem', padding: '0.3rem', width: 'calc(100% - 1.5rem)' }}
+                                >
+                                    {categories.map(cat => (
+                                        <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                    ))}
+                                </select>
+                            )}
+
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                                <input
+                                    type="radio"
+                                    name="downloadType"
+                                    checked={downloadFilterType === 'brand'}
+                                    onChange={() => {
+                                        setDownloadFilterType('brand');
+                                        setDownloadTarget(brands.length > 0 ? brands[0] : '');
+                                    }}
+                                />
+                                브랜드별 다운로드
+                            </label>
+                            {downloadFilterType === 'brand' && (
+                                <select
+                                    value={downloadTarget}
+                                    onChange={(e) => setDownloadTarget(e.target.value)}
+                                    style={{ marginLeft: '1.5rem', padding: '0.3rem', width: 'calc(100% - 1.5rem)' }}
+                                >
+                                    {brands.map((brand, idx) => (
+                                        <option key={idx} value={brand}>{brand}</option>
+                                    ))}
+                                </select>
+                            )}
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
+                            <button onClick={downloadAllProducts} className="btn btn-primary" style={{ flex: 1 }}>다운로드</button>
+                            <button onClick={() => setShowDownloadModal(false)} className="btn btn-secondary" style={{ flex: 1, background: '#6c757d' }}>취소</button>
+                        </div>
                     </div>
                 </div>
             )}
