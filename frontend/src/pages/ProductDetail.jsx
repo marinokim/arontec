@@ -78,7 +78,16 @@ function ProductDetail({ user }) {
             <Navbar user={user} />
 
             <div className="dashboard-content container">
-                <div className="dashboard-header">
+                <div className="dashboard-header" style={{
+                    position: 'sticky',
+                    top: '80px',
+                    zIndex: 100,
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    backdropFilter: 'blur(10px)',
+                    padding: '1rem 0',
+                    margin: '-1rem 0 1rem 0',
+                    borderBottom: '1px solid #eee'
+                }}>
                     <button onClick={() => navigate('/catalog')} className="btn btn-secondary">
                         &larr; 목록으로 돌아가기
                     </button>

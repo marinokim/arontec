@@ -11,12 +11,64 @@ function Catalog({ user }) {
     const [products, setProducts] = useState([])
     const [categories, setCategories] = useState([])
     const [totalCount, setTotalCount] = useState(0)
-    const [selectedCategory, setSelectedCategory] = useState('')
-    const [showNewOnly, setShowNewOnly] = useState(false)
-    const [search, setSearch] = useState('')
+
+    // Initialize state from sessionStorage if available
+    const [selectedCategory, setSelectedCategory] = useState(() => {
+        return sessionStorage.getItem('catalog_category') || ''
+    })
+    const [showNewOnly, setShowNewOnly] = useState(() => {
+        return sessionStorage.getItem('catalog_showNew') === 'true'
+    })
+    const [search, setSearch] = useState(() => {
+        return sessionStorage.getItem('catalog_search') || ''
+    })
+
     const [proposalItems, setProposalItems] = useState([])
     const [showProposalModal, setShowProposalModal] = useState(false)
     const navigate = useNavigate()
+
+    // Save state to sessionStorage whenever it changes
+    useEffect(() => {
+        sessionStorage.setItem('catalog_category', selectedCategory)
+        sessionStorage.setItem('catalog_showNew', showNewOnly)
+        sessionStorage.setItem('catalog_search', search)
+    }, [selectedCategory, showNewOnly, search])
+
+    // Restore scroll position
+    useEffect(() => {
+        const savedScroll = sessionStorage.getItem('catalog_scroll')
+        if (savedScroll && products.length > 0) {
+            // Small timeout to ensure rendering is done
+            setTimeout(() => {
+                window.scrollTo(0, parseInt(savedScroll))
+                // Optional: Clear scroll after restoring? 
+                // No, keep it in case user navigates away and back again without unmounting/remounting issues, 
+                // though usually we want to clear it if they navigate to a different page from catalog that isn't product detail.
+                // But detecting "where they are going" is hard here.
+                // Let's just keep it. If they manually scroll, it updates.
+            }, 100)
+        }
+    }, [products])
+
+    // Save scroll position on scroll
+    useEffect(() => {
+        const handleScroll = () => {
+            sessionStorage.setItem('catalog_scroll', window.scrollY)
+        }
+
+        // Debounce scroll handler
+        let timeoutId
+        const debouncedScroll = () => {
+            clearTimeout(timeoutId)
+            timeoutId = setTimeout(handleScroll, 100)
+        }
+
+        window.addEventListener('scroll', debouncedScroll)
+        return () => {
+            window.removeEventListener('scroll', debouncedScroll)
+            clearTimeout(timeoutId)
+        }
+    }, [])
 
     useEffect(() => {
         fetchCategories()
