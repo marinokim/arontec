@@ -592,6 +592,64 @@ function AdminProducts({ user }) {
         document.body.removeChild(link)
     }
 
+    const downloadAllProducts = () => {
+        // Sort products by category order
+        const sortedProducts = [...products].sort((a, b) => {
+            const indexA = CATEGORY_ORDER.indexOf(a.category_name);
+            const indexB = CATEGORY_ORDER.indexOf(b.category_name);
+
+            if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+            if (indexA !== -1) return -1;
+            if (indexB !== -1) return 1;
+
+            if (a.category_name === 'Other') return 1;
+            if (b.category_name === 'Other') return -1;
+
+            return (a.category_name || '').localeCompare(b.category_name || '');
+        });
+
+        const headers = ['No.', 'Brand', 'ModelName', 'ModelNo', 'Category', 'Description', 'B2BPrice', 'SupplyPrice', 'ConsumerPrice', 'Stock', 'ImageURL', 'DetailURL', 'Manufacturer', 'Origin', 'ProductSpec', 'ProductOptions', 'IsTaxFree', 'QuantityPerCarton', 'ShippingFeeIndividual', 'ShippingFeeCarton', 'remark']
+
+        const rows = sortedProducts.map(p => [
+            p.id,
+            `"${(p.brand || '').replace(/"/g, '""')}"`,
+            `"${(p.model_name || '').replace(/"/g, '""')}"`,
+            `"${(p.model_no || '').replace(/"/g, '""')}"`,
+            `"${(p.category_name || '').replace(/"/g, '""')}"`,
+            `"${(p.description || '').replace(/"/g, '""')}"`,
+            p.b2b_price || 0,
+            p.supply_price || 0,
+            p.consumer_price || 0,
+            p.stock_quantity || 0,
+            `"${(p.image_url || '').replace(/"/g, '""')}"`,
+            `"${(p.detail_url || '').replace(/"/g, '""')}"`,
+            `"${(p.manufacturer || '').replace(/"/g, '""')}"`,
+            `"${(p.origin || '').replace(/"/g, '""')}"`,
+            `"${(p.product_spec || '').replace(/"/g, '""')}"`,
+            `"${(p.product_options || '').replace(/"/g, '""')}"`,
+            p.is_tax_free ? 'TRUE' : 'FALSE',
+            p.quantity_per_carton || 1,
+            p.shipping_fee_individual || 0,
+            p.shipping_fee_carton || 0,
+            `"${(p.remarks || '').replace(/"/g, '""')}"`
+        ]);
+
+        const csvContent = [
+            headers.join(','),
+            ...rows.map(row => row.join(','))
+        ].join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+        const link = document.createElement('a')
+        const url = URL.createObjectURL(blob)
+        link.setAttribute('href', url)
+        link.setAttribute('download', 'all_products.csv')
+        link.style.visibility = 'hidden'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+    }
+
     const handleDeleteRecent = async () => {
         const hours = prompt('최근 몇 시간 내에 등록된 상품을 삭제하시겠습니까? (숫자만 입력)', '1')
         if (!hours) return
@@ -678,8 +736,12 @@ function AdminProducts({ user }) {
                         <button onClick={() => setShowCategoryModal(true)} className="btn btn-secondary" style={{ padding: '0.5rem', fontSize: '0.8rem' }}>
                             + 카테고리 추가
                         </button>
+
                     </div>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <button onClick={downloadAllProducts} className="btn btn-info" style={{ color: 'white', background: '#138496', border: 'none' }}>
+                            <i className="fas fa-download"></i> 전체 상품 다운로드
+                        </button>
                         <button onClick={downloadTemplate} className="btn btn-secondary" style={{ background: '#28a745', border: 'none' }}>
                             <i className="fas fa-download"></i> 양식 다운로드
                         </button>
