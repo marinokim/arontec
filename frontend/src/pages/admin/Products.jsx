@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { getCategoryColor } from '../../constants/categories'
+import { getCategoryColor, sortCategories } from '../../constants/categories'
 
 import Navbar from '../../components/Navbar'
 
@@ -123,7 +123,7 @@ function AdminProducts({ user }) {
     const fetchCategories = async () => {
         const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/products/categories', { credentials: 'include' })
         const data = await res.json()
-        setCategories(data.categories)
+        setCategories(sortCategories(data.categories || []))
     }
 
     const formatPrice = (value) => {
@@ -573,8 +573,8 @@ function AdminProducts({ user }) {
 
     const downloadTemplate = () => {
         // Create a CSV template
-        const headers = ['Brand', 'ModelName', 'ModelNo', 'Category', 'Description', 'B2BPrice', 'ConsumerPrice', 'Stock', 'ImageURL', 'DetailURL', 'Manufacturer', 'Origin', 'ProductSpec', 'ProductOptions', 'IsTaxFree', 'QuantityPerCarton', 'ShippingFeeIndividual', 'ShippingFeeCarton', 'Remark']
-        const example = ['Samsung', 'Galaxy S24', 'SM-S921', 'Mobile', 'Latest smartphone', '1000000', '1200000', '100', 'https://example.com/image.jpg', 'https://example.com/detail.jpg', 'Samsung Electronics', 'Vietnam', '256GB, 8GB RAM', 'Phantom Black, Cream', 'FALSE', '20', '3000', '0', 'Special Offer']
+        const headers = ['No.', 'Brand', 'ModelName', 'ModelNo', 'Category', 'Description', 'B2BPrice', 'SupplyPrice', 'ConsumerPrice', 'Stock', 'ImageURL', 'DetailURL', 'Manufacturer', 'Origin', 'ProductSpec', 'ProductOptions', 'IsTaxFree', 'QuantityPerCarton', 'ShippingFeeIndividual', 'ShippingFeeCarton', 'remark']
+        const example = ['1', 'Samsung', 'Galaxy S24', 'SM-S921', 'Mobile', 'Latest smartphone', '1000000', '900000', '1200000', '100', 'https://example.com/image.jpg', 'https://example.com/detail.jpg', 'Samsung Electronics', 'Vietnam', '256GB, 8GB RAM', 'Phantom Black, Cream', 'FALSE', '20', '3000', '0', 'Special Offer']
 
         const csvContent = [
             headers.join(','),
@@ -663,7 +663,16 @@ function AdminProducts({ user }) {
                         >
                             <option value="All">전체 카테고리</option>
                             {categories.map(cat => (
-                                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                <option
+                                    key={cat.id}
+                                    value={cat.id}
+                                    style={{
+                                        backgroundColor: getCategoryColor(cat.name),
+                                        color: '#fff'
+                                    }}
+                                >
+                                    {cat.name}
+                                </option>
                             ))}
                         </select>
                         <button onClick={() => setShowCategoryModal(true)} className="btn btn-secondary" style={{ padding: '0.5rem', fontSize: '0.8rem' }}>
@@ -770,7 +779,7 @@ function AdminProducts({ user }) {
                                             </td>
                                             <td style={{ padding: 0, width: '100px' }}>
                                                 {product.image_url ? (
-                                                    <img src={getImageUrl(product.image_url)} alt={product.model_name} style={{ width: '100%', height: '100px', objectFit: 'cover', display: 'block' }} />
+                                                    <img src={getImageUrl(product.image_url)} alt={product.model_name} style={{ width: '100%', height: '100px', objectFit: 'contain', display: 'block', backgroundColor: '#fff' }} />
                                                 ) : (
                                                     <div style={{ width: '100%', height: '100px', background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem' }}>No Img</div>
                                                 )}
