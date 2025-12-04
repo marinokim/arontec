@@ -103,7 +103,18 @@ function Dashboard({ user }) {
                 <div className="dashboard-card" style={{ marginTop: '2rem' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                         <h3>✨ 신상품</h3>
-                        <Link to="/catalog?filter=new" style={{ fontSize: '0.9rem', color: '#007bff', textDecoration: 'none' }}>더보기 &gt;</Link>
+                        <Link to="/catalog" style={{
+                            fontSize: '1rem',
+                            color: '#fff',
+                            background: '#007bff',
+                            padding: '8px 16px',
+                            borderRadius: '20px',
+                            textDecoration: 'none',
+                            fontWeight: 'bold',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                        }}>
+                            전체 상품 보기 &gt;
+                        </Link>
                     </div>
 
                     {data.newProducts && data.newProducts.length > 0 ? (
@@ -132,9 +143,28 @@ function Dashboard({ user }) {
                     )}
                 </div>
 
-                <div className="quick-actions">
-                    <Link to="/catalog" className="btn btn-primary">상품 둘러보기</Link>
-                    <Link to="/cart" className="btn btn-secondary">장바구니 보기</Link>
+                <div className="quick-actions" style={{ marginTop: '2rem' }}>
+                    <Link to="/catalog" className="btn btn-primary" style={{
+                        padding: '1.2rem 3rem',
+                        fontSize: '1.3rem',
+                        fontWeight: 'bold',
+                        boxShadow: '0 4px 12px rgba(0,123,255,0.3)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px'
+                    }}>
+                        <span>🔍</span> 상품 둘러보기
+                    </Link>
+                    <Link to="/cart" className="btn btn-secondary" style={{
+                        padding: '1.2rem 3rem',
+                        fontSize: '1.3rem',
+                        fontWeight: 'bold',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px'
+                    }}>
+                        <span>🛒</span> 장바구니 보기
+                    </Link>
                 </div>
             </div>
         </div>
