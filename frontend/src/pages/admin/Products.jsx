@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { getCategoryColor, sortCategories } from '../../constants/categories'
+import { getCategoryColor, sortCategories, CATEGORY_ORDER } from '../../constants/categories'
 
 import Navbar from '../../components/Navbar'
 
