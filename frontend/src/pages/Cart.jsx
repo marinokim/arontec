@@ -9,11 +9,6 @@ function Cart({ user }) {
     const navigate = useNavigate()
 
     useEffect(() => {
-        if (user?.isAdmin) {
-            alert('관리자는 장바구니를 이용할 수 없습니다.')
-            navigate('/dashboard')
-            return
-        }
         fetchCart()
     }, [user])
 
