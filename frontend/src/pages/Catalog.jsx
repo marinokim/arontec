@@ -515,7 +515,7 @@ function Catalog({ user }) {
                     zIndex: 100
                 }}
             >
-                <span>📋 제안서 관리</span>
+                <span>📋 제안서 다운로드</span>
                 <span style={{ background: 'white', color: '#28a745', padding: '0.2rem 0.6rem', borderRadius: '12px', fontSize: '0.9rem', fontWeight: 'bold' }}>
                     {proposalItems.length}
                 </span>
