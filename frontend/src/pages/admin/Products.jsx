@@ -794,9 +794,7 @@ function AdminProducts({ user }) {
                         <button onClick={downloadTemplate} className="btn btn-secondary" style={{ background: '#28a745', border: 'none' }}>
                             <i className="fas fa-download"></i> 양식 다운로드
                         </button>
-                        <button onClick={handleDeleteRecent} className="btn btn-secondary" style={{ background: '#dc3545', border: 'none' }}>
-                            <i className="fas fa-trash"></i> 최근 업로드 삭제
-                        </button>
+
                         <button onClick={handleDeleteRange} className="btn btn-secondary" style={{ background: '#c82333', border: 'none' }}>
                             <i className="fas fa-eraser"></i> 구간 삭제
                         </button>
