@@ -155,6 +155,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Category Constants (Synced with SCM)
+    const CATEGORY_ORDER = [
+        'Audio',
+        'Premium Audio',
+        'Mobile',
+        'Beauty',
+        'Food',
+        'Living',
+        'GIFT SET',
+        'Travel',
+        'Kitchen',
+        'Other'
+    ];
+
+    const CATEGORY_COLORS = {
+        'Audio': '#007bff',          // Blue
+        'Premium Audio': '#6610f2',  // Indigo
+        'Mobile': '#fd7e14',         // Orange
+        'Beauty': '#e83e8c',         // Pink
+        'Food': '#dc3545',           // Red
+        'Living': '#28a745',         // Green
+        'GIFT SET': '#20c997',       // Teal
+        'Travel': '#17a2b8',         // Cyan
+        'Kitchen': '#ffc107',        // Yellow
+        'Other': '#6c757d'           // Gray
+    };
+
     // Render Products & Categories
     const productGrid = document.getElementById('product-grid');
     const categoryContainer = document.querySelector('.category-filters');
@@ -180,18 +207,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await res.json();
                 let categories = data.categories;
 
-                // Sort categories: 'Other' at the end
+                // Sort categories based on SCM order
                 categories.sort((a, b) => {
+                    const indexA = CATEGORY_ORDER.indexOf(a.name);
+                    const indexB = CATEGORY_ORDER.indexOf(b.name);
+
+                    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+                    if (indexA !== -1) return -1;
+                    if (indexB !== -1) return 1;
+
+                    // If neither is in the list, sort alphabetically
                     if (a.name === 'Other') return 1;
                     if (b.name === 'Other') return -1;
-                    return 0; // Keep original order for others (or sort by ID/Name if needed)
+                    return a.name.localeCompare(b.name);
                 });
 
                 // Create buttons: All + Dynamic Categories
-                let buttonsHtml = `<button class="category-btn active" data-category="All">All</button>`;
+                let buttonsHtml = `<button class="category-btn active" data-category="All" style="background-color: #333; color: white; border-color: #333;">All</button>`;
 
                 categories.forEach(cat => {
-                    buttonsHtml += `<button class="category-btn" data-category="${cat.name}">${cat.name}</button>`;
+                    const color = CATEGORY_COLORS[cat.name] || '#6c757d';
+                    // Initially inactive, so white background with colored border/text
+                    // We will handle active state in the click listener or via inline style if we want them always colored
+                    // Let's make them colored outline by default, and filled when active
+                    buttonsHtml += `<button class="category-btn" data-category="${cat.name}" data-color="${color}" style="border-color: ${color}; color: ${color};">${cat.name}</button>`;
                 });
 
                 categoryContainer.innerHTML = buttonsHtml;
@@ -209,10 +248,31 @@ document.addEventListener('DOMContentLoaded', () => {
         const categoryBtns = document.querySelectorAll('.category-btn');
         categoryBtns.forEach(btn => {
             btn.addEventListener('click', () => {
-                // Remove active class from all
-                categoryBtns.forEach(b => b.classList.remove('active'));
-                // Add active class to clicked
+                // Remove active class from all and reset styles
+                categoryBtns.forEach(b => {
+                    b.classList.remove('active');
+                    const color = b.getAttribute('data-color');
+                    if (color) {
+                        b.style.backgroundColor = 'white';
+                        b.style.color = color;
+                    } else {
+                        // For 'All' button
+                        b.style.backgroundColor = 'white';
+                        b.style.color = '#333';
+                    }
+                });
+
+                // Add active class to clicked and apply active styles
                 btn.classList.add('active');
+                const color = btn.getAttribute('data-color');
+                if (color) {
+                    btn.style.backgroundColor = color;
+                    btn.style.color = 'white';
+                } else {
+                    // For 'All' button
+                    btn.style.backgroundColor = '#333';
+                    btn.style.color = 'white';
+                }
 
                 const category = btn.getAttribute('data-category');
                 activeCategory = category;
