@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { getCategoryColor } from '../../constants/categories'
+import { getCategoryColor, sortCategories } from '../../constants/categories'
 
 import Navbar from '../../components/Navbar'
 
@@ -123,7 +123,7 @@ function AdminProducts({ user }) {
     const fetchCategories = async () => {
         const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/products/categories', { credentials: 'include' })
         const data = await res.json()
-        setCategories(data.categories)
+        setCategories(sortCategories(data.categories || []))
     }
 
     const formatPrice = (value) => {
@@ -573,8 +573,8 @@ function AdminProducts({ user }) {
 
     const downloadTemplate = () => {
         // Create a CSV template
-        const headers = ['Brand', 'ModelName', 'ModelNo', 'Category', 'Description', 'B2BPrice', 'ConsumerPrice', 'Stock', 'ImageURL', 'DetailURL', 'Manufacturer', 'Origin', 'ProductSpec', 'ProductOptions', 'IsTaxFree', 'QuantityPerCarton', 'ShippingFeeIndividual', 'ShippingFeeCarton', 'Remark']
-        const example = ['Samsung', 'Galaxy S24', 'SM-S921', 'Mobile', 'Latest smartphone', '1000000', '1200000', '100', 'https://example.com/image.jpg', 'https://example.com/detail.jpg', 'Samsung Electronics', 'Vietnam', '256GB, 8GB RAM', 'Phantom Black, Cream', 'FALSE', '20', '3000', '0', 'Special Offer']
+        const headers = ['No.', 'Brand', 'ModelName', 'ModelNo', 'Category', 'Description', 'B2BPrice', 'SupplyPrice', 'ConsumerPrice', 'Stock', 'ImageURL', 'DetailURL', 'Manufacturer', 'Origin', 'ProductSpec', 'ProductOptions', 'IsTaxFree', 'QuantityPerCarton', 'ShippingFeeIndividual', 'ShippingFeeCarton', 'remark']
+        const example = ['1', 'Samsung', 'Galaxy S24', 'SM-S921', 'Mobile', 'Latest smartphone', '1000000', '900000', '1200000', '100', 'https://example.com/image.jpg', 'https://example.com/detail.jpg', 'Samsung Electronics', 'Vietnam', '256GB, 8GB RAM', 'Phantom Black, Cream', 'FALSE', '20', '3000', '0', 'Special Offer']
 
         const csvContent = [
             headers.join(','),
@@ -586,6 +586,64 @@ function AdminProducts({ user }) {
         const url = URL.createObjectURL(blob)
         link.setAttribute('href', url)
         link.setAttribute('download', 'product_upload_template.csv')
+        link.style.visibility = 'hidden'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+    }
+
+    const downloadAllProducts = () => {
+        // Sort products by category order
+        const sortedProducts = [...products].sort((a, b) => {
+            const indexA = CATEGORY_ORDER.indexOf(a.category_name);
+            const indexB = CATEGORY_ORDER.indexOf(b.category_name);
+
+            if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+            if (indexA !== -1) return -1;
+            if (indexB !== -1) return 1;
+
+            if (a.category_name === 'Other') return 1;
+            if (b.category_name === 'Other') return -1;
+
+            return (a.category_name || '').localeCompare(b.category_name || '');
+        });
+
+        const headers = ['No.', 'Brand', 'ModelName', 'ModelNo', 'Category', 'Description', 'B2BPrice', 'SupplyPrice', 'ConsumerPrice', 'Stock', 'ImageURL', 'DetailURL', 'Manufacturer', 'Origin', 'ProductSpec', 'ProductOptions', 'IsTaxFree', 'QuantityPerCarton', 'ShippingFeeIndividual', 'ShippingFeeCarton', 'remark']
+
+        const rows = sortedProducts.map(p => [
+            p.id,
+            `"${(p.brand || '').replace(/"/g, '""')}"`,
+            `"${(p.model_name || '').replace(/"/g, '""')}"`,
+            `"${(p.model_no || '').replace(/"/g, '""')}"`,
+            `"${(p.category_name || '').replace(/"/g, '""')}"`,
+            `"${(p.description || '').replace(/"/g, '""')}"`,
+            p.b2b_price || 0,
+            p.supply_price || 0,
+            p.consumer_price || 0,
+            p.stock_quantity || 0,
+            `"${(p.image_url || '').replace(/"/g, '""')}"`,
+            `"${(p.detail_url || '').replace(/"/g, '""')}"`,
+            `"${(p.manufacturer || '').replace(/"/g, '""')}"`,
+            `"${(p.origin || '').replace(/"/g, '""')}"`,
+            `"${(p.product_spec || '').replace(/"/g, '""')}"`,
+            `"${(p.product_options || '').replace(/"/g, '""')}"`,
+            p.is_tax_free ? 'TRUE' : 'FALSE',
+            p.quantity_per_carton || 1,
+            p.shipping_fee_individual || 0,
+            p.shipping_fee_carton || 0,
+            `"${(p.remarks || '').replace(/"/g, '""')}"`
+        ]);
+
+        const csvContent = [
+            headers.join(','),
+            ...rows.map(row => row.join(','))
+        ].join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+        const link = document.createElement('a')
+        const url = URL.createObjectURL(blob)
+        link.setAttribute('href', url)
+        link.setAttribute('download', 'all_products.csv')
         link.style.visibility = 'hidden'
         document.body.appendChild(link)
         link.click()
@@ -663,14 +721,27 @@ function AdminProducts({ user }) {
                         >
                             <option value="All">전체 카테고리</option>
                             {categories.map(cat => (
-                                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                <option
+                                    key={cat.id}
+                                    value={cat.id}
+                                    style={{
+                                        backgroundColor: getCategoryColor(cat.name),
+                                        color: '#fff'
+                                    }}
+                                >
+                                    {cat.name}
+                                </option>
                             ))}
                         </select>
                         <button onClick={() => setShowCategoryModal(true)} className="btn btn-secondary" style={{ padding: '0.5rem', fontSize: '0.8rem' }}>
                             + 카테고리 추가
                         </button>
+
                     </div>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <button onClick={downloadAllProducts} className="btn btn-info" style={{ color: 'white', background: '#138496', border: 'none' }}>
+                            <i className="fas fa-download"></i> 전체 상품 다운로드
+                        </button>
                         <button onClick={downloadTemplate} className="btn btn-secondary" style={{ background: '#28a745', border: 'none' }}>
                             <i className="fas fa-download"></i> 양식 다운로드
                         </button>
@@ -770,7 +841,7 @@ function AdminProducts({ user }) {
                                             </td>
                                             <td style={{ padding: 0, width: '100px' }}>
                                                 {product.image_url ? (
-                                                    <img src={getImageUrl(product.image_url)} alt={product.model_name} style={{ width: '100%', height: '100px', objectFit: 'cover', display: 'block' }} />
+                                                    <img src={getImageUrl(product.image_url)} alt={product.model_name} style={{ width: '100%', height: '100px', objectFit: 'contain', display: 'block', backgroundColor: '#fff' }} />
                                                 ) : (
                                                     <div style={{ width: '100%', height: '100px', background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem' }}>No Img</div>
                                                 )}
