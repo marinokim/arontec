@@ -208,10 +208,25 @@ function ProductDetail({ user }) {
                                 const detailUrl = product.detail_url;
                                 // Check for HTML tags
                                 if (/<[a-z][\s\S]*>/i.test(detailUrl)) {
+                                    const processHtml = (html) => {
+                                        try {
+                                            const div = document.createElement('div');
+                                            div.innerHTML = html;
+                                            const imgs = div.querySelectorAll('img[ec-data-src]');
+                                            imgs.forEach(img => {
+                                                img.src = img.getAttribute('ec-data-src');
+                                            });
+                                            return div.innerHTML;
+                                        } catch (e) {
+                                            console.error('HTML processing error:', e);
+                                            return html;
+                                        }
+                                    };
+
                                     return (
                                         <div
                                             className="product-detail-content"
-                                            dangerouslySetInnerHTML={{ __html: detailUrl }}
+                                            dangerouslySetInnerHTML={{ __html: processHtml(detailUrl) }}
                                             style={{ margin: '0 auto' }}
                                         />
                                     );
