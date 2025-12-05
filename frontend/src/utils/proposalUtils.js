@@ -174,7 +174,7 @@ export const generateProposalExcel = async (proposalItems, user, setProposalItem
 
     // Save history to backend
     try {
-        await fetch((import.meta.env.VITE_API_URL || '') + '/api/proposals', {
+        const response = await fetch((import.meta.env.VITE_API_URL || '') + '/api/proposals', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
@@ -183,6 +183,13 @@ export const generateProposalExcel = async (proposalItems, user, setProposalItem
                 items: proposalItems
             })
         })
+
+        if (!response.ok) {
+            const errorData = await response.json()
+            console.error('Failed to save proposal history:', errorData)
+            // Optional: Alert user if history saving fails, or just log it silently if it's not critical
+            // alert('제안서 이력 저장에 실패했습니다: ' + (errorData.error || response.statusText))
+        }
     } catch (error) {
         console.error('Failed to save proposal history:', error)
     }

@@ -11,6 +11,7 @@ import notificationRoutes from './routes/notifications.js'
 import adminRoutes from './routes/admin.js'
 import uploadRoutes from './routes/upload.js'
 import excelRoutes from './routes/excel.js'
+import proposalRoutes from './routes/proposalRoutes.js'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
