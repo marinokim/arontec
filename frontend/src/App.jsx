@@ -12,6 +12,7 @@ import AdminMembers from './pages/admin/Members'
 import AdminProducts from './pages/admin/Products'
 import AdminQuotes from './pages/admin/Quotes'
 import AdminNotifications from './pages/admin/Notifications'
+import AdminProposalHistory from './pages/admin/ProposalHistory'
 import ProductDetail from './pages/ProductDetail'
 
 // Assuming ProtectedRoute is defined elsewhere or will be added.
