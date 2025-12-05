@@ -444,6 +444,15 @@ function ProductCard({ product, onAddToCart, onAddToProposal, onRemoveFromPropos
                     ) : (
                         <div className="no-image">No Image</div>
                     )}
+
+                    <button
+                        className={`product-heart-btn ${isInProposal ? 'active' : ''}`}
+                        onClick={handleAddToProposal}
+                        title={isInProposal ? '제안서에서 제거' : '제안서에 담기'}
+                    >
+                        ♥
+                    </button>
+
                     {showOptions && (
                         <div className="image-overlay">
                             <h3>{product.brand}</h3>
@@ -479,12 +488,6 @@ function ProductCard({ product, onAddToCart, onAddToProposal, onRemoveFromPropos
                             }}
                         >
                             바로담기
-                        </button>
-                        <button
-                            className={`btn-heart ${isInProposal ? 'active' : ''}`}
-                            onClick={handleAddToProposal}
-                        >
-                            ♥
                         </button>
                     </div>
                 </div>
