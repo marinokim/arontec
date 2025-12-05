@@ -4,6 +4,7 @@ import ExcelJS from 'exceljs'
 import { saveAs } from 'file-saver'
 import './Catalog.css'
 import { sortCategories, getCategoryColor } from '../constants/categories'
+import guideIllustration from '../assets/guide_illustration.png'
 
 import Navbar from '../components/Navbar'
 
@@ -410,29 +411,49 @@ function Catalog({ user }) {
                         <h3 style={{ marginTop: 0, marginBottom: '1.5rem', color: '#333', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1.4rem' }}>
                             <span style={{ fontSize: '1.6rem' }}>💡</span> 제안서 다운로드 기능 사용법
                         </h3>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-                            <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                                <div style={{ background: '#e3f2fd', color: '#1976d2', fontWeight: 'bold', padding: '4px 8px', borderRadius: '4px', fontSize: '0.9rem', whiteSpace: 'nowrap' }}>STEP 1</div>
-                                <p style={{ margin: 0, lineHeight: '1.5', fontSize: '1.05rem', color: '#444' }}>
-                                    상품 카드의 <span style={{ color: '#e91e63', fontWeight: 'bold' }}>♥</span> 버튼을 클릭하여<br />
-                                    제안서 목록에 상품을 담으세요.
-                                </p>
+
+                        <div style={{ display: 'flex', gap: '2rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                            {/* Left Column: Text Steps */}
+                            <div style={{ flex: 1, minWidth: '280px', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                                <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                                    <div style={{ background: '#e3f2fd', color: '#1976d2', fontWeight: 'bold', padding: '4px 8px', borderRadius: '4px', fontSize: '0.9rem', whiteSpace: 'nowrap' }}>STEP 1</div>
+                                    <p style={{ margin: 0, lineHeight: '1.5', fontSize: '1.05rem', color: '#444' }}>
+                                        상품 카드의 <span style={{ color: '#e91e63', fontWeight: 'bold' }}>♥</span> 버튼을 클릭하여<br />
+                                        제안서 목록에 상품을 담으세요.
+                                    </p>
+                                </div>
+                                <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                                    <div style={{ background: '#e3f2fd', color: '#1976d2', fontWeight: 'bold', padding: '4px 8px', borderRadius: '4px', fontSize: '0.9rem', whiteSpace: 'nowrap' }}>STEP 2</div>
+                                    <p style={{ margin: 0, lineHeight: '1.5', fontSize: '1.05rem', color: '#444' }}>
+                                        우측 하단의 <span style={{ background: '#28a745', color: 'white', padding: '2px 8px', borderRadius: '4px', fontSize: '0.9em', fontWeight: 'bold' }}>📋 제안서 다운로드</span><br />
+                                        버튼을 확인하세요.
+                                    </p>
+                                </div>
+                                <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                                    <div style={{ background: '#e3f2fd', color: '#1976d2', fontWeight: 'bold', padding: '4px 8px', borderRadius: '4px', fontSize: '0.9rem', whiteSpace: 'nowrap' }}>STEP 3</div>
+                                    <p style={{ margin: 0, lineHeight: '1.5', fontSize: '1.05rem', color: '#444' }}>
+                                        버튼을 클릭하여 목록을 확인하고<br />
+                                        <span style={{ fontWeight: 'bold', color: '#28a745' }}>엑셀 파일(.xlsx)</span>로 다운로드하세요.
+                                    </p>
+                                </div>
                             </div>
-                            <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                                <div style={{ background: '#e3f2fd', color: '#1976d2', fontWeight: 'bold', padding: '4px 8px', borderRadius: '4px', fontSize: '0.9rem', whiteSpace: 'nowrap' }}>STEP 2</div>
-                                <p style={{ margin: 0, lineHeight: '1.5', fontSize: '1.05rem', color: '#444' }}>
-                                    우측 하단의 <span style={{ background: '#28a745', color: 'white', padding: '2px 8px', borderRadius: '4px', fontSize: '0.9em', fontWeight: 'bold' }}>📋 제안서 다운로드</span><br />
-                                    버튼을 확인하세요.
-                                </p>
-                            </div>
-                            <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                                <div style={{ background: '#e3f2fd', color: '#1976d2', fontWeight: 'bold', padding: '4px 8px', borderRadius: '4px', fontSize: '0.9rem', whiteSpace: 'nowrap' }}>STEP 3</div>
-                                <p style={{ margin: 0, lineHeight: '1.5', fontSize: '1.05rem', color: '#444' }}>
-                                    버튼을 클릭하여 목록을 확인하고<br />
-                                    <span style={{ fontWeight: 'bold', color: '#28a745' }}>엑셀 파일(.xlsx)</span>로 다운로드하세요.
-                                </p>
+
+                            {/* Right Column: Image */}
+                            <div style={{ flex: 1, minWidth: '200px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                <img
+                                    src={guideIllustration}
+                                    alt="Guide Illustration"
+                                    style={{
+                                        maxWidth: '100%',
+                                        height: 'auto',
+                                        maxHeight: '250px',
+                                        objectFit: 'contain',
+                                        borderRadius: '8px'
+                                    }}
+                                />
                             </div>
                         </div>
+
                         <div style={{ marginTop: '2rem', textAlign: 'center' }}>
                             <button
                                 onClick={() => {
