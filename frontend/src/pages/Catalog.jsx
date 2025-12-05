@@ -4,6 +4,7 @@ import ExcelJS from 'exceljs'
 import { saveAs } from 'file-saver'
 import './Catalog.css'
 import { sortCategories, getCategoryColor } from '../constants/categories'
+import guideIllustration from '../assets/guide_illustration.png'
 
 import Navbar from '../components/Navbar'
 
@@ -25,6 +26,7 @@ function Catalog({ user }) {
 
     const [proposalItems, setProposalItems] = useState([])
     const [showProposalModal, setShowProposalModal] = useState(false)
+    const [showGuide, setShowGuide] = useState(() => localStorage.getItem('catalog_showGuide') !== 'false')
     const navigate = useNavigate()
 
     // Save state to sessionStorage whenever it changes
@@ -373,48 +375,46 @@ function Catalog({ user }) {
             </div>
 
             {/* Proposal Guide Modal */}
-            {(() => {
-                const [showGuide, setShowGuide] = useState(() => localStorage.getItem('catalog_showGuide') !== 'false')
-
-                if (!showGuide) return null
-
-                return (
-                    <div className="modal-overlay" style={{
-                        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-                        background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000
+            {showGuide && (
+                <div className="modal-overlay" style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000
+                }}>
+                    <div style={{
+                        background: 'white',
+                        borderRadius: '12px',
+                        padding: '2rem',
+                        width: '90%',
+                        maxWidth: '600px',
+                        position: 'relative',
+                        boxShadow: '0 10px 25px rgba(0,0,0,0.2)'
                     }}>
-                        <div style={{
-                            background: 'white',
-                            borderRadius: '12px',
-                            padding: '2rem',
-                            width: '90%',
-                            maxWidth: '600px',
-                            position: 'relative',
-                            boxShadow: '0 10px 25px rgba(0,0,0,0.2)'
-                        }}>
-                            <button
-                                onClick={() => {
-                                    setShowGuide(false)
-                                    localStorage.setItem('catalog_showGuide', 'false')
-                                }}
-                                style={{
-                                    position: 'absolute',
-                                    top: '15px',
-                                    right: '15px',
-                                    background: 'none',
-                                    border: 'none',
-                                    fontSize: '1.5rem',
-                                    cursor: 'pointer',
-                                    color: '#999',
-                                    padding: '5px'
-                                }}
-                            >
-                                &times;
-                            </button>
-                            <h3 style={{ marginTop: 0, marginBottom: '1.5rem', color: '#333', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1.4rem' }}>
-                                <span style={{ fontSize: '1.6rem' }}>💡</span> 제안서 다운로드 기능 사용법
-                            </h3>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                        <button
+                            onClick={() => {
+                                setShowGuide(false)
+                                localStorage.setItem('catalog_showGuide', 'false')
+                            }}
+                            style={{
+                                position: 'absolute',
+                                top: '15px',
+                                right: '15px',
+                                background: 'none',
+                                border: 'none',
+                                fontSize: '1.5rem',
+                                cursor: 'pointer',
+                                color: '#999',
+                                padding: '5px'
+                            }}
+                        >
+                            &times;
+                        </button>
+                        <h3 style={{ marginTop: 0, marginBottom: '1.5rem', color: '#333', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1.4rem' }}>
+                            <span style={{ fontSize: '1.6rem' }}>💡</span> 제안서 다운로드 기능 사용법
+                        </h3>
+
+                        <div style={{ display: 'flex', gap: '2rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                            {/* Left Column: Text Steps */}
+                            <div style={{ flex: 1, minWidth: '280px', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
                                 <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
                                     <div style={{ background: '#e3f2fd', color: '#1976d2', fontWeight: 'bold', padding: '4px 8px', borderRadius: '4px', fontSize: '0.9rem', whiteSpace: 'nowrap' }}>STEP 1</div>
                                     <p style={{ margin: 0, lineHeight: '1.5', fontSize: '1.05rem', color: '#444' }}>
@@ -437,31 +437,47 @@ function Catalog({ user }) {
                                     </p>
                                 </div>
                             </div>
-                            <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-                                <button
-                                    onClick={() => {
-                                        setShowGuide(false)
-                                        localStorage.setItem('catalog_showGuide', 'false')
-                                    }}
+
+                            {/* Right Column: Image */}
+                            <div style={{ flex: 1, minWidth: '200px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                <img
+                                    src={guideIllustration}
+                                    alt="Guide Illustration"
                                     style={{
-                                        background: '#007bff',
-                                        color: 'white',
-                                        border: 'none',
-                                        padding: '10px 30px',
-                                        borderRadius: '25px',
-                                        fontSize: '1rem',
-                                        fontWeight: 'bold',
-                                        cursor: 'pointer',
-                                        boxShadow: '0 4px 6px rgba(0,123,255,0.2)'
+                                        maxWidth: '100%',
+                                        height: 'auto',
+                                        maxHeight: '250px',
+                                        objectFit: 'contain',
+                                        borderRadius: '8px'
                                     }}
-                                >
-                                    확인했습니다
-                                </button>
+                                />
                             </div>
                         </div>
+
+                        <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+                            <button
+                                onClick={() => {
+                                    setShowGuide(false)
+                                    localStorage.setItem('catalog_showGuide', 'false')
+                                }}
+                                style={{
+                                    background: '#007bff',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '10px 30px',
+                                    borderRadius: '25px',
+                                    fontSize: '1rem',
+                                    fontWeight: 'bold',
+                                    cursor: 'pointer',
+                                    boxShadow: '0 4px 6px rgba(0,123,255,0.2)'
+                                }}
+                            >
+                                확인했습니다
+                            </button>
+                        </div>
                     </div>
-                )
-            })()}
+                </div>
+            )}
 
             <div className="catalog-filters" style={{
                 position: 'sticky',
@@ -592,7 +608,7 @@ function Catalog({ user }) {
                 onClick={() => setShowProposalModal(true)}
                 style={{
                     position: 'fixed',
-                    bottom: '2rem',
+                    bottom: '5rem', // Moved up to make room for guide button
                     right: '2rem',
                     background: '#28a745',
                     color: 'white',
@@ -610,6 +626,29 @@ function Catalog({ user }) {
                 <span style={{ background: 'white', color: '#28a745', padding: '0.2rem 0.6rem', borderRadius: '12px', fontSize: '0.9rem', fontWeight: 'bold' }}>
                     {proposalItems.length}
                 </span>
+            </div>
+
+            {/* Reopen Guide Button */}
+            <div
+                onClick={() => setShowGuide(true)}
+                style={{
+                    position: 'fixed',
+                    bottom: '2rem',
+                    right: '2rem',
+                    background: '#6c757d',
+                    color: 'white',
+                    padding: '0.8rem 1.2rem',
+                    borderRadius: '50px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    zIndex: 100,
+                    fontSize: '0.9rem'
+                }}
+            >
+                <span>❓ 안내가이드</span>
             </div>
 
             {/* Proposal Modal */}
