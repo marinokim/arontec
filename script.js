@@ -423,9 +423,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let detailContentHtml = '';
         if (detailUrl) {
+            // Helper to process HTML for ec-data-src
+            const processHtml = (html) => {
+                try {
+                    const div = document.createElement('div');
+                    div.innerHTML = html;
+                    const imgs = div.querySelectorAll('img');
+                    imgs.forEach(img => {
+                        const ecSrc = img.getAttribute('ec-data-src') || img.getAttribute('ecd-data-src');
+                        if (ecSrc) {
+                            img.setAttribute('src', ecSrc);
+                            img.style.display = 'block';
+                            img.style.maxWidth = '100%';
+                        }
+                    });
+                    return div.innerHTML;
+                } catch (e) {
+                    console.error('HTML processing error:', e);
+                    return html;
+                }
+            };
+
             // Check if it contains HTML tags (specifically img)
             if (detailUrl.trim().match(/<img/i) || detailUrl.includes('<img')) {
-                detailContentHtml = `<div class="product-detail-content">${detailUrl}</div>`;
+                detailContentHtml = `<div class="product-detail-content">${processHtml(detailUrl)}</div>`;
             } else {
                 detailContentHtml = `<div class="product-detail-content"><img src="${detailUrl}" alt="Detail"></div>`;
             }
