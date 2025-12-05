@@ -445,12 +445,6 @@ function ProductCard({ product, onAddToCart, onAddToProposal, onRemoveFromPropos
                         <div className="no-image">No Image</div>
                     )}
 
-                    {!product.is_available && (
-                        <div className="sold-out-overlay">
-                            <span>판매중지</span>
-                        </div>
-                    )}
-
                     <button
                         className={`product-heart-btn ${isInProposal ? 'active' : ''}`}
                         onClick={handleAddToProposal}

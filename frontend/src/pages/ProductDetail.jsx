@@ -173,23 +173,9 @@ function ProductDetail({ user }) {
                                     <button
                                         className="btn btn-primary"
                                         onClick={addToCart}
-                                        disabled={!product.is_available}
-                                        style={{
-                                            flex: 1,
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            gap: '10px',
-                                            fontSize: '1.1rem',
-                                            padding: '10px',
-                                            opacity: product.is_available ? 1 : 0.6,
-                                            cursor: product.is_available ? 'pointer' : 'not-allowed',
-                                            backgroundColor: product.is_available ? '#007bff' : '#6c757d',
-                                            borderColor: product.is_available ? '#007bff' : '#6c757d'
-                                        }}
+                                        style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', fontSize: '1.1rem', padding: '10px' }}
                                     >
-                                        <span style={{ fontSize: '1.4rem' }}>{product.is_available ? '🛒' : '🚫'}</span>
-                                        {product.is_available ? '장바구니 담기' : '판매중지'}
+                                        <span style={{ fontSize: '1.4rem' }}>🛒</span> 장바구니 담기
                                     </button>
                                 </div>
                                 <button

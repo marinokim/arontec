@@ -121,7 +121,7 @@ function AdminProducts({ user }) {
     }
 
     const fetchProducts = async () => {
-        const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/products', { credentials: 'include' })
+        const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/products?includeUnavailable=true', { credentials: 'include' })
         const data = await res.json()
         setProducts(data.products)
     }
