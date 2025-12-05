@@ -64,6 +64,7 @@ app.use('/api/notifications', notificationRoutes)
 app.use('/api/admin', adminRoutes)
 app.use('/api/upload', uploadRoutes)
 app.use('/api/excel', excelRoutes)
+app.use('/api/proposals', proposalRoutes)
 
 // Serve uploads directory
 const __filename = fileURLToPath(import.meta.url)

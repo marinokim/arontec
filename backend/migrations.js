@@ -208,6 +208,17 @@ export const runMigrations = async () => {
                 );
             `)
 
+            // Create proposal_history table
+            await client.query(`
+                CREATE TABLE IF NOT EXISTS proposal_history (
+                    id SERIAL PRIMARY KEY,
+                    user_id INTEGER REFERENCES users(id),
+                    title VARCHAR(255),
+                    items JSONB,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+            `)
+
             await client.query('COMMIT')
             console.log('✅ Database migrations completed successfully')
         } catch (error) {
