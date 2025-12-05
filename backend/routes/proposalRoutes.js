@@ -1,13 +1,13 @@
 import express from 'express'
 import pool from '../config/database.js'
-import { authenticateToken, isAdmin } from '../middleware/auth.js'
+import { requireAuth, requireAdmin } from '../middleware/auth.js'
 
 const router = express.Router()
 
 // Save proposal history
-router.post('/', authenticateToken, async (req, res) => {
+router.post('/', requireAuth, async (req, res) => {
     const { title, items } = req.body
-    const userId = req.user.id
+    const userId = req.session.userId // Use session.userId instead of req.user.id
 
     try {
         const result = await pool.query(
@@ -22,8 +22,8 @@ router.post('/', authenticateToken, async (req, res) => {
 })
 
 // Get my proposal history
-router.get('/my', authenticateToken, async (req, res) => {
-    const userId = req.user.id
+router.get('/my', requireAuth, async (req, res) => {
+    const userId = req.session.userId
 
     try {
         const result = await pool.query(
@@ -38,7 +38,8 @@ router.get('/my', authenticateToken, async (req, res) => {
 })
 
 // Get all proposal history (Admin only)
-router.get('/all', authenticateToken, isAdmin, async (req, res) => {
+router.get('/all', requireAuth, requireAdmin, async (req, res) => {
+
     try {
         const result = await pool.query(`
             SELECT ph.*, u.email, u.company_name, u.username 
