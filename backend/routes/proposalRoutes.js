@@ -42,7 +42,7 @@ router.get('/all', requireAuth, requireAdmin, async (req, res) => {
 
     try {
         const result = await pool.query(`
-            SELECT ph.*, u.email, u.company_name, u.username 
+            SELECT ph.*, u.email, u.company_name, u.contact_person as username 
             FROM proposal_history ph 
             JOIN users u ON ph.user_id = u.id 
             ORDER BY ph.created_at DESC
