@@ -212,9 +212,16 @@ function ProductDetail({ user }) {
                                         try {
                                             const div = document.createElement('div');
                                             div.innerHTML = html;
-                                            const imgs = div.querySelectorAll('img[ec-data-src]');
+                                            const imgs = div.querySelectorAll('img');
                                             imgs.forEach(img => {
-                                                img.src = img.getAttribute('ec-data-src');
+                                                // Check for ec-data-src or ecd-data-src (user mentioned typo)
+                                                const ecSrc = img.getAttribute('ec-data-src') || img.getAttribute('ecd-data-src');
+                                                if (ecSrc) {
+                                                    img.setAttribute('src', ecSrc);
+                                                    // Ensure the image is visible
+                                                    img.style.display = 'block';
+                                                    img.style.maxWidth = '100%';
+                                                }
                                             });
                                             return div.innerHTML;
                                         } catch (e) {
