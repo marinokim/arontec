@@ -227,7 +227,7 @@ router.get('/', async (req, res) => {
       SELECT p.*, c.name as category_name
       FROM products p
       LEFT JOIN categories c ON p.category_id = c.id
-      WHERE p.is_available = true
+      WHERE 1=1
     `
         const params = []
 
@@ -272,13 +272,13 @@ router.get('/categories', async (req, res) => {
         const result = await pool.query(`
             SELECT c.*, COUNT(p.id)::int as product_count 
             FROM categories c 
-            LEFT JOIN products p ON c.id = p.category_id AND p.is_available = true 
+            LEFT JOIN products p ON c.id = p.category_id 
             GROUP BY c.id 
             ORDER BY c.id
         `)
 
         // Get total count for "All" category
-        const totalRes = await pool.query('SELECT COUNT(*)::int as total FROM products WHERE is_available = true')
+        const totalRes = await pool.query('SELECT COUNT(*)::int as total FROM products')
         const totalCount = totalRes.rows[0].total
 
         res.json({ categories: result.rows, totalCount })

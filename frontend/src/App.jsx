@@ -12,6 +12,7 @@ import AdminMembers from './pages/admin/Members'
 import AdminProducts from './pages/admin/Products'
 import AdminQuotes from './pages/admin/Quotes'
 import AdminNotifications from './pages/admin/Notifications'
+import AdminProposalHistory from './pages/admin/ProposalHistory'
 import ProductDetail from './pages/ProductDetail'
 
 // Assuming ProtectedRoute is defined elsewhere or will be added.
@@ -78,6 +79,7 @@ function App() {
                     <Route path="/admin/products" element={<ProtectedRoute requireAdmin user={user}><AdminProducts user={user} /></ProtectedRoute>} />
                     <Route path="/admin/quotes" element={<ProtectedRoute requireAdmin user={user}><AdminQuotes user={user} /></ProtectedRoute>} />
                     <Route path="/admin/notifications" element={<ProtectedRoute requireAdmin user={user}><AdminNotifications user={user} /></ProtectedRoute>} />
+                    <Route path="/admin/proposals" element={<ProtectedRoute requireAdmin user={user}><AdminProposalHistory user={user} /></ProtectedRoute>} />
 
                     <Route path="/" element={<Navigate to="/dashboard" />} />
                 </Routes>

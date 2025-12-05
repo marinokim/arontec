@@ -2,6 +2,11 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import './Catalog.css' // Reuse catalog styles or create new ones
 
+import ProposalGuide from '../components/ProposalGuide'
+import ProposalModal from '../components/ProposalModal'
+import ProposalFABs from '../components/ProposalFABs'
+import { generateProposalExcel } from '../utils/proposalUtils'
+
 import Navbar from '../components/Navbar'
 
 function ProductDetail({ user }) {
@@ -12,6 +17,9 @@ function ProductDetail({ user }) {
     const [error, setError] = useState(null)
     const [quantity, setQuantity] = useState(1)
     const [proposalItems, setProposalItems] = useState([])
+
+    const [showProposalModal, setShowProposalModal] = useState(false)
+    const [showGuide, setShowGuide] = useState(() => localStorage.getItem('catalog_showGuide') !== 'false')
 
     useEffect(() => {
         const savedProposal = localStorage.getItem('proposalItems')
@@ -58,20 +66,35 @@ function ProductDetail({ user }) {
         }
     }
 
-    const addToProposal = () => {
-        if (proposalItems.find(item => item.id === product.id)) {
-            alert('이미 제안서 목록에 있는 상품입니다.')
-            return
+    const toggleProposal = () => {
+        const exists = proposalItems.find(item => item.id === product.id)
+        let newItems
+        if (exists) {
+            newItems = proposalItems.filter(item => item.id !== product.id)
+            alert('제안서 목록에서 제거되었습니다.')
+        } else {
+            newItems = [...proposalItems, product]
+            alert('제안서 목록에 추가되었습니다.')
         }
-        const newItems = [...proposalItems, product]
         setProposalItems(newItems)
         localStorage.setItem('proposalItems', JSON.stringify(newItems))
-        alert('제안서 목록에 추가되었습니다.')
+    }
+
+    const removeFromProposal = (productId) => {
+        const newItems = proposalItems.filter(item => item.id !== productId)
+        setProposalItems(newItems)
+        localStorage.setItem('proposalItems', JSON.stringify(newItems))
+    }
+
+    const handleDownloadProposal = () => {
+        generateProposalExcel(proposalItems, user, setProposalItems, setShowProposalModal)
     }
 
     if (loading) return <div className="loading">Loading...</div>
     if (error) return <div className="error">{error}</div>
     if (!product) return null
+
+    const isInProposal = proposalItems.some(item => item.id === product.id)
 
     return (
         <div className="dashboard">
@@ -150,17 +173,41 @@ function ProductDetail({ user }) {
                                     <button
                                         className="btn btn-primary"
                                         onClick={addToCart}
-                                        style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', fontSize: '1.1rem', padding: '10px' }}
+                                        disabled={!product.is_available}
+                                        style={{
+                                            flex: 1,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            gap: '10px',
+                                            fontSize: '1.1rem',
+                                            padding: '10px',
+                                            opacity: product.is_available ? 1 : 0.6,
+                                            cursor: product.is_available ? 'pointer' : 'not-allowed',
+                                            backgroundColor: product.is_available ? '#007bff' : '#6c757d',
+                                            borderColor: product.is_available ? '#007bff' : '#6c757d'
+                                        }}
                                     >
-                                        <span style={{ fontSize: '1.4rem' }}>🛒</span> 장바구니 담기
+                                        <span style={{ fontSize: '1.4rem' }}>{product.is_available ? '🛒' : '🚫'}</span>
+                                        {product.is_available ? '장바구니 담기' : '판매중지'}
                                     </button>
                                 </div>
                                 <button
-                                    className="btn btn-secondary"
-                                    onClick={addToProposal}
-                                    style={{ width: '100%', background: '#28a745', padding: '10px', fontSize: '1.1rem' }}
+                                    className={`btn ${isInProposal ? 'btn-danger' : 'btn-secondary'}`}
+                                    onClick={toggleProposal}
+                                    style={{
+                                        width: '100%',
+                                        background: isInProposal ? '#dc3545' : '#6c757d',
+                                        padding: '10px',
+                                        fontSize: '1.1rem',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '8px'
+                                    }}
                                 >
-                                    제안서 다운로드
+                                    <span style={{ fontSize: '1.2rem' }}>{isInProposal ? '♥' : '♡'}</span>
+                                    {isInProposal ? '제안서 목록에서 제거' : '제안서 목록에 담기'}
                                 </button>
                             </div>
                         </div>
@@ -212,6 +259,32 @@ function ProductDetail({ user }) {
                     )}
                 </div>
             </div>
+
+            <ProposalFABs
+                itemCount={proposalItems.length}
+                onOpenProposal={() => setShowProposalModal(true)}
+                onOpenGuide={() => setShowGuide(true)}
+            />
+
+            <ProposalGuide
+                show={showGuide}
+                onClose={() => {
+                    setShowGuide(false)
+                    localStorage.setItem('catalog_showGuide', 'false')
+                }}
+            />
+
+            <ProposalModal
+                show={showProposalModal}
+                onClose={() => setShowProposalModal(false)}
+                items={proposalItems}
+                onRemove={removeFromProposal}
+                onClear={() => {
+                    setProposalItems([])
+                    localStorage.removeItem('proposalItems')
+                }}
+                onDownload={handleDownloadProposal}
+            />
         </div>
     )
 }

@@ -77,6 +77,7 @@ function AdminDashboard({ user }) {
                         <Link to="/admin/products" className="btn btn-secondary">상품 등록</Link>
                         <Link to="/admin/members" className="btn btn-secondary">전체 회원 조회</Link>
                         <Link to="/admin/quotes" className="btn btn-secondary">전체 견적 조회</Link>
+                        <Link to="/admin/proposals" className="btn btn-secondary">제안서 이력 조회</Link>
                     </div>
                 </div>
             </div>

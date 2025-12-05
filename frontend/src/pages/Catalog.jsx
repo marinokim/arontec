@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import ExcelJS from 'exceljs'
-import { saveAs } from 'file-saver'
 import './Catalog.css'
 import { sortCategories, getCategoryColor } from '../constants/categories'
-import guideIllustration from '../assets/guide_illustration.png'
 
 import Navbar from '../components/Navbar'
+import ProposalGuide from '../components/ProposalGuide'
+import ProposalModal from '../components/ProposalModal'
+import ProposalFABs from '../components/ProposalFABs'
+import { generateProposalExcel } from '../utils/proposalUtils'
 
 function Catalog({ user }) {
     const [products, setProducts] = useState([])
@@ -159,183 +160,8 @@ function Catalog({ user }) {
         localStorage.setItem('proposalItems', JSON.stringify(newItems))
     }
 
-    const generateProposalExcel = async () => {
-        if (proposalItems.length === 0) {
-            alert('제안서 목록이 비어있습니다.')
-            return
-        }
-
-        const workbook = new ExcelJS.Workbook()
-        const worksheet = workbook.addWorksheet('제안서')
-
-        // Define columns based on user requirement
-        worksheet.columns = [
-            { header: '순번', key: 'no', width: 5 },
-            { header: '품절여부', key: 'status', width: 10 },
-            { header: '고유번호', key: 'id', width: 10 },
-            { header: '상품명', key: 'name', width: 40 },
-            { header: '상품이미지', key: 'image', width: 20 },
-            { header: '모델명', key: 'model', width: 15 },
-            { header: '옵션', key: 'option', width: 10 },
-            { header: '설명', key: 'desc', width: 40 },
-            { header: '제조원', key: 'manufacturer', width: 15 },
-            { header: '원산지', key: 'origin', width: 10 },
-            { header: '카톤입수량', key: 'cartonQty', width: 10 },
-            { header: '기본수량', key: 'defaultQty', width: 10 },
-            { header: '소비자가', key: 'consumerPrice', width: 12 },
-            { header: '공급가(부가세포함)', key: 'supplyPrice', width: 15 },
-            { header: '개별배송비(부가세포함)', key: 'shipping', width: 15 },
-            { header: '대표이미지', key: 'imageUrl', width: 30 },
-            { header: '상세이미지', key: 'detailUrl', width: 30 },
-            { header: '비고', key: 'remarks', width: 20 },
-        ]
-
-        // Insert Title/Warning Row at the top
-        worksheet.insertRow(1, [])
-
-        // Merge cells for Title, Warning, and File Info
-        worksheet.mergeCells('A1:D1')
-        worksheet.mergeCells('E1:L1')
-        worksheet.mergeCells('M1:P1')
-
-        // Set Title (ARONTEC Logo placeholder)
-        const titleCell = worksheet.getCell('A1')
-        titleCell.value = 'ARONTEC KOREA'
-        titleCell.font = { name: 'Arial', size: 20, bold: true, color: { argb: '003366' } } // Dark Blue
-        titleCell.alignment = { vertical: 'middle', horizontal: 'left' }
-
-        // Set Warning Text
-        const warningCell = worksheet.getCell('E1')
-        warningCell.value = '■ 당사가 운영하는 모든 상품은 폐쇄몰을 제외한 온라인 판매를 금하며, 판매 시 상품 공급이 중단됩니다.'
-        warningCell.font = { name: 'Malgun Gothic', size: 12, bold: true, color: { argb: 'FF0000' } } // Red
-        warningCell.alignment = { vertical: 'middle', horizontal: 'left' }
-
-        // Set File Info Text
-        const now = new Date()
-        const clientName = user?.companyName || 'Client'
-        const dateStr = `${now.getFullYear()}년${now.getMonth() + 1}월${now.getDate()}일`
-        const hours = now.getHours()
-        const ampm = hours >= 12 ? '오후' : '오전'
-        const timeStr = `${ampm}${hours % 12 || 12}:${String(now.getMinutes()).padStart(2, '0')}`
-
-        const fileInfoCell = worksheet.getCell('M1')
-        fileInfoCell.value = `(${clientName})_제안_${dateStr}_${timeStr}`
-        fileInfoCell.font = { name: 'Malgun Gothic', size: 10, bold: true }
-        fileInfoCell.alignment = { vertical: 'middle', horizontal: 'right' }
-
-        // Set Header Row Height
-        worksheet.getRow(1).height = 30
-
-        // Style Table Header Row (Now Row 2)
-        const headerRow = worksheet.getRow(2)
-        headerRow.font = { bold: true, color: { argb: '000000' } }
-        headerRow.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'CCE5FF' } // Light blue background
-        }
-        headerRow.alignment = { vertical: 'middle', horizontal: 'center' }
-
-        // Add data rows
-        for (let i = 0; i < proposalItems.length; i++) {
-            const item = proposalItems[i]
-            // Use getRow(i + 3) because Row 1 is Title, Row 2 is Header.
-            // addRow() skips rows if addImage() instantiated the next row (due to 'br' coordinates).
-            const row = worksheet.getRow(i + 3)
-            row.values = {
-                no: i + 1,
-                status: item.is_available ? '' : '품절',
-                id: item.id,
-                name: item.brand ? `[${item.brand}] ${item.model_name}` : item.model_name,
-                image: '', // Placeholder for image
-                model: item.model_name,
-                option: '',
-                desc: item.description || '',
-                manufacturer: item.manufacturer || '',
-                origin: item.origin || '',
-                cartonQty: item.quantity_per_carton || '',
-                defaultQty: 1,
-                consumerPrice: item.consumer_price ? parseInt(item.consumer_price) : '',
-                supplyPrice: item.b2b_price ? parseInt(item.b2b_price) : '',
-                shipping: item.shipping_fee ? parseInt(item.shipping_fee) : 0,
-                imageUrl: item.image_url || '',
-                detailUrl: item.detail_url || '',
-                remarks: ''
-            }
-
-            // Set row height for image
-            row.height = 100
-            row.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true }
-
-            // Embed image if available
-            // Embed image if available
-            if (item.image_url) {
-                try {
-                    // Use backend proxy to avoid CORS and Mixed Content issues
-                    const proxyUrl = `${import.meta.env.VITE_API_URL}/api/products/proxy-image?url=${encodeURIComponent(item.image_url)}`
-
-                    // Fetch image as buffer via proxy
-                    const response = await fetch(proxyUrl)
-                    if (!response.ok) {
-                        const errorText = await response.text()
-                        console.error(`Proxy fetch failed for ${item.image_url}:`, response.status, response.statusText, errorText)
-                        throw new Error(`Failed to fetch image: ${response.statusText}`)
-                    }
-
-                    const buffer = await response.arrayBuffer()
-
-                    // Determine extension from URL or Content-Type
-                    let extension = 'jpeg'
-                    const contentType = response.headers.get('content-type')
-                    if (contentType) {
-                        if (contentType.includes('png')) extension = 'png'
-                        else if (contentType.includes('gif')) extension = 'gif'
-                    } else {
-                        const lowerUrl = item.image_url.toLowerCase()
-                        if (lowerUrl.includes('.png')) extension = 'png'
-                        else if (lowerUrl.includes('.gif')) extension = 'gif'
-                    }
-
-                    const imageId = workbook.addImage({
-                        buffer: buffer,
-                        extension: extension,
-                    })
-
-                    worksheet.addImage(imageId, {
-                        tl: { col: 4, row: i + 2 }, // Column E (index 4)
-                        br: { col: 5, row: i + 3 },
-                        editAs: 'oneCell'
-                    })
-                } catch (err) {
-                    console.error('Failed to embed image for', item.model_name, err)
-                    // Fallback: put text in the cell
-                    const cell = worksheet.getCell(i + 3, 5) // Row i+3, Col 5 (E)
-                    cell.value = '이미지 로드 실패'
-                }
-            }
-        }
-
-        // Generate filename: [ClientName]_제안_[YYYYMMDD]_[HHmm].xlsx
-        const nowForFilename = new Date()
-        const dateStrForFilename = nowForFilename.getFullYear() +
-            String(nowForFilename.getMonth() + 1).padStart(2, '0') +
-            String(nowForFilename.getDate()).padStart(2, '0')
-        const timeStrForFilename = String(nowForFilename.getHours()).padStart(2, '0') +
-            String(nowForFilename.getMinutes()).padStart(2, '0')
-
-        const clientNameForFilename = user?.companyName || 'Client'
-        const filename = `${clientNameForFilename}_제안_${dateStrForFilename}_${timeStrForFilename}.xlsx`
-
-        // Generate and save file
-        const buffer = await workbook.xlsx.writeBuffer()
-        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
-        saveAs(blob, filename)
-
-        // Clear proposal list after download
-        setProposalItems([])
-        localStorage.removeItem('proposalItems')
-        setShowProposalModal(false)
-        alert('제안서가 다운로드되었습니다. 목록이 초기화됩니다.')
+    const handleDownloadProposal = () => {
+        generateProposalExcel(proposalItems, user, setProposalItems, setShowProposalModal)
     }
 
     return (
@@ -374,110 +200,13 @@ function Catalog({ user }) {
                 <button onClick={() => navigate('/dashboard')} className="btn btn-secondary">← 대시보드</button>
             </div>
 
-            {/* Proposal Guide Modal */}
-            {showGuide && (
-                <div className="modal-overlay" style={{
-                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-                    background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000
-                }}>
-                    <div style={{
-                        background: 'white',
-                        borderRadius: '12px',
-                        padding: '2rem',
-                        width: '90%',
-                        maxWidth: '600px',
-                        position: 'relative',
-                        boxShadow: '0 10px 25px rgba(0,0,0,0.2)'
-                    }}>
-                        <button
-                            onClick={() => {
-                                setShowGuide(false)
-                                localStorage.setItem('catalog_showGuide', 'false')
-                            }}
-                            style={{
-                                position: 'absolute',
-                                top: '15px',
-                                right: '15px',
-                                background: 'none',
-                                border: 'none',
-                                fontSize: '1.5rem',
-                                cursor: 'pointer',
-                                color: '#999',
-                                padding: '5px'
-                            }}
-                        >
-                            &times;
-                        </button>
-                        <h3 style={{ marginTop: 0, marginBottom: '1.5rem', color: '#333', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1.4rem' }}>
-                            <span style={{ fontSize: '1.6rem' }}>💡</span> 제안서 다운로드 기능 사용법
-                        </h3>
-
-                        <div style={{ display: 'flex', gap: '2rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                            {/* Left Column: Text Steps */}
-                            <div style={{ flex: 1, minWidth: '280px', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-                                <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                                    <div style={{ background: '#e3f2fd', color: '#1976d2', fontWeight: 'bold', padding: '4px 8px', borderRadius: '4px', fontSize: '0.9rem', whiteSpace: 'nowrap' }}>STEP 1</div>
-                                    <p style={{ margin: 0, lineHeight: '1.5', fontSize: '1.05rem', color: '#444' }}>
-                                        상품 카드의 <span style={{ color: '#e91e63', fontWeight: 'bold' }}>♥</span> 버튼을 클릭하여<br />
-                                        제안서 목록에 상품을 담으세요.
-                                    </p>
-                                </div>
-                                <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                                    <div style={{ background: '#e3f2fd', color: '#1976d2', fontWeight: 'bold', padding: '4px 8px', borderRadius: '4px', fontSize: '0.9rem', whiteSpace: 'nowrap' }}>STEP 2</div>
-                                    <p style={{ margin: 0, lineHeight: '1.5', fontSize: '1.05rem', color: '#444' }}>
-                                        우측 하단의 <span style={{ background: '#28a745', color: 'white', padding: '2px 8px', borderRadius: '4px', fontSize: '0.9em', fontWeight: 'bold' }}>📋 제안서 다운로드</span><br />
-                                        버튼을 확인하세요.
-                                    </p>
-                                </div>
-                                <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                                    <div style={{ background: '#e3f2fd', color: '#1976d2', fontWeight: 'bold', padding: '4px 8px', borderRadius: '4px', fontSize: '0.9rem', whiteSpace: 'nowrap' }}>STEP 3</div>
-                                    <p style={{ margin: 0, lineHeight: '1.5', fontSize: '1.05rem', color: '#444' }}>
-                                        버튼을 클릭하여 목록을 확인하고<br />
-                                        <span style={{ fontWeight: 'bold', color: '#28a745' }}>엑셀 파일(.xlsx)</span>로 다운로드하세요.
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* Right Column: Image */}
-                            <div style={{ flex: 1, minWidth: '200px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                <img
-                                    src={guideIllustration}
-                                    alt="Guide Illustration"
-                                    style={{
-                                        maxWidth: '100%',
-                                        height: 'auto',
-                                        maxHeight: '250px',
-                                        objectFit: 'contain',
-                                        borderRadius: '8px'
-                                    }}
-                                />
-                            </div>
-                        </div>
-
-                        <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-                            <button
-                                onClick={() => {
-                                    setShowGuide(false)
-                                    localStorage.setItem('catalog_showGuide', 'false')
-                                }}
-                                style={{
-                                    background: '#007bff',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '10px 30px',
-                                    borderRadius: '25px',
-                                    fontSize: '1rem',
-                                    fontWeight: 'bold',
-                                    cursor: 'pointer',
-                                    boxShadow: '0 4px 6px rgba(0,123,255,0.2)'
-                                }}
-                            >
-                                확인했습니다
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <ProposalGuide
+                show={showGuide}
+                onClose={() => {
+                    setShowGuide(false)
+                    localStorage.setItem('catalog_showGuide', 'false')
+                }}
+            />
 
             <div className="catalog-filters" style={{
                 position: 'sticky',
@@ -513,7 +242,7 @@ function Catalog({ user }) {
                                 font-size: 0.95rem;
                                 color: #666;
                                 display: flex;
-                                align-items: center;
+                                alignItems: center;
                                 gap: 6px;
                             }
                             .category-btn:hover {
@@ -523,7 +252,7 @@ function Catalog({ user }) {
                             .category-count {
                                 background: rgba(0,0,0,0.05);
                                 padding: 2px 8px;
-                                border-radius: 10px;
+                                borderRadius: 10px;
                                 font-size: 0.8rem;
                             }
                         `}
@@ -602,115 +331,23 @@ function Catalog({ user }) {
                 )
             }
 
-            {/* Proposal Floating Button */}
-            <div
-                className="proposal-fab"
-                onClick={() => setShowProposalModal(true)}
-                style={{
-                    position: 'fixed',
-                    bottom: '5rem', // Moved up to make room for guide button
-                    right: '2rem',
-                    background: '#28a745',
-                    color: 'white',
-                    padding: '1rem 1.5rem',
-                    borderRadius: '50px',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    zIndex: 100
+            <ProposalFABs
+                itemCount={proposalItems.length}
+                onOpenProposal={() => setShowProposalModal(true)}
+                onOpenGuide={() => setShowGuide(true)}
+            />
+
+            <ProposalModal
+                show={showProposalModal}
+                onClose={() => setShowProposalModal(false)}
+                items={proposalItems}
+                onRemove={removeFromProposal}
+                onClear={() => {
+                    setProposalItems([])
+                    localStorage.removeItem('proposalItems')
                 }}
-            >
-                <span>📋 제안서 다운로드</span>
-                <span style={{ background: 'white', color: '#28a745', padding: '0.2rem 0.6rem', borderRadius: '12px', fontSize: '0.9rem', fontWeight: 'bold' }}>
-                    {proposalItems.length}
-                </span>
-            </div>
-
-            {/* Reopen Guide Button */}
-            <div
-                onClick={() => setShowGuide(true)}
-                style={{
-                    position: 'fixed',
-                    bottom: '2rem',
-                    right: '2rem',
-                    background: '#6c757d',
-                    color: 'white',
-                    padding: '0.8rem 1.2rem',
-                    borderRadius: '50px',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    zIndex: 100,
-                    fontSize: '0.9rem'
-                }}
-            >
-                <span>❓ 안내가이드</span>
-            </div>
-
-            {/* Proposal Modal */}
-            {
-                showProposalModal && (
-                    <div className="modal-overlay" style={{
-                        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-                        background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
-                    }}>
-                        <div className="modal-content" style={{
-                            background: 'white', padding: '2rem', borderRadius: '8px', width: '90%', maxWidth: '800px',
-                            maxHeight: '80vh', overflowY: 'auto'
-                        }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                <h2>제안서 목록 ({proposalItems.length})</h2>
-                                <button onClick={() => setShowProposalModal(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>&times;</button>
-                            </div>
-
-                            {proposalItems.length === 0 ? (
-                                <p style={{ textAlign: 'center', color: '#666', padding: '2rem' }}>제안서 목록에 담긴 상품이 없습니다.</p>
-                            ) : (
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                    {proposalItems.map(item => (
-                                        <div key={item.id} style={{ display: 'flex', gap: '1rem', border: '1px solid #eee', padding: '1rem', borderRadius: '8px', alignItems: 'center' }}>
-                                            <img src={item.image_url} alt={item.model_name} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '4px' }} />
-                                            <div style={{ flex: 1 }}>
-                                                <div style={{ fontSize: '0.9rem', color: '#666' }}>{item.brand}</div>
-                                                <div style={{ fontWeight: 'bold' }}>{item.model_name}</div>
-                                                <div style={{ color: '#007bff' }}>{parseInt(item.b2b_price).toLocaleString()}원</div>
-                                            </div>
-                                            <button
-                                                onClick={() => removeFromProposal(item.id)}
-                                                className="btn btn-danger"
-                                                style={{ padding: '0.5rem', fontSize: '0.8rem' }}
-                                            >
-                                                삭제
-                                            </button>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-
-                            <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
-                                <button
-                                    onClick={() => setProposalItems([]) || localStorage.removeItem('proposalItems')}
-                                    className="btn btn-secondary"
-                                    style={{ background: '#dc3545' }}
-                                >
-                                    전체 삭제
-                                </button>
-                                <button
-                                    onClick={generateProposalExcel}
-                                    className="btn btn-primary"
-                                    style={{ background: '#28a745' }}
-                                >
-                                    엑셀 다운로드 (.xlsx)
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )
-            }
+                onDownload={handleDownloadProposal}
+            />
         </div >
     )
 }
@@ -807,6 +444,21 @@ function ProductCard({ product, onAddToCart, onAddToProposal, onRemoveFromPropos
                     ) : (
                         <div className="no-image">No Image</div>
                     )}
+
+                    {!product.is_available && (
+                        <div className="sold-out-overlay">
+                            <span>판매중지</span>
+                        </div>
+                    )}
+
+                    <button
+                        className={`product-heart-btn ${isInProposal ? 'active' : ''}`}
+                        onClick={handleAddToProposal}
+                        title={isInProposal ? '제안서에서 제거' : '제안서에 담기'}
+                    >
+                        ♥
+                    </button>
+
                     {showOptions && (
                         <div className="image-overlay">
                             <h3>{product.brand}</h3>
@@ -842,12 +494,6 @@ function ProductCard({ product, onAddToCart, onAddToProposal, onRemoveFromPropos
                             }}
                         >
                             바로담기
-                        </button>
-                        <button
-                            className={`btn-heart ${isInProposal ? 'active' : ''}`}
-                            onClick={handleAddToProposal}
-                        >
-                            ♥
                         </button>
                     </div>
                 </div>

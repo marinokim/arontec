@@ -11,6 +11,7 @@ import notificationRoutes from './routes/notifications.js'
 import adminRoutes from './routes/admin.js'
 import uploadRoutes from './routes/upload.js'
 import excelRoutes from './routes/excel.js'
+import proposalRoutes from './routes/proposalRoutes.js'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
@@ -64,6 +65,7 @@ app.use('/api/notifications', notificationRoutes)
 app.use('/api/admin', adminRoutes)
 app.use('/api/upload', uploadRoutes)
 app.use('/api/excel', excelRoutes)
+app.use('/api/proposals', proposalRoutes)
 
 // Serve uploads directory
 const __filename = fileURLToPath(import.meta.url)

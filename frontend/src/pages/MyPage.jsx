@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
+import { downloadProposalFromHistory } from '../utils/proposalUtils'
 
 import Navbar from '../components/Navbar'
 
@@ -9,16 +10,30 @@ function MyPage({ user }) {
     const [selectedQuote, setSelectedQuote] = useState(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [quotes, setQuotes] = useState([])
+    const [proposalHistory, setProposalHistory] = useState([])
     const navigate = useNavigate()
 
     useEffect(() => {
         fetchQuotes()
+        fetchProposalHistory()
     }, [])
 
     const fetchQuotes = async () => {
         const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/quotes', { credentials: 'include' })
         const data = await res.json()
         setQuotes(data.quotes)
+    }
+
+    const fetchProposalHistory = async () => {
+        try {
+            const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/proposals/my', { credentials: 'include' })
+            const data = await res.json()
+            if (data.history) {
+                setProposalHistory(data.history)
+            }
+        } catch (error) {
+            console.error('Error fetching proposal history:', error)
+        }
     }
 
     const fetchQuoteDetail = async (id) => {
@@ -146,6 +161,42 @@ function MyPage({ user }) {
                     <p><strong>회사명:</strong> {user?.companyName}</p>
                     <p><strong>담당자:</strong> {user?.contactPerson}</p>
                 </div>
+            </div>
+
+            <div className="card" style={{ marginBottom: '2rem' }}>
+                <h2>제안서 다운로드 이력</h2>
+                {proposalHistory.length === 0 ? (
+                    <p className="text-muted">다운로드 이력이 없습니다</p>
+                ) : (
+                    <table className="table">
+                        <thead>
+                            <tr>
+                                <th>파일명</th>
+                                <th>상품수</th>
+                                <th>다운로드 일시</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {proposalHistory.map(history => (
+                                <tr key={history.id}>
+                                    <td>{history.title}</td>
+                                    <td>{history.items?.length || 0}개</td>
+                                    <td>{new Date(history.created_at).toLocaleString()}</td>
+                                    <td>
+                                        <button
+                                            onClick={() => downloadProposalFromHistory(history, user)}
+                                            className="btn btn-primary"
+                                            style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}
+                                        >
+                                            다시 받기
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )}
             </div>
 
             <div className="card">

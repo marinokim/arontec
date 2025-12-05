@@ -80,8 +80,10 @@
 .product-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     transition: transform 0.5s ease;
+    padding: 10px;
+    /* Add some padding so it doesn't touch edges */
 }
 
 .product-image.hovered img {
@@ -198,21 +200,35 @@
     background: #f8f9fa;
 }
 
-.btn-heart {
-    width: 40px;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    cursor: pointer;
+.product-heart-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 1.2rem;
     color: #ccc;
-    transition: color 0.2s;
+    cursor: pointer;
+    z-index: 20;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.btn-heart:hover,
-.btn-heart.active {
+.product-heart-btn:hover {
+    transform: scale(1.1);
+    color: #ff4757;
+}
+
+.product-heart-btn.active {
     color: #ff4757;
     border-color: #ff4757;
+    background: white;
 }
 
 /* Hover Actions Styling */
@@ -354,4 +370,28 @@
         padding: 1.5rem !important;
         max-height: 85vh !important;
     }
+}
+
+/* Sold Out Overlay */
+.sold-out-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.sold-out-overlay span {
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.9rem;
 }
