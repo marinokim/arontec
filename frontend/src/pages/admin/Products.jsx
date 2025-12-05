@@ -1251,19 +1251,23 @@ function AdminProducts({ user }) {
                             <div className="form-group">
                                 <label>상세페이지 URL</label>
                                 <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                    <input
-                                        type="text"
+                                    <textarea
                                         value={formData.detailUrl}
                                         onChange={e => setFormData({ ...formData, detailUrl: e.target.value })}
-                                        placeholder="https://example.com/product/123"
-                                        style={{ flex: 1 }}
+                                        placeholder="https://example.com/product/123 or HTML content"
+                                        style={{ flex: 1, minHeight: '100px' }}
                                         onBlur={async (e) => {
                                             const url = e.target.value
-                                            const extractedHtml = await extractAllImagesFromHtml(url)
-                                            if (extractedHtml) {
-                                                setFormData(prev => ({ ...prev, detailUrl: extractedHtml }))
-                                                const count = (extractedHtml.match(/<img/g) || []).length
-                                                alert(`HTML에서 ${count}장의 이미지를 추출하여 태그로 변환했습니다.`)
+                                            console.log('Detail URL Length:', url.length);
+
+                                            // Only try to fetch if it looks like a URL and NOT HTML
+                                            if (url.match(/^https?:\/\//) && !url.match(/<[a-z][\s\S]*>/i)) {
+                                                const extractedHtml = await extractAllImagesFromHtml(url)
+                                                if (extractedHtml) {
+                                                    setFormData(prev => ({ ...prev, detailUrl: extractedHtml }))
+                                                    const count = (extractedHtml.match(/<img/g) || []).length
+                                                    alert(`HTML에서 ${count}장의 이미지를 추출하여 태그로 변환했습니다.`)
+                                                }
                                             }
                                         }}
                                     />
