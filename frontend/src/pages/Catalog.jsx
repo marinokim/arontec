@@ -223,7 +223,6 @@ function Catalog({ user }) {
                 <div className="category-list" style={{
                     display: 'flex',
                     gap: '10px',
-                    flexWrap: 'wrap',
                     paddingBottom: '5px'
                 }}>
                     <style>

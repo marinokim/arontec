@@ -316,6 +316,11 @@
     margin: 0 auto;
 }
 
+/* Default Category List Style (Desktop) */
+.category-list {
+    flex-wrap: wrap;
+}
+
 /* Mobile Responsive Styles */
 @media (max-width: 768px) {
     .catalog-page {
@@ -359,8 +364,15 @@
     }
 
     .proposal-fab {
-        bottom: 1.5rem !important;
-        right: 1.5rem !important;
+        bottom: 4.5rem !important;
+        right: 1rem !important;
+        padding: 0.8rem 1.2rem !important;
+        font-size: 0.9rem;
+    }
+
+    .guide-fab {
+        bottom: 1rem !important;
+        right: 1rem !important;
         padding: 0.8rem 1.2rem !important;
         font-size: 0.9rem;
     }
@@ -369,5 +381,18 @@
         width: 95% !important;
         padding: 1.5rem !important;
         max-height: 85vh !important;
+    }
+
+    /* Horizontal Scroll for Categories on Mobile */
+    .category-list {
+        flex-wrap: nowrap !important;
+        overflow-x: auto;
+        padding-bottom: 5px;
+        -webkit-overflow-scrolling: touch;
+        gap: 8px !important;
+    }
+
+    .category-list::-webkit-scrollbar {
+        display: none;
     }
 }

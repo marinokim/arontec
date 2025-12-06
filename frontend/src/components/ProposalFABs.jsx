@@ -31,6 +31,7 @@ const ProposalFABs = ({ itemCount, onOpenProposal, onOpenGuide }) => {
 
             {/* Reopen Guide Button */}
             <div
+                className="guide-fab"
                 onClick={onOpenGuide}
                 style={{
                     position: 'fixed',
