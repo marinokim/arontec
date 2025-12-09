@@ -297,7 +297,8 @@ function AdminProducts({ user }) {
             const imgTagSrc = finalImageUrl && finalImageUrl.match(/<img[^>]+src=(?:['"]([^'"]+)['"]|(\S+))/i)
             if (imgTagSrc) {
                 let extracted = imgTagSrc[1] || imgTagSrc[2]
-                if (extracted) extracted = extracted.replace(/>$/, '')
+                // Remove trailing > and / from extracted URL (common in unquoted tags like <img src=.../>)
+                if (extracted) extracted = extracted.replace(/[\/>]+$/, '')
                 finalImageUrl = extracted
             } else if (finalImageUrl && finalImageUrl.match(/\.html?$/i)) {
                 const extractedUrl = await extractImageFromHtml(finalImageUrl)
@@ -312,6 +313,14 @@ function AdminProducts({ user }) {
                 if (extractedHtml) {
                     finalDetailUrl = extractedHtml
                 }
+            } else if (finalDetailUrl) {
+                // Formatting clean-up for raw HTML input:
+                // Quote unquoted src attributes to prevent browser parsing errors with trailing slashes
+                // e.g. <img src=...jpg/> -> <img src="...jpg"/>
+                finalDetailUrl = finalDetailUrl.replace(/src=([^"'\s>]+)/gi, (match, url) => {
+                    let cleanUrl = url.replace(/[\/>]+$/, '')
+                    return `src="${cleanUrl}"`
+                })
             }
 
             const payload = {
