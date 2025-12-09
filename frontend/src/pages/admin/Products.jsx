@@ -242,12 +242,19 @@ function AdminProducts({ user }) {
                 const html = await res.text()
                 console.log('Fetched HTML length:', html.length)
 
-                // More robust regex: case insensitive, handles spaces around =, matches non-greedy until quote
-                const regex = /<img\s+[^>]*src\s*=\s*['"]([^'"]+)['"]/gi
+                // Robust regex: supports quoted (single/double) and unquoted attributes
+                const regex = /<img\s+[^>]*src\s*=\s*(?:['"]([^'"]+)['"]|(\S+))/gi
                 const matches = []
                 let match
                 while ((match = regex.exec(html)) !== null) {
-                    let imgUrl = match[1]
+                    let imgUrl = match[1] || match[2]
+                    // Clean up potential trailing slash or bracket from greedy unquoted match if needed
+                    // But \S+ stops at space or >, wait does it?
+                    // \S matches anything not space. But in HTML > is not space.
+                    // If src=foo.jpg>, then match[2] will be "foo.jpg>".
+                    // Better regex for unquoted: ([^'"\s>]+)
+
+                    if (imgUrl) imgUrl = imgUrl.replace(/>$/, '')
                     // Clean up HTML entities if present? mostly fine for URLs in attributes
                     if (!imgUrl.startsWith('http')) {
                         try {
@@ -287,9 +294,11 @@ function AdminProducts({ user }) {
         try {
             let finalImageUrl = formData.imageUrl
             // Check for <img src="..."> tag first
-            const imgTagSrc = finalImageUrl && finalImageUrl.match(/<img[^>]+src=['"]([^'"]+)['"]/i)
-            if (imgTagSrc && imgTagSrc[1]) {
-                finalImageUrl = imgTagSrc[1]
+            const imgTagSrc = finalImageUrl && finalImageUrl.match(/<img[^>]+src=(?:['"]([^'"]+)['"]|(\S+))/i)
+            if (imgTagSrc) {
+                let extracted = imgTagSrc[1] || imgTagSrc[2]
+                if (extracted) extracted = extracted.replace(/>$/, '')
+                finalImageUrl = extracted
             } else if (finalImageUrl && finalImageUrl.match(/\.html?$/i)) {
                 const extractedUrl = await extractImageFromHtml(finalImageUrl)
                 if (extractedUrl) {
