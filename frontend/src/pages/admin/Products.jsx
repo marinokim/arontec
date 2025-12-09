@@ -11,7 +11,14 @@ function AdminProducts({ user }) {
     const [manufacturers, setManufacturers] = useState([])
     const [origins, setOrigins] = useState([])
     const [editingProduct, setEditingProduct] = useState(null)
-    const [selectedCategory, setSelectedCategory] = useState('All')
+    const [selectedCategory, setSelectedCategory] = useState(() => {
+        return sessionStorage.getItem('admin_selectedCategory') || 'All'
+    })
+
+    // Save selected category to sessionStorage
+    useEffect(() => {
+        sessionStorage.setItem('admin_selectedCategory', selectedCategory)
+    }, [selectedCategory])
     const [showModal, setShowModal] = useState(false)
     const [showCategoryModal, setShowCategoryModal] = useState(false)
     const [newCategoryName, setNewCategoryName] = useState('')
