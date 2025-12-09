@@ -169,11 +169,13 @@ export const runMigrations = async () => {
                 WHERE email = 'admin@arontec.com';
             `)
 
-            // Delete specific users as requested
+            // Delete specific users as requested - REMOVED
+            /*
             await client.query(`
                 DELETE FROM users 
                 WHERE company_name IN ('(주)갑을', '(주)마인드케이');
             `)
+            */
 
             // Force delete test accounts and related data - REMOVED
             // const targetEmails = ['twovol@naver.com', 'twovol@gmail.com']
