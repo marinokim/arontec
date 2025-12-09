@@ -178,7 +178,7 @@ function Catalog({ user }) {
         <div className="catalog-page">
             <Navbar user={user} />
             <div className="catalog-header">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
                     <h1>상품 카탈로그</h1>
                     <label style={{
                         cursor: 'pointer',
@@ -190,7 +190,8 @@ function Catalog({ user }) {
                         borderRadius: '25px',
                         border: '2px solid #ff4444',
                         transition: 'all 0.2s ease',
-                        boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
+                        boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+                        whiteSpace: 'nowrap'
                     }}>
                         <input
                             type="checkbox"
@@ -201,13 +202,25 @@ function Catalog({ user }) {
                         <span style={{
                             fontWeight: 'bold',
                             color: showNewOnly ? '#fff' : '#ff4444',
-                            fontSize: '1rem'
+                            fontSize: '0.9rem'
                         }}>
-                            {showNewOnly ? '✓ NEW 신상품 모아보기' : 'NEW 신상품만 보기'}
+                            {showNewOnly ? '✓ NEW' : 'NEW 신상품'}
                         </span>
                     </label>
                 </div>
-                <button onClick={() => navigate('/dashboard')} className="btn btn-secondary">← 대시보드</button>
+
+                <div className="search-container">
+                    <i className="fas fa-search search-icon"></i>
+                    <input
+                        type="text"
+                        className="search-input-enhanced"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        placeholder="상품명, 브랜드, 모델명으로 검색해보세요"
+                    />
+                </div>
+
+                <button onClick={() => navigate('/dashboard')} className="btn btn-secondary" style={{ whiteSpace: 'nowrap' }}>← 대시보드</button>
             </div>
 
             <ProposalGuide
@@ -218,18 +231,7 @@ function Catalog({ user }) {
                 }}
             />
 
-            <div className="catalog-filters" style={{
-                position: 'sticky',
-                top: '80px', // Adjusted for Navbar height + spacing
-                zIndex: 900,
-                background: 'rgba(255, 255, 255, 0.95)',
-                backdropFilter: 'blur(10px)',
-                padding: '1rem',
-                borderRadius: '8px',
-                border: '1px solid #eee',
-                marginBottom: '2rem',
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-            }}>
+            <div className="catalog-filters">
                 <div className="category-list" style={{
                     display: 'flex',
                     gap: '10px',
@@ -309,18 +311,7 @@ function Catalog({ user }) {
                 </div>
             </div>
 
-            <div className="filter-group" style={{ marginBottom: '2rem' }}>
-                <div className="search-container">
-                    <i className="fas fa-search search-icon"></i>
-                    <input
-                        type="text"
-                        className="search-input-enhanced"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder="상품명, 브랜드, 모델명으로 검색해보세요"
-                    />
-                </div>
-            </div>
+
 
             <div className="products-grid">
                 {products.map(product => (

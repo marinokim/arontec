@@ -4,31 +4,43 @@
     margin: 0 auto;
 }
 
+/* Sticky Header & Filter Styles */
 .catalog-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
+    gap: 1.5rem;
+    margin-bottom: 0;
+    /* Remove margin as filters are now sticky below */
+    padding-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.catalog-header h1 {
+    margin: 0;
+    white-space: nowrap;
 }
 
 .catalog-filters {
+    position: sticky;
+    top: 80px;
+    /* Adjust based on your Navbar height */
+    z-index: 100;
     display: flex;
     gap: 2rem;
     margin-bottom: 2rem;
-    padding: 1.5rem;
-    background: white;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(5px);
     border-radius: 8px;
-}
-
-.filter-group {
-    flex: 1;
+    border: 1px solid #eee;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 /* Enhanced Search Styling */
 .search-container {
+    flex: 1;
+    min-width: 300px;
     position: relative;
-    max-width: 100%;
-    /* margin: 0 auto; */
 }
 
 .search-icon {
@@ -44,15 +56,12 @@
 
 .search-input-enhanced {
     width: 100%;
-    padding: 16px 20px 16px 50px;
-    /* Left padding for icon */
-    font-size: 1.1rem;
-    border: 2px solid #e9ecef;
-    border-radius: 12px;
+    padding: 12px 20px 12px 45px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 25px;
     background: #f8f9fa;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-    color: #495057;
+    transition: all 0.2s ease;
 }
 
 .search-input-enhanced::placeholder {
@@ -62,7 +71,7 @@
 .search-input-enhanced:focus {
     background: white;
     border-color: #007bff;
-    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.1);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
     outline: none;
 }
 
@@ -377,9 +386,8 @@
     }
 
     .catalog-header {
-        flex-direction: column;
-        align-items: flex-start;
         gap: 1rem;
+        padding-bottom: 0.5rem;
     }
 
     .catalog-header h1 {
