@@ -61,6 +61,7 @@ function Cart({ user }) {
                         <table className="table">
                             <thead>
                                 <tr>
+                                    <th style={{ width: '80px' }}>이미지</th>
                                     <th>상품</th>
                                     <th>단가</th>
                                     <th>수량</th>
@@ -72,8 +73,26 @@ function Cart({ user }) {
                                 {cartItems.map(item => (
                                     <tr key={item.id}>
                                         <td>
-                                            <strong>{item.brand}</strong><br />
-                                            {item.model_name}
+                                            <div
+                                                onClick={() => navigate(`/product/${item.product_id}`, { state: { from: 'cart' } })}
+                                                style={{ cursor: 'pointer', width: '60px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8f9fa', borderRadius: '4px', overflow: 'hidden' }}
+                                            >
+                                                {item.image_url ? (
+                                                    <img
+                                                        src={item.image_url.startsWith('http') ? item.image_url : (import.meta.env.VITE_API_URL || '') + item.image_url}
+                                                        alt={item.model_name}
+                                                        style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                                                    />
+                                                ) : (
+                                                    <span style={{ fontSize: '0.8rem', color: '#aaa' }}>No Image</span>
+                                                )}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div onClick={() => navigate(`/product/${item.product_id}`, { state: { from: 'cart' } })} style={{ cursor: 'pointer' }}>
+                                                <strong>{item.brand}</strong><br />
+                                                {item.model_name}
+                                            </div>
                                         </td>
                                         <td>{parseInt(item.b2b_price).toLocaleString()}원</td>
                                         <td>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import './Catalog.css' // Reuse catalog styles or create new ones
 
 import ProposalGuide from '../components/ProposalGuide'
@@ -12,6 +12,7 @@ import Navbar from '../components/Navbar'
 function ProductDetail({ user }) {
     const { id } = useParams()
     const navigate = useNavigate()
+    const location = useLocation()
     const [product, setProduct] = useState(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
@@ -111,9 +112,15 @@ function ProductDetail({ user }) {
                     margin: '-1rem 0 1rem 0',
                     borderBottom: '1px solid #eee'
                 }}>
-                    <button onClick={() => navigate('/catalog')} className="btn btn-secondary">
-                        &larr; 목록으로 돌아가기
-                    </button>
+                    {location.state?.from === 'cart' ? (
+                        <button onClick={() => navigate('/cart')} className="btn btn-secondary">
+                            &larr; 장바구니로 돌아가기
+                        </button>
+                    ) : (
+                        <button onClick={() => navigate('/catalog')} className="btn btn-secondary">
+                            &larr; 목록으로 돌아가기
+                        </button>
+                    )}
                 </div>
 
                 <div className="card" style={{ padding: '40px' }}>
