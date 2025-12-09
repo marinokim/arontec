@@ -25,10 +25,16 @@ body {
     color: var(--text-color);
     background-color: var(--bg-light);
     line-height: 1.6;
+    overflow-x: hidden;
+    /* Prevent horizontal scroll */
+    overflow-y: auto;
+    /* Ensure vertical scroll is on body */
 }
 
 .app {
     min-height: 100vh;
+    overflow: visible;
+    /* Critical for sticky to work */
 }
 
 .loading {

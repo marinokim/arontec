@@ -177,68 +177,69 @@ function Catalog({ user }) {
     return (
         <div className="catalog-page">
             <Navbar user={user} />
-            <div className="catalog-header">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                    <h1>상품 카탈로그</h1>
-                    <label style={{
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        background: showNewOnly ? '#ff4444' : '#fff',
-                        padding: '8px 16px',
-                        borderRadius: '25px',
-                        border: '2px solid #ff4444',
-                        transition: 'all 0.2s ease',
-                        boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-                        whiteSpace: 'nowrap'
-                    }}>
-                        <input
-                            type="checkbox"
-                            checked={showNewOnly}
-                            onChange={(e) => setShowNewOnly(e.target.checked)}
-                            style={{ display: 'none' }}
-                        />
-                        <span style={{
-                            fontWeight: 'bold',
-                            color: showNewOnly ? '#fff' : '#ff4444',
-                            fontSize: '0.9rem'
+            <div className="sticky-header-wrapper">
+                <div className="catalog-header">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                        <h1>상품 카탈로그</h1>
+                        <label style={{
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            background: showNewOnly ? '#ff4444' : '#fff',
+                            padding: '8px 16px',
+                            borderRadius: '25px',
+                            border: '2px solid #ff4444',
+                            transition: 'all 0.2s ease',
+                            boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+                            whiteSpace: 'nowrap'
                         }}>
-                            {showNewOnly ? '✓ NEW' : 'NEW 신상품'}
-                        </span>
-                    </label>
+                            <input
+                                type="checkbox"
+                                checked={showNewOnly}
+                                onChange={(e) => setShowNewOnly(e.target.checked)}
+                                style={{ display: 'none' }}
+                            />
+                            <span style={{
+                                fontWeight: 'bold',
+                                color: showNewOnly ? '#fff' : '#ff4444',
+                                fontSize: '0.9rem'
+                            }}>
+                                {showNewOnly ? '✓ NEW' : 'NEW 신상품'}
+                            </span>
+                        </label>
+                    </div>
+
+                    <div className="search-container">
+                        <i className="fas fa-search search-icon"></i>
+                        <input
+                            type="text"
+                            className="search-input-enhanced"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="상품명, 브랜드, 모델명으로 검색해보세요"
+                        />
+                    </div>
+
+                    <button onClick={() => navigate('/dashboard')} className="btn btn-secondary" style={{ whiteSpace: 'nowrap' }}>← 대시보드</button>
                 </div>
 
-                <div className="search-container">
-                    <i className="fas fa-search search-icon"></i>
-                    <input
-                        type="text"
-                        className="search-input-enhanced"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder="상품명, 브랜드, 모델명으로 검색해보세요"
-                    />
-                </div>
+                <ProposalGuide
+                    show={showGuide}
+                    onClose={() => {
+                        setShowGuide(false)
+                        localStorage.setItem('catalog_showGuide', 'false')
+                    }}
+                />
 
-                <button onClick={() => navigate('/dashboard')} className="btn btn-secondary" style={{ whiteSpace: 'nowrap' }}>← 대시보드</button>
-            </div>
-
-            <ProposalGuide
-                show={showGuide}
-                onClose={() => {
-                    setShowGuide(false)
-                    localStorage.setItem('catalog_showGuide', 'false')
-                }}
-            />
-
-            <div className="catalog-filters">
-                <div className="category-list" style={{
-                    display: 'flex',
-                    gap: '10px',
-                    paddingBottom: '5px'
-                }}>
-                    <style>
-                        {`
+                <div className="catalog-filters">
+                    <div className="category-list" style={{
+                        display: 'flex',
+                        gap: '10px',
+                        paddingBottom: '5px'
+                    }}>
+                        <style>
+                            {`
                             .category-list::-webkit-scrollbar {
                                 display: none;
                             }
@@ -267,47 +268,48 @@ function Catalog({ user }) {
                                 font-size: 0.8rem;
                             }
                         `}
-                    </style>
-                    <button
-                        className="category-btn"
-                        onClick={() => setSelectedCategory('')}
-                        style={{
-                            backgroundColor: selectedCategory === '' ? '#007bff' : 'white',
-                            color: selectedCategory === '' ? 'white' : '#666',
-                            borderColor: '#007bff'
-                        }}
-                    >
-                        전체
-                        <span className="category-count" style={{
-                            background: selectedCategory === '' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.05)',
-                            color: selectedCategory === '' ? 'white' : 'inherit'
-                        }}>{totalCount}</span>
-                    </button>
-                    {sortCategories(categories).map(cat => {
-                        const catColor = getCategoryColor(cat.name);
-                        const isActive = selectedCategory === cat.slug;
+                        </style>
+                        <button
+                            className="category-btn"
+                            onClick={() => setSelectedCategory('')}
+                            style={{
+                                backgroundColor: selectedCategory === '' ? '#007bff' : 'white',
+                                color: selectedCategory === '' ? 'white' : '#666',
+                                borderColor: '#007bff'
+                            }}
+                        >
+                            전체
+                            <span className="category-count" style={{
+                                background: selectedCategory === '' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.05)',
+                                color: selectedCategory === '' ? 'white' : 'inherit'
+                            }}>{totalCount}</span>
+                        </button>
+                        {sortCategories(categories).map(cat => {
+                            const catColor = getCategoryColor(cat.name);
+                            const isActive = selectedCategory === cat.slug;
 
-                        return (
-                            <button
-                                key={cat.id}
-                                className="category-btn"
-                                onClick={() => setSelectedCategory(cat.slug)}
-                                style={{
-                                    backgroundColor: isActive ? catColor : 'white',
-                                    color: isActive ? 'white' : catColor,
-                                    borderColor: catColor,
-                                    fontWeight: isActive ? 'bold' : 'normal',
-                                    boxShadow: isActive ? `0 4px 12px ${catColor}40` : 'none'
-                                }}
-                            >
-                                {cat.name}
-                                <span className="category-count" style={{
-                                    background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.05)',
-                                    color: isActive ? 'white' : 'inherit'
-                                }}>{cat.product_count || 0}</span>
-                            </button>
-                        )
-                    })}
+                            return (
+                                <button
+                                    key={cat.id}
+                                    className="category-btn"
+                                    onClick={() => setSelectedCategory(cat.slug)}
+                                    style={{
+                                        backgroundColor: isActive ? catColor : 'white',
+                                        color: isActive ? 'white' : catColor,
+                                        borderColor: catColor,
+                                        fontWeight: isActive ? 'bold' : 'normal',
+                                        boxShadow: isActive ? `0 4px 12px ${catColor}40` : 'none'
+                                    }}
+                                >
+                                    {cat.name}
+                                    <span className="category-count" style={{
+                                        background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.05)',
+                                        color: isActive ? 'white' : 'inherit'
+                                    }}>{cat.product_count || 0}</span>
+                                </button>
+                            )
+                        })}
+                    </div>
                 </div>
             </div>
 
