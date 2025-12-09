@@ -92,6 +92,19 @@ function Catalog({ user }) {
         }
     }, [selectedCategory, search, showNewOnly])
 
+    // Restore scroll position
+    useEffect(() => {
+        const savedScroll = sessionStorage.getItem('catalog_scroll')
+        if (savedScroll && products.length > 0) {
+            // Restore scroll position after products are loaded
+            // Use a slight delay to ensure layout
+            setTimeout(() => {
+                window.scrollTo(0, parseInt(savedScroll))
+                sessionStorage.removeItem('catalog_scroll') // Consume the value to prevent unwanted restoration on filter changes
+            }, 100)
+        }
+    }, [products])
+
     const fetchCategories = async () => {
         const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/products/categories?sort=display_order', { credentials: 'include' })
         const data = await res.json()
@@ -439,7 +452,10 @@ function ProductCard({ product, onAddToCart, onAddToProposal, onRemoveFromPropos
     return (
         <div
             className="product-card"
-            onClick={() => navigate(`/product/${product.id}`)}
+            onClick={() => {
+                sessionStorage.setItem('catalog_scroll', window.scrollY.toString())
+                navigate(`/product/${product.id}`)
+            }}
             onMouseLeave={() => setIsHovered(false)}
         >
             <div className="product-image-container">
