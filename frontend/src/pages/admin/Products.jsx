@@ -201,19 +201,27 @@ function AdminProducts({ user }) {
     }
 
     const extractImageFromHtml = async (url) => {
-        if (!url || !url.match(/\.html?$/i)) return null
+        if (!url) return null
 
         try {
             const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/products/proxy-image?url=${encodeURIComponent(url)}`)
             if (res.ok) {
                 const html = await res.text()
-                const match = html.match(/<img[^>]+src=['"]([^'"]+)['"]/)
+                // Match first img src, handle different quote styles
+                const match = html.match(/<img\s+[^>]*src\s*=\s*['"]([^'"]+)['"]/i)
                 if (match && match[1]) {
                     let imgUrl = match[1]
                     if (!imgUrl.startsWith('http')) {
                         // Resolve relative URL
-                        const baseUrl = url.substring(0, url.lastIndexOf('/') + 1)
-                        imgUrl = new URL(imgUrl, baseUrl).href
+                        // Handle base URL extraction more robustly or default to origin
+                        try {
+                            const urlObj = new URL(url)
+                            imgUrl = new URL(imgUrl, urlObj.origin).href
+                        } catch (e) {
+                            // If url is not valid, try simply appending (fallback)
+                            const baseUrl = url.substring(0, url.lastIndexOf('/') + 1)
+                            imgUrl = new URL(imgUrl, baseUrl).href
+                        }
                     }
                     return imgUrl
                 }
@@ -225,7 +233,7 @@ function AdminProducts({ user }) {
     }
 
     const extractAllImagesFromHtml = async (url) => {
-        if (!url || !url.match(/\.html?$/i)) return null
+        if (!url) return null
 
         try {
             const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/products/proxy-image?url=${encodeURIComponent(url)}`)
@@ -233,15 +241,21 @@ function AdminProducts({ user }) {
                 const html = await res.text()
                 console.log('Fetched HTML length:', html.length)
 
-                // More robust regex: case insensitive, handles spaces around =
+                // More robust regex: case insensitive, handles spaces around =, matches non-greedy until quote
                 const regex = /<img\s+[^>]*src\s*=\s*['"]([^'"]+)['"]/gi
                 const matches = []
                 let match
                 while ((match = regex.exec(html)) !== null) {
                     let imgUrl = match[1]
+                    // Clean up HTML entities if present? mostly fine for URLs in attributes
                     if (!imgUrl.startsWith('http')) {
-                        const baseUrl = url.substring(0, url.lastIndexOf('/') + 1)
-                        imgUrl = new URL(imgUrl, baseUrl).href
+                        try {
+                            const urlObj = new URL(url)
+                            imgUrl = new URL(imgUrl, urlObj.origin).href
+                        } catch (e) {
+                            const baseUrl = url.substring(0, url.lastIndexOf('/') + 1)
+                            imgUrl = new URL(imgUrl, baseUrl).href
+                        }
                     }
                     matches.push(imgUrl)
                 }
