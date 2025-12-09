@@ -116,6 +116,10 @@ function ProductDetail({ user }) {
                         <button onClick={() => navigate('/cart')} className="btn btn-secondary">
                             &larr; 장바구니로 돌아가기
                         </button>
+                    ) : location.state?.from === 'proposal' ? (
+                        <button onClick={() => navigate('/catalog', { state: { openProposal: true } })} className="btn btn-secondary">
+                            &larr; 제안서 목록으로 돌아가기
+                        </button>
                     ) : (
                         <button onClick={() => navigate('/catalog')} className="btn btn-secondary">
                             &larr; 목록으로 돌아가기

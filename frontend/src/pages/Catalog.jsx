@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import './Catalog.css'
 import { sortCategories, getCategoryColor } from '../constants/categories'
 
@@ -29,6 +29,16 @@ function Catalog({ user }) {
     const [showProposalModal, setShowProposalModal] = useState(false)
     const [showGuide, setShowGuide] = useState(() => localStorage.getItem('catalog_showGuide') !== 'false')
     const navigate = useNavigate()
+    const location = useLocation()
+
+    useEffect(() => {
+        if (location.state?.openProposal) {
+            setShowProposalModal(true)
+            // Clear the state so it doesn't reopen on refresh?
+            // Actually replacing state is better but for now this works.
+            window.history.replaceState({}, document.title)
+        }
+    }, [location])
 
     // Save state to sessionStorage whenever it changes
     useEffect(() => {
