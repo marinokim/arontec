@@ -1,4 +1,3 @@
-```javascript
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { compressImage } from '../../utils/imageCompression'
@@ -206,7 +205,7 @@ function AdminProducts({ user }) {
         if (!url) return null
 
         try {
-            const res = await fetch((import.meta.env.VITE_API_URL || '') + `/ api / products / proxy - image ? url = ${ encodeURIComponent(url) } `)
+            const res = await fetch((import.meta.env.VITE_API_URL || '') + `/ api / products / proxy - image ? url = ${encodeURIComponent(url)} `)
             if (res.ok) {
                 const html = await res.text()
                 // Match first img src, handle different quote styles
@@ -238,7 +237,7 @@ function AdminProducts({ user }) {
         if (!url) return null
 
         try {
-            const res = await fetch((import.meta.env.VITE_API_URL || '') + `/ api / products / proxy - image ? url = ${ encodeURIComponent(url) } `)
+            const res = await fetch((import.meta.env.VITE_API_URL || '') + `/ api / products / proxy - image ? url = ${encodeURIComponent(url)} `)
             if (res.ok) {
                 const html = await res.text()
                 console.log('Fetched HTML length:', html.length)
@@ -262,7 +261,7 @@ function AdminProducts({ user }) {
                     matches.push(imgUrl)
                 }
 
-                console.log(`Found ${ matches.length } images in HTML`)
+                console.log(`Found ${matches.length} images in HTML`)
 
                 if (matches.length > 0) {
                     // Convert to HTML tags as requested
@@ -270,100 +269,100 @@ function AdminProducts({ user }) {
                 }
             }
         } catch (error) {
-        console.error('Failed to extract images from HTML:', error)
-    }
-    return null
+            console.error('Failed to extract images from HTML:', error)
+        }
+        return null
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
 
         const baseUrl = import.meta.env.VITE_API_URL || ''
-    const url = editingProduct ? `${baseUrl}/api/products/${editingProduct.id}` : `${baseUrl}/api/products`
-    const method = editingProduct ? 'PUT' : 'POST'
+        const url = editingProduct ? `${baseUrl}/api/products/${editingProduct.id}` : `${baseUrl}/api/products`
+        const method = editingProduct ? 'PUT' : 'POST'
 
-    if (isSubmitting) return
-    setIsSubmitting(true)
+        if (isSubmitting) return
+        setIsSubmitting(true)
 
-    try {
-        let finalImageUrl = formData.imageUrl
+        try {
+            let finalImageUrl = formData.imageUrl
             // Check for <img src="..."> tag first
-        const imgTagSrc = finalImageUrl && finalImageUrl.match(/<img[^>]+src=['"]([^'"]+)['"]/i)
-        if (imgTagSrc && imgTagSrc[1]) {
-            finalImageUrl = imgTagSrc[1]
-        } else if (finalImageUrl && finalImageUrl.match(/\.html?$/i)) {
+            const imgTagSrc = finalImageUrl && finalImageUrl.match(/<img[^>]+src=['"]([^'"]+)['"]/i)
+            if (imgTagSrc && imgTagSrc[1]) {
+                finalImageUrl = imgTagSrc[1]
+            } else if (finalImageUrl && finalImageUrl.match(/\.html?$/i)) {
                 const extractedUrl = await extractImageFromHtml(finalImageUrl)
-        if (extractedUrl) {
-            finalImageUrl = extractedUrl
-        }
+                if (extractedUrl) {
+                    finalImageUrl = extractedUrl
+                }
             }
 
-        let finalDetailUrl = formData.detailUrl
-        if (finalDetailUrl && finalDetailUrl.match(/\.html?$/i)) {
+            let finalDetailUrl = formData.detailUrl
+            if (finalDetailUrl && finalDetailUrl.match(/\.html?$/i)) {
                 const extractedHtml = await extractAllImagesFromHtml(finalDetailUrl)
-        if (extractedHtml) {
-            finalDetailUrl = extractedHtml
-        }
+                if (extractedHtml) {
+                    finalDetailUrl = extractedHtml
+                }
             }
 
-        const payload = {
-            ...formData,
-            imageUrl: finalImageUrl,
-        detailUrl: finalDetailUrl,
-        consumerPrice: parsePrice(formData.consumerPrice),
-        supplyPrice: parsePrice(formData.supplyPrice),
-        b2bPrice: parsePrice(formData.b2bPrice),
-        b2bPrice: parsePrice(formData.b2bPrice),
-        stockQuantity: parsePrice(formData.stockQuantity),
-        quantityPerCarton: formData.quantityPerCarton ? formData.quantityPerCarton : '0',
-        shippingFeeIndividual: formData.shippingFeeIndividual ? parsePrice(formData.shippingFeeIndividual) : '0',
-        shippingFeeCarton: formData.shippingFeeCarton ? parsePrice(formData.shippingFeeCarton) : '0',
-        // Keep legacy shippingFee for compatibility if needed, or remove it. Let's set it to individual fee for now.
-        shippingFee: formData.shippingFeeIndividual ? parsePrice(formData.shippingFeeIndividual) : '0',
-        productOptions: formData.productOptions,
-        // Remove double quotes from text fields as requested
-        modelName: formData.modelName ? formData.modelName.replace(/"/g, '') : '',
-        modelNo: formData.modelNo ? formData.modelNo.replace(/"/g, '') : '',
-        manufacturer: formData.manufacturer ? formData.manufacturer.replace(/"/g, '') : '',
-        origin: formData.origin ? formData.origin.replace(/"/g, '') : '',
-        isTaxFree: formData.isTaxFree,
-        remarks: formData.remarks ? formData.remarks.replace(/"/g, '') : '',
-        productOptions: formData.productOptions ? formData.productOptions.replace(/"/g, '') : '',
-        productOptions: formData.productOptions ? formData.productOptions.replace(/"/g, '') : '',
-        description: formData.description ? formData.description.replace(/"/g, '') : '',
-        productSpec: formData.productSpec ? formData.productSpec.replace(/"/g, '') : '',
-        displayOrder: formData.displayOrder ? parseInt(formData.displayOrder) : 0
+            const payload = {
+                ...formData,
+                imageUrl: finalImageUrl,
+                detailUrl: finalDetailUrl,
+                consumerPrice: parsePrice(formData.consumerPrice),
+                supplyPrice: parsePrice(formData.supplyPrice),
+                b2bPrice: parsePrice(formData.b2bPrice),
+                b2bPrice: parsePrice(formData.b2bPrice),
+                stockQuantity: parsePrice(formData.stockQuantity),
+                quantityPerCarton: formData.quantityPerCarton ? formData.quantityPerCarton : '0',
+                shippingFeeIndividual: formData.shippingFeeIndividual ? parsePrice(formData.shippingFeeIndividual) : '0',
+                shippingFeeCarton: formData.shippingFeeCarton ? parsePrice(formData.shippingFeeCarton) : '0',
+                // Keep legacy shippingFee for compatibility if needed, or remove it. Let's set it to individual fee for now.
+                shippingFee: formData.shippingFeeIndividual ? parsePrice(formData.shippingFeeIndividual) : '0',
+                productOptions: formData.productOptions,
+                // Remove double quotes from text fields as requested
+                modelName: formData.modelName ? formData.modelName.replace(/"/g, '') : '',
+                modelNo: formData.modelNo ? formData.modelNo.replace(/"/g, '') : '',
+                manufacturer: formData.manufacturer ? formData.manufacturer.replace(/"/g, '') : '',
+                origin: formData.origin ? formData.origin.replace(/"/g, '') : '',
+                isTaxFree: formData.isTaxFree,
+                remarks: formData.remarks ? formData.remarks.replace(/"/g, '') : '',
+                productOptions: formData.productOptions ? formData.productOptions.replace(/"/g, '') : '',
+                productOptions: formData.productOptions ? formData.productOptions.replace(/"/g, '') : '',
+                description: formData.description ? formData.description.replace(/"/g, '') : '',
+                productSpec: formData.productSpec ? formData.productSpec.replace(/"/g, '') : '',
+                displayOrder: formData.displayOrder ? parseInt(formData.displayOrder) : 0
             }
 
-        const res = await fetch(url, {
-            method,
-            headers: {'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(payload)
+            const res = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(payload)
             })
 
-        if (res.ok) {
-            alert(editingProduct ? '상품이 수정되었습니다' : '상품이 등록되었습니다')
+            if (res.ok) {
+                alert(editingProduct ? '상품이 수정되었습니다' : '상품이 등록되었습니다')
 
                 // Save scroll position
                 // Save scroll position explicitly before refresh
                 sessionStorage.setItem('admin_products_scroll', window.scrollY)
 
-        setShowModal(false)
-        setEditingProduct(null)
-        setFormData(initialFormState)
-        fetchProducts()
-        fetchBrands()
-        fetchManufacturers()
-        fetchOrigins()
+                setShowModal(false)
+                setEditingProduct(null)
+                setFormData(initialFormState)
+                fetchProducts()
+                fetchBrands()
+                fetchManufacturers()
+                fetchOrigins()
             } else {
                 if (res.status === 401) {
-            alert('세션이 만료되었습니다. 다시 로그인해주세요.')
+                    alert('세션이 만료되었습니다. 다시 로그인해주세요.')
                     window.location.href = '/login'
-        return
+                    return
                 }
-        const data = await res.json()
-        alert(data.error || '오류가 발생했습니다')
+                const data = await res.json()
+                alert(data.error || '오류가 발생했습니다')
             }
         } catch (error) {
             console.error('Submit error:', error)
@@ -376,17 +375,17 @@ function AdminProducts({ user }) {
     const handleToggleNew = async (productId, currentStatus) => {
         try {
             const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/products/${productId}/new-status`, {
-            method: 'PATCH',
-        headers: {'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({isNew: !currentStatus })
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ isNew: !currentStatus })
             })
 
-        if (res.ok) {
-            fetchProducts()
-        } else {
-            alert('상태 변경 실패')
-        }
+            if (res.ok) {
+                fetchProducts()
+            } else {
+                alert('상태 변경 실패')
+            }
         } catch (error) {
             console.error('Error toggling new status:', error)
             alert('상태 변경 중 오류 발생')
@@ -403,45 +402,45 @@ function AdminProducts({ user }) {
         try {
             // Compress image if needed
             let fileToUpload = file
-        try {
-            fileToUpload = await compressImage(file)
-        } catch (compError) {
-            console.error('Compression failed, trying original file:', compError)
-        }
+            try {
+                fileToUpload = await compressImage(file)
+            } catch (compError) {
+                console.error('Compression failed, trying original file:', compError)
+            }
 
-        const formData = new FormData()
-        formData.append('image', fileToUpload)
+            const formData = new FormData()
+            formData.append('image', fileToUpload)
 
-        const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/upload', {
-            method: 'POST',
-        body: formData,
-        credentials: 'include'
+            const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/upload', {
+                method: 'POST',
+                body: formData,
+                credentials: 'include'
             })
 
 
-        if (res.ok) {
+            if (res.ok) {
                 const data = await res.json()
-        // ... (existing success logic, keeping it brief for the plan/diff)
-        let fullUrl = data.url
-        if (fullUrl.startsWith('/')) {
-            let apiUrl = import.meta.env.VITE_API_URL || ''
-        if (apiUrl && !apiUrl.startsWith('http') && !apiUrl.startsWith('/')) {
-            apiUrl = 'https://' + apiUrl
-        }
-        fullUrl = apiUrl + fullUrl
+                // ... (existing success logic, keeping it brief for the plan/diff)
+                let fullUrl = data.url
+                if (fullUrl.startsWith('/')) {
+                    let apiUrl = import.meta.env.VITE_API_URL || ''
+                    if (apiUrl && !apiUrl.startsWith('http') && !apiUrl.startsWith('/')) {
+                        apiUrl = 'https://' + apiUrl
+                    }
+                    fullUrl = apiUrl + fullUrl
                 }
-                setFormData(prev => ({...prev, [field]: fullUrl }))
-        alert('이미지 업로드 성공')
+                setFormData(prev => ({ ...prev, [field]: fullUrl }))
+                alert('이미지 업로드 성공')
             } else {
-            let errorMsg = '이미지 업로드 실패'
-        try {
+                let errorMsg = '이미지 업로드 실패'
+                try {
                     const errorData = await res.json()
-        errorMsg += `: ${errorData.error || res.statusText}`
+                    errorMsg += `: ${errorData.error || res.statusText}`
                 } catch (e) {
-            errorMsg += `: ${res.status} ${res.statusText}`
-        }
-        console.error('Upload failed:', res.status, res.statusText)
-        alert(errorMsg)
+                    errorMsg += `: ${res.status} ${res.statusText}`
+                }
+                console.error('Upload failed:', res.status, res.statusText)
+                alert(errorMsg)
             }
         } catch (error) {
             console.error('Error uploading image:', error)
@@ -457,16 +456,16 @@ function AdminProducts({ user }) {
         if (!confirm('정말 삭제하시겠습니까?')) return
 
         try {
-            const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/products/${id}`, {method: 'DELETE', credentials: 'include' })
-        if (res.ok) {
-            fetchProducts()
-        } else {
+            const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/products/${id}`, { method: 'DELETE', credentials: 'include' })
+            if (res.ok) {
+                fetchProducts()
+            } else {
                 if (res.status === 401) {
-            alert('세션이 만료되었습니다. 다시 로그인해주세요.')
+                    alert('세션이 만료되었습니다. 다시 로그인해주세요.')
                     window.location.href = '/login'
-        return
+                    return
                 }
-        alert('삭제 실패')
+                alert('삭제 실패')
             }
         } catch (error) {
             console.error('Delete error:', error)
@@ -476,24 +475,24 @@ function AdminProducts({ user }) {
     const handleToggleAvailability = async (product) => {
         try {
             const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/products/${product.id}/availability`, {
-            method: 'PATCH',
-        headers: {'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({isAvailable: !product.is_available })
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ isAvailable: !product.is_available })
             })
 
-        if (res.ok) {
-            setProducts(products.map(p =>
-                p.id === product.id ? { ...p, is_available: !p.is_available } : p
-            ))
-        } else {
+            if (res.ok) {
+                setProducts(products.map(p =>
+                    p.id === product.id ? { ...p, is_available: !p.is_available } : p
+                ))
+            } else {
                 if (res.status === 401) {
-            alert('세션이 만료되었습니다. 다시 로그인해주세요.')
+                    alert('세션이 만료되었습니다. 다시 로그인해주세요.')
                     window.location.href = '/login'
-        return
+                    return
                 }
-        const data = await res.json()
-        alert(data.error || '상태 변경 실패')
+                const data = await res.json()
+                alert(data.error || '상태 변경 실패')
             }
         } catch (error) {
             console.error('Toggle availability error:', error)
@@ -504,24 +503,24 @@ function AdminProducts({ user }) {
     const handleDisplayOrderChange = async (productId, newOrder) => {
         try {
             const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/products/${productId}/display-order`, {
-            method: 'PATCH',
-        headers: {'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({displayOrder: parseInt(newOrder) })
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ displayOrder: parseInt(newOrder) })
             })
 
-        if (res.ok) {
-            // Save scroll position
-            // Save scroll position
-            sessionStorage.setItem('admin_products_scroll', window.scrollY)
+            if (res.ok) {
+                // Save scroll position
+                // Save scroll position
+                sessionStorage.setItem('admin_products_scroll', window.scrollY)
                 fetchProducts() // Refetch to re-sort
             } else {
                 if (res.status === 401) {
-            alert('세션이 만료되었습니다. 다시 로그인해주세요.')
+                    alert('세션이 만료되었습니다. 다시 로그인해주세요.')
                     window.location.href = '/login'
-        return
+                    return
                 }
-        alert('순위 변경 실패')
+                alert('순위 변경 실패')
             }
         } catch (error) {
             console.error('Change display order error:', error)
@@ -530,62 +529,62 @@ function AdminProducts({ user }) {
     }
 
     const openEditModal = (product) => {
-            setEditingProduct(product)
+        setEditingProduct(product)
         setFormData({
             categoryId: product.category_id,
-        brand: product.brand,
-        modelName: product.model_name,
-        modelNo: product.model_no || '',
-        description: product.description || '',
-        imageUrl: product.image_url || '',
-        consumerPrice: formatPrice(product.consumer_price || ''),
-        supplyPrice: formatPrice(product.supply_price || ''),
-        b2bPrice: formatPrice(product.b2b_price),
-        stockQuantity: formatPrice(product.stock_quantity),
-        quantityPerCarton: product.quantity_per_carton || '',
-        shippingFeeIndividual: formatPrice(product.shipping_fee_individual || product.shipping_fee || ''),
-        shippingFeeCarton: formatPrice(product.shipping_fee_carton || ''),
-        productOptions: product.product_options || '',
-        manufacturer: product.manufacturer || '',
-        origin: product.origin || '',
-        isAvailable: product.is_available,
-        isTaxFree: product.is_tax_free || false,
-        detailUrl: product.detail_url || '',
-        detailUrl: product.detail_url || '',
-        detailUrl: product.detail_url || '',
-        remarks: product.remarks || '',
-        productSpec: product.product_spec || '',
-        displayOrder: product.display_order || '0'
+            brand: product.brand,
+            modelName: product.model_name,
+            modelNo: product.model_no || '',
+            description: product.description || '',
+            imageUrl: product.image_url || '',
+            consumerPrice: formatPrice(product.consumer_price || ''),
+            supplyPrice: formatPrice(product.supply_price || ''),
+            b2bPrice: formatPrice(product.b2b_price),
+            stockQuantity: formatPrice(product.stock_quantity),
+            quantityPerCarton: product.quantity_per_carton || '',
+            shippingFeeIndividual: formatPrice(product.shipping_fee_individual || product.shipping_fee || ''),
+            shippingFeeCarton: formatPrice(product.shipping_fee_carton || ''),
+            productOptions: product.product_options || '',
+            manufacturer: product.manufacturer || '',
+            origin: product.origin || '',
+            isAvailable: product.is_available,
+            isTaxFree: product.is_tax_free || false,
+            detailUrl: product.detail_url || '',
+            detailUrl: product.detail_url || '',
+            detailUrl: product.detail_url || '',
+            remarks: product.remarks || '',
+            productSpec: product.product_spec || '',
+            displayOrder: product.display_order || '0'
         })
         setShowModal(true)
     }
 
     const openAddModal = () => {
-            setEditingProduct(null)
+        setEditingProduct(null)
         setFormData(initialFormState)
         setShowModal(true)
     }
 
     const handleAddCategory = async (e) => {
-            e.preventDefault()
+        e.preventDefault()
         if (!newCategoryName.trim()) return
 
         try {
             const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/products/categories', {
-            method: 'POST',
-        headers: {'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({name: newCategoryName })
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ name: newCategoryName })
             })
 
-        if (res.ok) {
-            alert('카테고리가 추가되었습니다')
+            if (res.ok) {
+                alert('카테고리가 추가되었습니다')
                 setNewCategoryName('')
-        setShowCategoryModal(false)
-        fetchCategories()
+                setShowCategoryModal(false)
+                fetchCategories()
             } else {
-            alert('카테고리 추가 실패')
-        }
+                alert('카테고리 추가 실패')
+            }
         } catch (error) {
             console.error('Add category error:', error)
             alert('오류가 발생했습니다')
@@ -601,11 +600,11 @@ function AdminProducts({ user }) {
         // Handle relative paths (starting with /)
         if (cleanUrl.startsWith('/')) {
             let apiUrl = import.meta.env.VITE_API_URL || ''
-        // Ensure API URL has protocol
-        if (apiUrl && !apiUrl.startsWith('http')) {
-            apiUrl = 'https://' + apiUrl
-        }
-        return apiUrl + cleanUrl
+            // Ensure API URL has protocol
+            if (apiUrl && !apiUrl.startsWith('http')) {
+                apiUrl = 'https://' + apiUrl
+            }
+            return apiUrl + cleanUrl
         }
 
         // If it has a slash but no protocol, assume it's domain/path -> prepend https://
@@ -635,21 +634,21 @@ function AdminProducts({ user }) {
 
         try {
             const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/excel/upload', {
-            method: 'POST',
-        body: formData,
-        credentials: 'include'
+                method: 'POST',
+                body: formData,
+                credentials: 'include'
             })
 
-        const data = await res.json()
+            const data = await res.json()
 
-        if (res.ok) {
-            alert(`처리 완료\n성공: ${data.success}건\n실패: ${data.failed}건\n${data.errors.length > 0 ? '\n오류 목록:\n' + data.errors.slice(0, 5).join('\n') + (data.errors.length > 5 ? `\n...외 ${data.errors.length - 5}건` : '') : ''}`)
+            if (res.ok) {
+                alert(`처리 완료\n성공: ${data.success}건\n실패: ${data.failed}건\n${data.errors.length > 0 ? '\n오류 목록:\n' + data.errors.slice(0, 5).join('\n') + (data.errors.length > 5 ? `\n...외 ${data.errors.length - 5}건` : '') : ''}`)
                 fetchProducts()
-        fetchCategories()
-        fetchBrands()
+                fetchCategories()
+                fetchBrands()
             } else {
-            alert('업로드 실패: ' + (data.error || '알 수 없는 오류'))
-        }
+                alert('업로드 실패: ' + (data.error || '알 수 없는 오류'))
+            }
         } catch (error) {
             console.error('Excel upload error:', error)
             alert('업로드 중 오류가 발생했습니다.')
@@ -665,11 +664,11 @@ function AdminProducts({ user }) {
         const example = ['1', 'Samsung', 'Galaxy S24', 'SM-S921', 'Mobile', 'Latest smartphone', '1000000', '900000', '1200000', '100', 'https://example.com/image.jpg', 'https://example.com/detail.jpg', 'Samsung Electronics', 'Vietnam', '256GB, 8GB RAM', 'Phantom Black, Cream', 'FALSE', '20', '3000', '0', 'Special Offer']
 
         const csvContent = [
-        headers.join(','),
-        example.join(',')
+            headers.join(','),
+            example.join(',')
         ].join('\n')
 
-        const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;' })
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
         const link = document.createElement('a')
         const url = URL.createObjectURL(blob)
         link.setAttribute('href', url)
@@ -681,92 +680,92 @@ function AdminProducts({ user }) {
     }
 
     const downloadAllProducts = () => {
-            setIsDownloading(true)
+        setIsDownloading(true)
         setShowDownloadModal(false) // Close modal
 
         // Use setTimeout to allow UI to update before heavy processing
         setTimeout(() => {
             try {
-            let productsToDownload = [...products];
+                let productsToDownload = [...products];
 
-        // Filter based on selection
-        if (downloadFilterType === 'category' && downloadTarget) {
-            productsToDownload = productsToDownload.filter(p => p.category_id === parseInt(downloadTarget));
+                // Filter based on selection
+                if (downloadFilterType === 'category' && downloadTarget) {
+                    productsToDownload = productsToDownload.filter(p => p.category_id === parseInt(downloadTarget));
                 } else if (downloadFilterType === 'brand' && downloadTarget) {
-            productsToDownload = productsToDownload.filter(p => p.brand === downloadTarget);
+                    productsToDownload = productsToDownload.filter(p => p.brand === downloadTarget);
                 }
 
                 // Sort products by category order, then by brand
                 const sortedProducts = productsToDownload.sort((a, b) => {
                     const indexA = CATEGORY_ORDER.indexOf(a.category_name);
-        const indexB = CATEGORY_ORDER.indexOf(b.category_name);
+                    const indexB = CATEGORY_ORDER.indexOf(b.category_name);
 
-        let comparison = 0;
+                    let comparison = 0;
 
-        if (indexA !== -1 && indexB !== -1) {
-            comparison = indexA - indexB;
+                    if (indexA !== -1 && indexB !== -1) {
+                        comparison = indexA - indexB;
                     } else if (indexA !== -1) {
-            comparison = -1;
+                        comparison = -1;
                     } else if (indexB !== -1) {
-            comparison = 1;
+                        comparison = 1;
                     } else {
                         if (a.category_name === 'Other') comparison = 1;
-        else if (b.category_name === 'Other') comparison = -1;
-        else comparison = (a.category_name || '').localeCompare(b.category_name || '');
+                        else if (b.category_name === 'Other') comparison = -1;
+                        else comparison = (a.category_name || '').localeCompare(b.category_name || '');
                     }
 
-        if (comparison !== 0) return comparison;
+                    if (comparison !== 0) return comparison;
 
-        // Secondary Sort: Brand
-        return (a.brand || '').localeCompare(b.brand || '');
+                    // Secondary Sort: Brand
+                    return (a.brand || '').localeCompare(b.brand || '');
                 });
 
-        const headers = ['No.', 'Brand', 'ModelName', 'ModelNo', 'Category', 'Description', 'B2BPrice', 'SupplyPrice', 'ConsumerPrice', 'Stock', 'ImageURL', 'DetailURL', 'Manufacturer', 'Origin', 'ProductSpec', 'ProductOptions', 'IsTaxFree', 'QuantityPerCarton', 'ShippingFeeIndividual', 'ShippingFeeCarton', 'remark']
+                const headers = ['No.', 'Brand', 'ModelName', 'ModelNo', 'Category', 'Description', 'B2BPrice', 'SupplyPrice', 'ConsumerPrice', 'Stock', 'ImageURL', 'DetailURL', 'Manufacturer', 'Origin', 'ProductSpec', 'ProductOptions', 'IsTaxFree', 'QuantityPerCarton', 'ShippingFeeIndividual', 'ShippingFeeCarton', 'remark']
 
                 const rows = sortedProducts.map(p => [
-        p.id,
-        `"${(p.brand || '').replace(/"/g, '""')}"`,
-        `"${(p.model_name || '').replace(/"/g, '""')}"`,
-        `"${(p.model_no || '').replace(/"/g, '""')}"`,
-        `"${(p.category_name || '').replace(/"/g, '""')}"`,
-        `"${(p.description || '').replace(/"/g, '""')}"`,
-        parseInt(p.b2b_price || 0),
-        parseInt(p.supply_price || 0),
-        parseInt(p.consumer_price || 0),
-        parseInt(p.stock_quantity || 0),
-        `"${(p.image_url || '').replace(/"/g, '""')}"`,
-        `"${(p.detail_url || '').replace(/"/g, '""')}"`,
-        `"${(p.manufacturer || '').replace(/"/g, '""')}"`,
-        `"${(p.origin || '').replace(/"/g, '""')}"`,
-        `"${(p.product_spec || '').replace(/"/g, '""')}"`,
-        `"${(p.product_options || '').replace(/"/g, '""')}"`,
-        p.is_tax_free ? 'TRUE' : 'FALSE',
-        parseInt(p.quantity_per_carton || 1),
-        parseInt(p.shipping_fee_individual || 0),
-        parseInt(p.shipping_fee_carton || 0),
-        `"${(p.remarks || '').replace(/"/g, '""')}"`
-        ]);
+                    p.id,
+                    `"${(p.brand || '').replace(/"/g, '""')}"`,
+                    `"${(p.model_name || '').replace(/"/g, '""')}"`,
+                    `"${(p.model_no || '').replace(/"/g, '""')}"`,
+                    `"${(p.category_name || '').replace(/"/g, '""')}"`,
+                    `"${(p.description || '').replace(/"/g, '""')}"`,
+                    parseInt(p.b2b_price || 0),
+                    parseInt(p.supply_price || 0),
+                    parseInt(p.consumer_price || 0),
+                    parseInt(p.stock_quantity || 0),
+                    `"${(p.image_url || '').replace(/"/g, '""')}"`,
+                    `"${(p.detail_url || '').replace(/"/g, '""')}"`,
+                    `"${(p.manufacturer || '').replace(/"/g, '""')}"`,
+                    `"${(p.origin || '').replace(/"/g, '""')}"`,
+                    `"${(p.product_spec || '').replace(/"/g, '""')}"`,
+                    `"${(p.product_options || '').replace(/"/g, '""')}"`,
+                    p.is_tax_free ? 'TRUE' : 'FALSE',
+                    parseInt(p.quantity_per_carton || 1),
+                    parseInt(p.shipping_fee_individual || 0),
+                    parseInt(p.shipping_fee_carton || 0),
+                    `"${(p.remarks || '').replace(/"/g, '""')}"`
+                ]);
 
-        const csvContent = [
-        headers.join(','),
+                const csvContent = [
+                    headers.join(','),
                     ...rows.map(row => row.join(','))
-        ].join('\n');
+                ].join('\n');
 
-        const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;' })
-        const link = document.createElement('a')
-        const url = URL.createObjectURL(blob)
-        link.setAttribute('href', url)
-        link.setAttribute('download', 'all_products.csv')
-        link.style.visibility = 'hidden'
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+                const link = document.createElement('a')
+                const url = URL.createObjectURL(blob)
+                link.setAttribute('href', url)
+                link.setAttribute('download', 'all_products.csv')
+                link.style.visibility = 'hidden'
+                document.body.appendChild(link)
+                link.click()
+                document.body.removeChild(link)
             } catch (error) {
-            console.error('Download error:', error)
+                console.error('Download error:', error)
                 alert('다운로드 중 오류가 발생했습니다.')
             } finally {
-            setIsDownloading(false)
-        }
+                setIsDownloading(false)
+            }
         }, 100)
     }
 
@@ -778,18 +777,18 @@ function AdminProducts({ user }) {
 
         try {
             const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/products/recent?hours=${hours}`, {
-            method: 'DELETE',
-        credentials: 'include'
+                method: 'DELETE',
+                credentials: 'include'
             })
 
-        const data = await res.json()
+            const data = await res.json()
 
-        if (res.ok) {
-            alert(data.message)
+            if (res.ok) {
+                alert(data.message)
                 fetchProducts()
             } else {
-            alert('삭제 실패: ' + (data.error || '알 수 없는 오류'))
-        }
+                alert('삭제 실패: ' + (data.error || '알 수 없는 오류'))
+            }
         } catch (error) {
             console.error('Delete recent error:', error)
             alert('오류가 발생했습니다')
@@ -808,25 +807,25 @@ function AdminProducts({ user }) {
             // Use /api/excel/range to bypass auth issues if any, or /api/products/range if auth is working
             // Using /api/excel/range as it was recently added for this purpose
             const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/excel/range?startId=${startId}&endId=${endId}`, {
-            method: 'DELETE',
-        credentials: 'include'
+                method: 'DELETE',
+                credentials: 'include'
             })
 
-        const data = await res.json()
+            const data = await res.json()
 
-        if (res.ok) {
-            alert(data.message)
+            if (res.ok) {
+                alert(data.message)
                 fetchProducts()
             } else {
-            alert('삭제 실패: ' + (data.error || '알 수 없는 오류'))
-        }
+                alert('삭제 실패: ' + (data.error || '알 수 없는 오류'))
+            }
         } catch (error) {
             console.error('Delete range error:', error)
             alert('오류가 발생했습니다')
         }
     }
 
-        return (
+    return (
         <div className="dashboard">
             <Navbar user={user} isAdminMode={true} />
 
@@ -1616,7 +1615,7 @@ function AdminProducts({ user }) {
                 </div>
             )}
         </div>
-        )
+    )
 }
 
-        export default AdminProducts
+export default AdminProducts
