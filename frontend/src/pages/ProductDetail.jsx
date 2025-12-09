@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import './Catalog.css' // Reuse catalog styles or create new ones
 
 import ProposalGuide from '../components/ProposalGuide'
@@ -12,6 +12,7 @@ import Navbar from '../components/Navbar'
 function ProductDetail({ user }) {
     const { id } = useParams()
     const navigate = useNavigate()
+    const location = useLocation()
     const [product, setProduct] = useState(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
@@ -111,9 +112,23 @@ function ProductDetail({ user }) {
                     margin: '-1rem 0 1rem 0',
                     borderBottom: '1px solid #eee'
                 }}>
-                    <button onClick={() => navigate('/catalog')} className="btn btn-secondary">
-                        &larr; 목록으로 돌아가기
-                    </button>
+                    {location.state?.from === 'cart' ? (
+                        <button onClick={() => navigate('/cart')} className="btn btn-secondary">
+                            &larr; 장바구니로 돌아가기
+                        </button>
+                    ) : location.state?.from === 'proposal' ? (
+                        <button onClick={() => navigate('/catalog', { state: { openProposal: true } })} className="btn btn-secondary">
+                            &larr; 제안서 목록으로 돌아가기
+                        </button>
+                    ) : location.state?.from === 'admin' ? (
+                        <button onClick={() => navigate('/admin/products')} className="btn btn-secondary">
+                            &larr; 상품 관리로 돌아가기
+                        </button>
+                    ) : (
+                        <button onClick={() => navigate('/catalog')} className="btn btn-secondary">
+                            &larr; 목록으로 돌아가기
+                        </button>
+                    )}
                 </div>
 
                 <div className="card" style={{ padding: '40px' }}>
@@ -173,23 +188,9 @@ function ProductDetail({ user }) {
                                     <button
                                         className="btn btn-primary"
                                         onClick={addToCart}
-                                        disabled={!product.is_available}
-                                        style={{
-                                            flex: 1,
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            gap: '10px',
-                                            fontSize: '1.1rem',
-                                            padding: '10px',
-                                            opacity: product.is_available ? 1 : 0.6,
-                                            cursor: product.is_available ? 'pointer' : 'not-allowed',
-                                            backgroundColor: product.is_available ? '#007bff' : '#6c757d',
-                                            borderColor: product.is_available ? '#007bff' : '#6c757d'
-                                        }}
+                                        style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', fontSize: '1.1rem', padding: '10px' }}
                                     >
-                                        <span style={{ fontSize: '1.4rem' }}>{product.is_available ? '🛒' : '🚫'}</span>
-                                        {product.is_available ? '장바구니 담기' : '판매중지'}
+                                        <span style={{ fontSize: '1.4rem' }}>🛒</span> 장바구니 담기
                                     </button>
                                 </div>
                                 <button
@@ -222,10 +223,32 @@ function ProductDetail({ user }) {
                                 const detailUrl = product.detail_url;
                                 // Check for HTML tags
                                 if (/<[a-z][\s\S]*>/i.test(detailUrl)) {
+                                    const processHtml = (html) => {
+                                        try {
+                                            const div = document.createElement('div');
+                                            div.innerHTML = html;
+                                            const imgs = div.querySelectorAll('img');
+                                            imgs.forEach(img => {
+                                                // Check for ec-data-src or ecd-data-src (user mentioned typo)
+                                                const ecSrc = img.getAttribute('ec-data-src') || img.getAttribute('ecd-data-src');
+                                                if (ecSrc) {
+                                                    img.setAttribute('src', ecSrc);
+                                                    // Ensure the image is visible
+                                                    img.style.display = 'block';
+                                                    img.style.maxWidth = '100%';
+                                                }
+                                            });
+                                            return div.innerHTML;
+                                        } catch (e) {
+                                            console.error('HTML processing error:', e);
+                                            return html;
+                                        }
+                                    };
+
                                     return (
                                         <div
                                             className="product-detail-content"
-                                            dangerouslySetInnerHTML={{ __html: detailUrl }}
+                                            dangerouslySetInnerHTML={{ __html: processHtml(detailUrl) }}
                                             style={{ margin: '0 auto' }}
                                         />
                                     );

@@ -107,12 +107,28 @@ function Register() {
 
                     <div className="form-group">
                         <label>비밀번호 *</label>
-                        <input type="password" name="password" value={formData.password} onChange={handleChange} required />
+                        <input
+                            type="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            required
+                            autoComplete="new-password"
+                            style={{ imeMode: 'disabled' }}
+                        />
                     </div>
 
                     <div className="form-group">
                         <label>비밀번호 확인 *</label>
-                        <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required />
+                        <input
+                            type="password"
+                            name="confirmPassword"
+                            value={formData.confirmPassword}
+                            onChange={handleChange}
+                            required
+                            autoComplete="new-password"
+                            style={{ imeMode: 'disabled' }}
+                        />
                     </div>
 
                     <div className="form-group">

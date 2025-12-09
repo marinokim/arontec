@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { getCategoryColor, sortCategories, CATEGORY_ORDER } from '../../constants/categories'
 
 import Navbar from '../../components/Navbar'
@@ -18,7 +18,9 @@ function AdminProducts({ user }) {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isUploading, setIsUploading] = useState(false)
     const [isExcelUploading, setIsExcelUploading] = useState(false)
-    const scrollPosition = useRef(0)
+
+    const navigate = useNavigate()
+    // Remove useRef scrollPosition, use effective restoration below
 
 
 
@@ -73,12 +75,34 @@ function AdminProducts({ user }) {
         fetchOrigins()
     }, [])
 
+    // Scroll restoration logic
     useEffect(() => {
-        if (scrollPosition.current > 0) {
-            window.scrollTo(0, scrollPosition.current)
-            scrollPosition.current = 0
+        const savedScroll = sessionStorage.getItem('admin_products_scroll')
+        if (savedScroll && products.length > 0) {
+            setTimeout(() => {
+                window.scrollTo(0, parseInt(savedScroll))
+            }, 100)
         }
     }, [products])
+
+    // Save scroll position
+    useEffect(() => {
+        const handleScroll = () => {
+            sessionStorage.setItem('admin_products_scroll', window.scrollY)
+        }
+
+        let timeoutId
+        const debouncedScroll = () => {
+            clearTimeout(timeoutId)
+            timeoutId = setTimeout(handleScroll, 100)
+        }
+
+        window.addEventListener('scroll', debouncedScroll)
+        return () => {
+            window.removeEventListener('scroll', debouncedScroll)
+            clearTimeout(timeoutId)
+        }
+    }, [])
 
     const fetchBrands = async () => {
         try {
@@ -121,7 +145,7 @@ function AdminProducts({ user }) {
     }
 
     const fetchProducts = async () => {
-        const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/products', { credentials: 'include' })
+        const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/products?includeUnavailable=true', { credentials: 'include' })
         const data = await res.json()
         setProducts(data.products)
     }
@@ -282,7 +306,8 @@ function AdminProducts({ user }) {
                 alert(editingProduct ? '상품이 수정되었습니다' : '상품이 등록되었습니다')
 
                 // Save scroll position
-                scrollPosition.current = window.scrollY
+                // Save scroll position explicitly before refresh
+                sessionStorage.setItem('admin_products_scroll', window.scrollY)
 
                 setShowModal(false)
                 setEditingProduct(null)
@@ -432,7 +457,8 @@ function AdminProducts({ user }) {
 
             if (res.ok) {
                 // Save scroll position
-                scrollPosition.current = window.scrollY
+                // Save scroll position
+                sessionStorage.setItem('admin_products_scroll', window.scrollY)
                 fetchProducts() // Refetch to re-sort
             } else {
                 if (res.status === 401) {
@@ -888,11 +914,16 @@ function AdminProducts({ user }) {
                                                 </select>
                                             </td>
                                             <td style={{ padding: 0, width: '100px' }}>
-                                                {product.image_url ? (
-                                                    <img src={getImageUrl(product.image_url)} alt={product.model_name} style={{ width: '100%', height: '100px', objectFit: 'contain', display: 'block', backgroundColor: '#fff' }} />
-                                                ) : (
-                                                    <div style={{ width: '100%', height: '100px', background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem' }}>No Img</div>
-                                                )}
+                                                <div
+                                                    onClick={() => navigate(`/product/${product.id}`, { state: { from: 'admin' } })}
+                                                    style={{ cursor: 'pointer' }}
+                                                >
+                                                    {product.image_url ? (
+                                                        <img src={getImageUrl(product.image_url)} alt={product.model_name} style={{ width: '100%', height: '100px', objectFit: 'contain', display: 'block', backgroundColor: '#fff' }} />
+                                                    ) : (
+                                                        <div style={{ width: '100%', height: '100px', background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem' }}>No Img</div>
+                                                    )}
+                                                </div>
                                             </td>
                                             <td>
                                                 <div style={{
@@ -1251,19 +1282,23 @@ function AdminProducts({ user }) {
                             <div className="form-group">
                                 <label>상세페이지 URL</label>
                                 <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                    <input
-                                        type="text"
+                                    <textarea
                                         value={formData.detailUrl}
                                         onChange={e => setFormData({ ...formData, detailUrl: e.target.value })}
-                                        placeholder="https://example.com/product/123"
-                                        style={{ flex: 1 }}
+                                        placeholder="https://example.com/product/123 or HTML content"
+                                        style={{ flex: 1, minHeight: '100px' }}
                                         onBlur={async (e) => {
                                             const url = e.target.value
-                                            const extractedHtml = await extractAllImagesFromHtml(url)
-                                            if (extractedHtml) {
-                                                setFormData(prev => ({ ...prev, detailUrl: extractedHtml }))
-                                                const count = (extractedHtml.match(/<img/g) || []).length
-                                                alert(`HTML에서 ${count}장의 이미지를 추출하여 태그로 변환했습니다.`)
+                                            console.log('Detail URL Length:', url.length);
+
+                                            // Only try to fetch if it looks like a URL and NOT HTML
+                                            if (url.match(/^https?:\/\//) && !url.match(/<[a-z][\s\S]*>/i)) {
+                                                const extractedHtml = await extractAllImagesFromHtml(url)
+                                                if (extractedHtml) {
+                                                    setFormData(prev => ({ ...prev, detailUrl: extractedHtml }))
+                                                    const count = (extractedHtml.match(/<img/g) || []).length
+                                                    alert(`HTML에서 ${count}장의 이미지를 추출하여 태그로 변환했습니다.`)
+                                                }
                                             }
                                         }}
                                     />

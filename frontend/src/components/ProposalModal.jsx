@@ -1,6 +1,9 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const ProposalModal = ({ show, onClose, items, onRemove, onClear, onDownload }) => {
+    const navigate = useNavigate()
+
     if (!show) return null
 
     return (
@@ -23,11 +26,19 @@ const ProposalModal = ({ show, onClose, items, onRemove, onClear, onDownload }) 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         {items.map(item => (
                             <div key={item.id} style={{ display: 'flex', gap: '1rem', border: '1px solid #eee', padding: '1rem', borderRadius: '8px', alignItems: 'center' }}>
-                                <img src={item.image_url} alt={item.model_name} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '4px' }} />
-                                <div style={{ flex: 1 }}>
-                                    <div style={{ fontSize: '0.9rem', color: '#666' }}>{item.brand}</div>
-                                    <div style={{ fontWeight: 'bold' }}>{item.model_name}</div>
-                                    <div style={{ color: '#007bff' }}>{parseInt(item.b2b_price).toLocaleString()}원</div>
+                                <div
+                                    onClick={() => {
+                                        onClose()
+                                        navigate(`/product/${item.id}`, { state: { from: 'proposal' } })
+                                    }}
+                                    style={{ display: 'flex', gap: '1rem', flex: 1, cursor: 'pointer', alignItems: 'center' }}
+                                >
+                                    <img src={item.image_url} alt={item.model_name} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '4px' }} />
+                                    <div style={{ flex: 1 }}>
+                                        <div style={{ fontSize: '0.9rem', color: '#666' }}>{item.brand}</div>
+                                        <div style={{ fontWeight: 'bold' }}>{item.model_name}</div>
+                                        <div style={{ color: '#007bff' }}>{parseInt(item.b2b_price).toLocaleString()}원</div>
+                                    </div>
                                 </div>
                                 <button
                                     onClick={() => onRemove(item.id)}

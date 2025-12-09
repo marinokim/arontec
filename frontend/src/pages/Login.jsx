@@ -184,6 +184,7 @@ function Login({ setUser }) {
                             required
                             placeholder="비밀번호를 입력하세요"
                             autoComplete="current-password"
+                            style={{ imeMode: 'disabled' }}
                         />
                         {passwordWarning && (
                             <div style={{ color: '#dc3545', fontSize: '0.8rem', marginTop: '4px' }}>

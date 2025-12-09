@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import './Catalog.css'
 import { sortCategories, getCategoryColor } from '../constants/categories'
 
@@ -29,6 +29,16 @@ function Catalog({ user }) {
     const [showProposalModal, setShowProposalModal] = useState(false)
     const [showGuide, setShowGuide] = useState(() => localStorage.getItem('catalog_showGuide') !== 'false')
     const navigate = useNavigate()
+    const location = useLocation()
+
+    useEffect(() => {
+        if (location.state?.openProposal) {
+            setShowProposalModal(true)
+            // Clear the state so it doesn't reopen on refresh?
+            // Actually replacing state is better but for now this works.
+            window.history.replaceState({}, document.title)
+        }
+    }, [location])
 
     // Save state to sessionStorage whenever it changes
     useEffect(() => {
@@ -81,6 +91,38 @@ function Catalog({ user }) {
             setProposalItems(JSON.parse(savedProposal))
         }
     }, [selectedCategory, search, showNewOnly])
+
+    // Restore scroll position
+    useEffect(() => {
+        const savedScroll = sessionStorage.getItem('catalog_scroll')
+        if (savedScroll && products.length > 0) {
+            const targetScroll = parseInt(savedScroll)
+
+            // Robust scroll restoration with retries
+            const attemptScroll = (attempt) => {
+                window.scrollTo(0, targetScroll)
+
+                // Check if restoration was successful
+                // We consider it success if we are close to target OR if we hit the bottom
+                const currentFn = window.scrollY
+                const maxScroll = document.documentElement.scrollHeight - window.innerHeight
+                const isCloseEnough = Math.abs(currentFn - targetScroll) < 20
+                const isAtBottom = targetScroll >= maxScroll && currentFn >= maxScroll - 20
+
+                if (isCloseEnough || isAtBottom) {
+                    sessionStorage.removeItem('catalog_scroll')
+                } else if (attempt < 5) { // Retry up to 5 times (approx 1.5s total)
+                    setTimeout(() => attemptScroll(attempt + 1), 100 + (attempt * 50))
+                } else {
+                    // Final cleanup even if failed, to avoid jumping later
+                    sessionStorage.removeItem('catalog_scroll')
+                }
+            }
+
+            // Initial attempt
+            setTimeout(() => attemptScroll(1), 50)
+        }
+    }, [products])
 
     const fetchCategories = async () => {
         const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/products/categories?sort=display_order', { credentials: 'include' })
@@ -167,67 +209,69 @@ function Catalog({ user }) {
     return (
         <div className="catalog-page">
             <Navbar user={user} />
-            <div className="catalog-header">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
-                    <h1>상품 카탈로그</h1>
-                    <label style={{
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        background: showNewOnly ? '#ff4444' : '#fff',
-                        padding: '8px 16px',
-                        borderRadius: '25px',
-                        border: '2px solid #ff4444',
-                        transition: 'all 0.2s ease',
-                        boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
-                    }}>
-                        <input
-                            type="checkbox"
-                            checked={showNewOnly}
-                            onChange={(e) => setShowNewOnly(e.target.checked)}
-                            style={{ display: 'none' }}
-                        />
-                        <span style={{
-                            fontWeight: 'bold',
-                            color: showNewOnly ? '#fff' : '#ff4444',
-                            fontSize: '1rem'
+            <div className="sticky-header-wrapper">
+                <div className="catalog-header">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                        <h1>상품 카탈로그</h1>
+                        <label style={{
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            background: showNewOnly ? '#ff4444' : '#fff',
+                            padding: '8px 16px',
+                            borderRadius: '25px',
+                            border: '2px solid #ff4444',
+                            transition: 'all 0.2s ease',
+                            boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+                            whiteSpace: 'nowrap'
                         }}>
-                            {showNewOnly ? '✓ NEW 신상품 모아보기' : 'NEW 신상품만 보기'}
-                        </span>
-                    </label>
+                            <input
+                                type="checkbox"
+                                checked={showNewOnly}
+                                onChange={(e) => setShowNewOnly(e.target.checked)}
+                                style={{ display: 'none' }}
+                            />
+                            <span style={{
+                                fontWeight: 'bold',
+                                color: showNewOnly ? '#fff' : '#ff4444',
+                                fontSize: '0.9rem'
+                            }}>
+                                {showNewOnly ? '✓ NEW' : 'NEW 신상품'}
+                            </span>
+                        </label>
+                    </div>
+
+                    <div className="search-container">
+                        <i className="fas fa-search search-icon"></i>
+                        <input
+                            type="text"
+                            className="search-input-enhanced"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="상품명, 브랜드, 모델명으로 검색해보세요"
+                        />
+                    </div>
+
+                    <button onClick={() => navigate('/dashboard')} className="btn btn-secondary" style={{ whiteSpace: 'nowrap' }}>← 대시보드</button>
                 </div>
-                <button onClick={() => navigate('/dashboard')} className="btn btn-secondary">← 대시보드</button>
-            </div>
 
-            <ProposalGuide
-                show={showGuide}
-                onClose={() => {
-                    setShowGuide(false)
-                    localStorage.setItem('catalog_showGuide', 'false')
-                }}
-            />
+                <ProposalGuide
+                    show={showGuide}
+                    onClose={() => {
+                        setShowGuide(false)
+                        localStorage.setItem('catalog_showGuide', 'false')
+                    }}
+                />
 
-            <div className="catalog-filters" style={{
-                position: 'sticky',
-                top: '80px', // Adjusted for Navbar height + spacing
-                zIndex: 900,
-                background: 'rgba(255, 255, 255, 0.95)',
-                backdropFilter: 'blur(10px)',
-                padding: '1rem',
-                borderRadius: '8px',
-                border: '1px solid #eee',
-                marginBottom: '2rem',
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-            }}>
-                <div className="category-list" style={{
-                    display: 'flex',
-                    gap: '10px',
-                    flexWrap: 'wrap',
-                    paddingBottom: '5px'
-                }}>
-                    <style>
-                        {`
+                <div className="catalog-filters">
+                    <div className="category-list" style={{
+                        display: 'flex',
+                        gap: '10px',
+                        paddingBottom: '5px'
+                    }}>
+                        <style>
+                            {`
                             .category-list::-webkit-scrollbar {
                                 display: none;
                             }
@@ -256,59 +300,52 @@ function Catalog({ user }) {
                                 font-size: 0.8rem;
                             }
                         `}
-                    </style>
-                    <button
-                        className="category-btn"
-                        onClick={() => setSelectedCategory('')}
-                        style={{
-                            backgroundColor: selectedCategory === '' ? '#007bff' : 'white',
-                            color: selectedCategory === '' ? 'white' : '#666',
-                            borderColor: '#007bff'
-                        }}
-                    >
-                        전체
-                        <span className="category-count" style={{
-                            background: selectedCategory === '' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.05)',
-                            color: selectedCategory === '' ? 'white' : 'inherit'
-                        }}>{totalCount}</span>
-                    </button>
-                    {sortCategories(categories).map(cat => {
-                        const catColor = getCategoryColor(cat.name);
-                        const isActive = selectedCategory === cat.slug;
+                        </style>
+                        <button
+                            className="category-btn"
+                            onClick={() => setSelectedCategory('')}
+                            style={{
+                                backgroundColor: selectedCategory === '' ? '#007bff' : 'white',
+                                color: selectedCategory === '' ? 'white' : '#666',
+                                borderColor: '#007bff'
+                            }}
+                        >
+                            전체
+                            <span className="category-count" style={{
+                                background: selectedCategory === '' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.05)',
+                                color: selectedCategory === '' ? 'white' : 'inherit'
+                            }}>{totalCount}</span>
+                        </button>
+                        {sortCategories(categories).map(cat => {
+                            const catColor = getCategoryColor(cat.name);
+                            const isActive = selectedCategory === cat.slug;
 
-                        return (
-                            <button
-                                key={cat.id}
-                                className="category-btn"
-                                onClick={() => setSelectedCategory(cat.slug)}
-                                style={{
-                                    backgroundColor: isActive ? catColor : 'white',
-                                    color: isActive ? 'white' : catColor,
-                                    borderColor: catColor,
-                                    fontWeight: isActive ? 'bold' : 'normal',
-                                    boxShadow: isActive ? `0 4px 12px ${catColor}40` : 'none'
-                                }}
-                            >
-                                {cat.name}
-                                <span className="category-count" style={{
-                                    background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.05)',
-                                    color: isActive ? 'white' : 'inherit'
-                                }}>{cat.product_count || 0}</span>
-                            </button>
-                        )
-                    })}
+                            return (
+                                <button
+                                    key={cat.id}
+                                    className="category-btn"
+                                    onClick={() => setSelectedCategory(cat.slug)}
+                                    style={{
+                                        backgroundColor: isActive ? catColor : 'white',
+                                        color: isActive ? 'white' : catColor,
+                                        borderColor: catColor,
+                                        fontWeight: isActive ? 'bold' : 'normal',
+                                        boxShadow: isActive ? `0 4px 12px ${catColor}40` : 'none'
+                                    }}
+                                >
+                                    {cat.name}
+                                    <span className="category-count" style={{
+                                        background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.05)',
+                                        color: isActive ? 'white' : 'inherit'
+                                    }}>{cat.product_count || 0}</span>
+                                </button>
+                            )
+                        })}
+                    </div>
                 </div>
             </div>
 
-            <div className="filter-group" style={{ marginBottom: '2rem' }}>
-                <label>검색</label>
-                <input
-                    type="text"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder="브랜드 또는 모델명 검색"
-                />
-            </div>
+
 
             <div className="products-grid">
                 {products.map(product => (
@@ -434,7 +471,10 @@ function ProductCard({ product, onAddToCart, onAddToProposal, onRemoveFromPropos
     return (
         <div
             className="product-card"
-            onClick={() => navigate(`/product/${product.id}`)}
+            onClick={() => {
+                sessionStorage.setItem('catalog_scroll', window.scrollY.toString())
+                navigate(`/product/${product.id}`)
+            }}
             onMouseLeave={() => setIsHovered(false)}
         >
             <div className="product-image-container">
@@ -443,12 +483,6 @@ function ProductCard({ product, onAddToCart, onAddToProposal, onRemoveFromPropos
                         <img src={product.image_url} alt={product.model_name} />
                     ) : (
                         <div className="no-image">No Image</div>
-                    )}
-
-                    {!product.is_available && (
-                        <div className="sold-out-overlay">
-                            <span>판매중지</span>
-                        </div>
                     )}
 
                     <button
