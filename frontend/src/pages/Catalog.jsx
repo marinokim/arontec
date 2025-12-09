@@ -310,13 +310,16 @@ function Catalog({ user }) {
             </div>
 
             <div className="filter-group" style={{ marginBottom: '2rem' }}>
-                <label>검색</label>
-                <input
-                    type="text"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder="브랜드 또는 모델명 검색"
-                />
+                <div className="search-container">
+                    <i className="fas fa-search search-icon"></i>
+                    <input
+                        type="text"
+                        className="search-input-enhanced"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        placeholder="상품명, 브랜드, 모델명으로 검색해보세요"
+                    />
+                </div>
             </div>
 
             <div className="products-grid">

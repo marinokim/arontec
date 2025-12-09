@@ -24,6 +24,54 @@
     flex: 1;
 }
 
+/* Enhanced Search Styling */
+.search-container {
+    position: relative;
+    max-width: 100%;
+    /* margin: 0 auto; */
+}
+
+.search-icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #adb5bd;
+    font-size: 1.2rem;
+    pointer-events: none;
+    transition: color 0.3s ease;
+}
+
+.search-input-enhanced {
+    width: 100%;
+    padding: 16px 20px 16px 50px;
+    /* Left padding for icon */
+    font-size: 1.1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    color: #495057;
+}
+
+.search-input-enhanced::placeholder {
+    color: #adb5bd;
+}
+
+.search-input-enhanced:focus {
+    background: white;
+    border-color: #007bff;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.1);
+    outline: none;
+}
+
+.search-input-enhanced:focus+.search-icon,
+.search-container:focus-within .search-icon {
+    color: #007bff;
+}
+
+/* 
 .filter-group label {
     display: block;
     margin-bottom: 0.5rem;
@@ -36,7 +84,8 @@
     padding: 0.75rem;
     border: 1px solid var(--border-color);
     border-radius: 5px;
-}
+} 
+*/
 
 .products-grid {
     display: grid;
