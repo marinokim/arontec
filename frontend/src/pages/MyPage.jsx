@@ -318,6 +318,8 @@ function MyPage({ user }) {
                                     onChange={e => setEditForm({ ...editForm, password: e.target.value })}
                                     className="form-control"
                                     placeholder="변경하지 않으려면 비워두세요"
+                                    autoComplete="new-password"
+                                    style={{ imeMode: 'disabled' }}
                                 />
                             </div>
                             {editForm.password && (
@@ -328,6 +330,8 @@ function MyPage({ user }) {
                                         value={editForm.confirmPassword}
                                         onChange={e => setEditForm({ ...editForm, confirmPassword: e.target.value })}
                                         className="form-control"
+                                        autoComplete="new-password"
+                                        style={{ imeMode: 'disabled' }}
                                     />
                                 </div>
                             )}
