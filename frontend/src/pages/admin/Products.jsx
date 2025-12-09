@@ -86,9 +86,26 @@ function AdminProducts({ user }) {
     useEffect(() => {
         const savedScroll = sessionStorage.getItem('admin_products_scroll')
         if (savedScroll && products.length > 0) {
-            setTimeout(() => {
-                window.scrollTo(0, parseInt(savedScroll))
-            }, 100)
+            const targetScroll = parseInt(savedScroll)
+
+            const attemptScroll = (attempt) => {
+                window.scrollTo(0, targetScroll)
+
+                const currentFn = window.scrollY
+                const maxScroll = document.documentElement.scrollHeight - window.innerHeight
+                const isCloseEnough = Math.abs(currentFn - targetScroll) < 20
+                const isAtBottom = targetScroll >= maxScroll && currentFn >= maxScroll - 20
+
+                if (isCloseEnough || isAtBottom) {
+                    sessionStorage.removeItem('admin_products_scroll')
+                } else if (attempt < 5) {
+                    setTimeout(() => attemptScroll(attempt + 1), 100 + (attempt * 50))
+                } else {
+                    sessionStorage.removeItem('admin_products_scroll')
+                }
+            }
+
+            setTimeout(() => attemptScroll(1), 50)
         }
     }, [products])
 
