@@ -410,9 +410,8 @@ function AdminProducts({ user }) {
 
             if (res.ok) {
                 const data = await res.json()
-
+                // ... (existing success logic, keeping it brief for the plan/diff)
                 let fullUrl = data.url
-                // Only prepend API URL if the returned URL is relative (starts with /)
                 if (fullUrl.startsWith('/')) {
                     let apiUrl = import.meta.env.VITE_API_URL || ''
                     if (apiUrl && !apiUrl.startsWith('http') && !apiUrl.startsWith('/')) {
@@ -420,15 +419,22 @@ function AdminProducts({ user }) {
                     }
                     fullUrl = apiUrl + fullUrl
                 }
-
                 setFormData(prev => ({ ...prev, [field]: fullUrl }))
                 alert('이미지 업로드 성공')
             } else {
-                alert('이미지 업로드 실패')
+                let errorMsg = '이미지 업로드 실패'
+                try {
+                    const errorData = await res.json()
+                    errorMsg += `: ${errorData.error || res.statusText}`
+                } catch (e) {
+                    errorMsg += `: ${res.status} ${res.statusText}`
+                }
+                console.error('Upload failed:', res.status, res.statusText)
+                alert(errorMsg)
             }
         } catch (error) {
             console.error('Error uploading image:', error)
-            alert('이미지 업로드 중 오류 발생')
+            alert(`이미지 업로드 중 오류 발생: ${error.message}`)
         } finally {
             setIsUploading(false)
             // Reset file input
