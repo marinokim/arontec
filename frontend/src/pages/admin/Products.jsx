@@ -18,7 +18,7 @@ function AdminProducts({ user }) {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isUploading, setIsUploading] = useState(false)
     const [isExcelUploading, setIsExcelUploading] = useState(false)
-    const [isExcelUploading, setIsExcelUploading] = useState(false)
+
     const navigate = useNavigate()
     // Remove useRef scrollPosition, use effective restoration below
 
