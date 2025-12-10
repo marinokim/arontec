@@ -45,6 +45,9 @@ router.post('/upload', upload.single('file'), async (req, res) => {
 
         for (const [index, row] of data.entries()) {
             try {
+                // Start a savepoint for this row to isolate errors
+                await client.query('SAVEPOINT row_savepoint')
+
                 // Map Excel columns to DB fields
                 // Expected columns: Brand, ModelName, ModelNo, Category, Description, B2BPrice, ConsumerPrice, Stock, ImageURL, DetailURL, Manufacturer, Origin, ProductSpec, ProductOptions
 
@@ -122,6 +125,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
                     const mode = req.body.mode || 'all'
                     if (mode === 'new') {
                         // Skip update for existing product in 'new' mode
+                        await client.query('RELEASE SAVEPOINT row_savepoint')
                         continue
                     }
 
@@ -162,6 +166,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
                     const mode = req.body.mode || 'all'
                     if (mode === 'update') {
                         // Skip insert for new product in 'update' mode
+                        await client.query('RELEASE SAVEPOINT row_savepoint')
                         continue
                     }
 
@@ -181,8 +186,11 @@ router.post('/upload', upload.single('file'), async (req, res) => {
                     )
                 }
 
+                await client.query('RELEASE SAVEPOINT row_savepoint')
                 successCount++
             } catch (err) {
+                // Rollback to savepoint if error occurs for this row
+                await client.query('ROLLBACK TO SAVEPOINT row_savepoint')
                 console.error(`Error processing row ${index + 2}:`, err)
                 errorCount++
                 errors.push(`Row ${index + 2}: ${err.message}`)
