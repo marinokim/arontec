@@ -333,6 +333,10 @@ function AdminProducts({ user }) {
                 // e.g. <img src=...jpg/> -> <img src="...jpg"/>
                 // Use robust regex to handle spaces and special chars like parentheses in URL
                 // Note: unquoted URLs with spaces are not valid HTML, but we support valid unquoted URLs with parens etc.
+
+                // Cleanup potentially problematic empty attributes like 'alt= ' which might confuse some parsers
+                finalDetailUrl = finalDetailUrl.replace(/alt=\s+/gi, '')
+
                 finalDetailUrl = finalDetailUrl.replace(/src\s*=\s*([^"'\s>]+)/gi, (match, url) => {
                     let cleanUrl = url.replace(/[\/>]+$/, '')
                     return `src="${cleanUrl}"`
