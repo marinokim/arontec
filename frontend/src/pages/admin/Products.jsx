@@ -294,7 +294,7 @@ function AdminProducts({ user }) {
         try {
             let finalImageUrl = formData.imageUrl
             // Check for <img src="..."> tag first
-            const imgTagSrc = finalImageUrl && finalImageUrl.match(/<img[^>]+src=(?:['"]([^'"]+)['"]|(\S+))/i)
+            const imgTagSrc = finalImageUrl && finalImageUrl.match(/<img[^>]+src\s*=\s*(?:['"]([^'"]+)['"]|(\S+))/i)
             if (imgTagSrc) {
                 let extracted = imgTagSrc[1] || imgTagSrc[2]
                 // Remove trailing > and / from extracted URL (common in unquoted tags like <img src=.../>)
@@ -331,7 +331,9 @@ function AdminProducts({ user }) {
 
                 // 2. Quote unquoted src attributes to prevent browser parsing errors with trailing slashes
                 // e.g. <img src=...jpg/> -> <img src="...jpg"/>
-                finalDetailUrl = finalDetailUrl.replace(/src=([^"'\s>]+)/gi, (match, url) => {
+                // Use robust regex to handle spaces and special chars like parentheses in URL
+                // Note: unquoted URLs with spaces are not valid HTML, but we support valid unquoted URLs with parens etc.
+                finalDetailUrl = finalDetailUrl.replace(/src\s*=\s*([^"'\s>]+)/gi, (match, url) => {
                     let cleanUrl = url.replace(/[\/>]+$/, '')
                     return `src="${cleanUrl}"`
                 })
