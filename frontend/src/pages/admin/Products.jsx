@@ -315,7 +315,21 @@ function AdminProducts({ user }) {
                 }
             } else if (finalDetailUrl) {
                 // Formatting clean-up for raw HTML input:
-                // Quote unquoted src attributes to prevent browser parsing errors with trailing slashes
+
+                // 1. Convert raw URLs (newline separated) to <img> tags if they are not already HTML
+                const trimmed = finalDetailUrl.trim()
+                if (!trimmed.startsWith('<')) {
+                    const lines = trimmed.split(/[\r\n]+/).map(l => l.trim()).filter(l => l)
+                    // If all lines look like URLs, convert them
+                    if (lines.length > 0 && lines.every(l => l.match(/^https?:\/\//i))) {
+                        finalDetailUrl = lines.map(url => {
+                            let cleanUrl = url.replace(/[\/>]+$/, '')
+                            return `<img src="${cleanUrl}" />`
+                        }).join('')
+                    }
+                }
+
+                // 2. Quote unquoted src attributes to prevent browser parsing errors with trailing slashes
                 // e.g. <img src=...jpg/> -> <img src="...jpg"/>
                 finalDetailUrl = finalDetailUrl.replace(/src=([^"'\s>]+)/gi, (match, url) => {
                     let cleanUrl = url.replace(/[\/>]+$/, '')
