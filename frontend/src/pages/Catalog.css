@@ -385,8 +385,7 @@
 }
 
 .product-detail-content img {
-    max-width: 100% !important;
-    width: auto !important;
+    width: 100% !important;
     height: auto !important;
     display: block;
     margin: 0 auto;
