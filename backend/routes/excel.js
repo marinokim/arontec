@@ -56,10 +56,10 @@ router.post('/upload', upload.single('file'), async (req, res) => {
                 const modelNo = sanitize(row['ModelNo'] || row['모델번호'])
                 const categoryName = sanitize(row['Category'] || row['카테고리'])
                 const description = sanitize(row['Description'] || row['상세설명'])
-                // Swapped mapping based on user feedback
-                const b2bPrice = parsePrice(row['B2BPrice'] || row['소비자가'] || row['B2B가'])
-                const consumerPrice = parsePrice(row['ConsumerPrice'] || row['공급가'])
-                let supplyPrice = parsePrice(row['SupplyPrice'] || row['매입가'] || 0)
+                // Swapped mapping based on user feedback (Corrected)
+                const b2bPrice = parsePrice(row['B2BPrice'] || row['실판매가'] || row['판매가'] || row['B2B가'])
+                const consumerPrice = parsePrice(row['ConsumerPrice'] || row['소비자가'] || row['소가'])
+                const supplyPrice = parsePrice(row['SupplyPrice'] || row['공급가'] || row['매입가'] || 0)
 
                 // If supplyPrice is not provided (0), use b2bPrice (실판매가)
                 if (supplyPrice === 0 && b2bPrice > 0) {
