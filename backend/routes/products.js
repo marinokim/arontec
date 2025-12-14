@@ -12,12 +12,20 @@ router.post('/', requireAdmin, async (req, res) => {
 
         // Sanitize inputs
         const cleanImageUrl = imageUrl ? imageUrl.trim() : imageUrl
+        const cleanB2bPrice = b2bPrice === '' ? 0 : b2bPrice
+        const cleanStockQuantity = stockQuantity === '' ? 0 : stockQuantity
+        const cleanConsumerPrice = consumerPrice === '' ? null : consumerPrice
+        const cleanSupplyPrice = supplyPrice === '' ? null : supplyPrice
+        const cleanQuantityPerCarton = quantityPerCarton === '' ? null : quantityPerCarton
+        const cleanShippingFeeIndividual = shippingFeeIndividual === '' ? 0 : shippingFeeIndividual
+        const cleanShippingFeeCarton = shippingFeeCarton === '' ? 0 : shippingFeeCarton
+        const cleanDisplayOrder = displayOrder === '' ? 0 : displayOrder
 
         const result = await pool.query(
-            `INSERT INTO products (category_id, brand, model_name, description, image_url, b2b_price, stock_quantity, detail_url, is_available, consumer_price, supply_price, quantity_per_carton, shipping_fee, manufacturer, origin, is_tax_free, shipping_fee_individual, shipping_fee_carton, product_options, model_no, remarks, display_order, product_spec, is_new)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24)
+            `INSERT INTO products (category_id, brand, model_name, description, image_url, b2b_price, stock_quantity, detail_url, is_available, consumer_price, supply_price, quantity_per_carton, manufacturer, origin, is_tax_free, shipping_fee_individual, shipping_fee_carton, product_options, model_no, remarks, display_order, product_spec, is_new)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23)
        RETURNING *`,
-            [categoryId, brand, modelName, description, cleanImageUrl, b2bPrice, stockQuantity, detailUrl, isAvailable !== undefined ? isAvailable : true, consumerPrice, supplyPrice, quantityPerCarton, shippingFee, manufacturer, origin, isTaxFree || false, shippingFeeIndividual || 0, shippingFeeCarton || 0, productOptions || '', modelNo || '', remarks || '', displayOrder || 0, productSpec || '', isNew || false]
+            [categoryId, brand, modelName, description, cleanImageUrl, cleanB2bPrice, cleanStockQuantity, detailUrl, isAvailable !== undefined ? isAvailable : true, cleanConsumerPrice, cleanSupplyPrice, cleanQuantityPerCarton, manufacturer, origin, isTaxFree || false, cleanShippingFeeIndividual || 0, cleanShippingFeeCarton || 0, productOptions || '', modelNo || '', remarks || '', cleanDisplayOrder || 0, productSpec || '', isNew || false]
         )
 
         res.status(201).json({ product: result.rows[0] })
@@ -34,19 +42,27 @@ router.put('/:id', requireAdmin, async (req, res) => {
 
         // Sanitize inputs
         const cleanImageUrl = imageUrl ? imageUrl.trim() : imageUrl
+        const cleanB2bPrice = b2bPrice === '' ? 0 : b2bPrice
+        const cleanStockQuantity = stockQuantity === '' ? 0 : stockQuantity
+        const cleanConsumerPrice = consumerPrice === '' ? null : consumerPrice
+        const cleanSupplyPrice = supplyPrice === '' ? null : supplyPrice
+        const cleanQuantityPerCarton = quantityPerCarton === '' ? null : quantityPerCarton
+        const cleanShippingFeeIndividual = shippingFeeIndividual === '' ? 0 : shippingFeeIndividual
+        const cleanShippingFeeCarton = shippingFeeCarton === '' ? 0 : shippingFeeCarton
+        const cleanDisplayOrder = displayOrder === '' ? 0 : displayOrder
 
         const result = await pool.query(
             `UPDATE products 
        SET category_id = $1, brand = $2, model_name = $3, description = $4, 
            image_url = $5, b2b_price = $6, stock_quantity = $7, is_available = $8, detail_url = $9, 
-           consumer_price = $10, supply_price = $11, quantity_per_carton = $12, shipping_fee = $13,
-           manufacturer = $14, origin = $15, is_tax_free = $16,
-           shipping_fee_individual = $17, shipping_fee_carton = $18, product_options = $19, model_no = $20,
-           remarks = $21, display_order = $22, product_spec = $23, is_new = $24,
+           consumer_price = $10, supply_price = $11, quantity_per_carton = $12,
+           manufacturer = $13, origin = $14, is_tax_free = $15,
+           shipping_fee_individual = $16, shipping_fee_carton = $17, product_options = $18, model_no = $19,
+           remarks = $20, display_order = $21, product_spec = $22, is_new = $23,
            updated_at = CURRENT_TIMESTAMP
-       WHERE id = $25
+       WHERE id = $24
        RETURNING *`,
-            [categoryId, brand, modelName, description, cleanImageUrl, b2bPrice, stockQuantity, isAvailable, detailUrl, consumerPrice, supplyPrice, quantityPerCarton, shippingFee, manufacturer, origin, isTaxFree, shippingFeeIndividual, shippingFeeCarton, productOptions, modelNo, remarks, displayOrder || 0, productSpec || '', isNew !== undefined ? isNew : false, req.params.id]
+            [categoryId, brand, modelName, description, cleanImageUrl, cleanB2bPrice, cleanStockQuantity, isAvailable, detailUrl, cleanConsumerPrice, cleanSupplyPrice, cleanQuantityPerCarton, manufacturer, origin, isTaxFree, cleanShippingFeeIndividual, cleanShippingFeeCarton, productOptions, modelNo, remarks, cleanDisplayOrder || 0, productSpec || '', isNew !== undefined ? isNew : false, req.params.id]
         )
 
         if (result.rows.length === 0) {
