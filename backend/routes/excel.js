@@ -490,4 +490,35 @@ router.post('/register-range', async (req, res) => {
     }
 })
 
+// Update source Excel file (Overwrite master file)
+router.post('/update-source', upload.single('file'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' })
+    }
+
+    const targetDir = path.join(__dirname, '..', '..', 'excel')
+    const targetPath = path.join(targetDir, 'aron_product_upload_consolidated.xlsx')
+
+    // Ensure directory exists
+    if (!fs.existsSync(targetDir)) {
+        fs.mkdirSync(targetDir, { recursive: true })
+    }
+
+    try {
+        // Move/Overwrite file
+        // Since mutation of req.file depends on storage, we used memory storage? 
+        // Wait, upload.single('file') with default setup usually uses memory or temp.
+        // Checking multer config above... usually it's declared but let's check.
+        // Assuming req.file.buffer exists if memory storage, or path if disk.
+        // Just defining writeFileSync is safest if buffer is available.
+
+        fs.writeFileSync(targetPath, req.file.buffer)
+        console.log(`Updated master Excel file at ${targetPath}`)
+        res.json({ message: 'Server source Excel file updated successfully' })
+    } catch (error) {
+        console.error('Failed to update source excel:', error)
+        res.status(500).json({ error: 'Failed to update source Excel file' })
+    }
+})
+
 export default router

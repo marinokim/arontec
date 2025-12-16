@@ -77,6 +77,8 @@ function AdminProducts({ user }) {
     const [rangeStart, setRangeStart] = useState('')
     const [rangeEnd, setRangeEnd] = useState('')
     const [isRangeRegistering, setIsRangeRegistering] = useState(false)
+    const [masterFile, setMasterFile] = useState(null)
+    const [isMasterUpdating, setIsMasterUpdating] = useState(false)
 
     useEffect(() => {
         fetchProducts()
@@ -735,6 +737,49 @@ function AdminProducts({ user }) {
         }
     }
 
+    const handleMasterFileChange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            setMasterFile(e.target.files[0])
+        }
+    }
+
+    const handleUpdateMasterFile = async () => {
+        if (!masterFile) {
+            alert('업로드할 엑셀 파일을 선택해주세요.')
+            return
+        }
+
+        if (!confirm('정말로 서버의 원본 엑셀 파일을 교체하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) {
+            return
+        }
+
+        setIsMasterUpdating(true)
+        const formData = new FormData()
+        formData.append('file', masterFile)
+
+        try {
+            const response = await fetch((import.meta.env.VITE_API_URL || '') + '/api/excel/update-source', {
+                method: 'POST',
+                body: formData
+            })
+
+            const result = await response.json()
+
+            if (response.ok) {
+                alert('서버 원본 엑셀 파일이 성공적으로 교체되었습니다.')
+                setMasterFile(null)
+                // Reset file input if possible, or just rely on state
+            } else {
+                alert(`파일 교체 실패: ${result.error}`)
+            }
+        } catch (error) {
+            console.error('Update master file error:', error)
+            alert('파일 교체 중 오류가 발생했습니다.')
+        } finally {
+            setIsMasterUpdating(false)
+        }
+    }
+
     const downloadTemplate = () => {
         // Create a CSV template
         const headers = ['No.', 'Brand', 'ModelName', 'ModelNo', 'Category', 'Description', 'B2BPrice', 'SupplyPrice', 'ConsumerPrice', 'Stock', 'ImageURL', 'DetailURL', 'Manufacturer', 'Origin', 'ProductSpec', 'ProductOptions', 'IsTaxFree', 'QuantityPerCarton', 'ShippingFeeIndividual', 'ShippingFeeCarton', 'remark']
@@ -959,6 +1004,24 @@ function AdminProducts({ user }) {
                             style={{ padding: '0.25rem 0.75rem', fontSize: '0.9rem', background: '#007bff', border: 'none', color: 'white', borderRadius: '3px', cursor: isRangeRegistering ? 'not-allowed' : 'pointer' }}
                         >
                             {isRangeRegistering ? '등록 중...' : '범위 등록'}
+                        </button>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', padding: '0.5rem', background: '#f8f9fa', borderRadius: '4px', border: '1px solid #dee2e6' }}>
+                        <span style={{ fontWeight: 'bold', fontSize: '0.9rem', color: '#333' }}>서버 원본 교체:</span>
+                        <input
+                            type="file"
+                            accept=".xlsx, .xls"
+                            onChange={handleMasterFileChange}
+                            style={{ width: 'auto', padding: '0.25rem', border: '1px solid #ced4da', borderRadius: '3px' }}
+                        />
+                        <button
+                            onClick={handleUpdateMasterFile}
+                            className="btn btn-danger"
+                            disabled={isMasterUpdating || !masterFile}
+                            style={{ padding: '0.25rem 0.75rem', fontSize: '0.9rem', background: '#dc3545', border: 'none', color: 'white', borderRadius: '3px', cursor: (isMasterUpdating || !masterFile) ? 'not-allowed' : 'pointer' }}
+                        >
+                            {isMasterUpdating ? '교체 중...' : '파일 교체'}
                         </button>
                     </div>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
