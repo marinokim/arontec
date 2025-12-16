@@ -13,6 +13,7 @@ sys.path.append(pylib_path)
 
 import openpyxl
 import pg8000.native
+import re
 
 # Helper functions
 def sanitize(val):
@@ -40,6 +41,22 @@ def normalize_name(name):
     if not name:
         return ""
     return str(name).replace('_x000D_', '').replace('\r', '').replace('\n', '').strip().lower()
+
+def extract_image_url(val):
+    if val is None:
+        return None
+    s = str(val).strip()
+    # Check for <img src=...> or <img src="...">
+    # Regex explains:
+    # <img : match tag start
+    # [^>]+ : anything not >
+    # src= : match src attribute
+    # ["\']? : optional quote
+    # ([^"\' >]+) : capture group for URL (stop at quote or space or >)
+    match = re.search(r'<img[^>]+src=["\']?([^"\' >]+)["\']?[^>]*>', s, re.IGNORECASE)
+    if match:
+        return match.group(1).replace('_x000D_', '').strip()
+    return sanitize(val)
 
 def register_range(start_row, end_row):
     print(f"Starting registration for range {start_row}-{end_row}")
@@ -171,7 +188,7 @@ def register_range(start_row, end_row):
                 
             description = sanitize_html(get_val(['Description', '상세설명']))
             detail_url = sanitize_html(get_val(['DetailURL', '상세페이지URL']))
-            image_url = truncate(sanitize(get_val(['ImageURL', '이미지URL'])))
+            image_url = truncate(extract_image_url(get_val(['ImageURL', '이미지URL'])))
 
             stock_quantity = parse_price(get_val(['Stock', '재고']))
             shipping_fee = parse_price(get_val(['ShippingFee', '배송비']))
