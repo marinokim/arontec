@@ -27,13 +27,30 @@ sys.path.append(abs_pylib_path)
 try:
     import openpyxl
     print("DEBUG: Successfully imported openpyxl")
+    print(f"DEBUG: openpyxl location: {getattr(openpyxl, '__file__', 'unknown')}")
 except ImportError as e:
     print(f"DEBUG: Failed to import openpyxl: {e}")
     print(f"DEBUG: sys.path: {sys.path}")
-    # Do not exit yet, let the original import fail to show traceback or raise
     raise
 
-import pg8000.native
+# Check for pg8000 specifically
+pg8000_path = os.path.join(abs_pylib_path, 'pg8000')
+print(f"DEBUG: Checking for pg8000 at {pg8000_path}")
+if os.path.exists(pg8000_path):
+    print(f"DEBUG: pg8000 dir exists. Contents: {os.listdir(pg8000_path)}")
+    init_file = os.path.join(pg8000_path, '__init__.py')
+    print(f"DEBUG: pg8000/__init__.py exists? {os.path.exists(init_file)}")
+else:
+    print("DEBUG: pg8000 dir does NOT exist!")
+
+try:
+    import pg8000.native
+    print("DEBUG: Successfully imported pg8000.native")
+except ImportError as e:
+    print(f"DEBUG: Failed to import pg8000: {e}")
+    # Print sys.path again just in case
+    print(f"DEBUG: sys.path: {sys.path}")
+    raise
 
 # Helper functions
 def sanitize(val):
