@@ -3,7 +3,13 @@ import os
 import ssl
 import time
 import argparse
-sys.path.append(os.path.join(os.getcwd(), 'pylib'))
+
+# Fix path to pylib (parent dir of backend, or sibling?)
+# Struct: root/backend/script.py and root/pylib
+# So pylib is at ../pylib relative to this script
+current_dir = os.path.dirname(os.path.abspath(__file__))
+pylib_path = os.path.join(current_dir, '..', 'pylib')
+sys.path.append(pylib_path)
 
 import openpyxl
 import pg8000.native
