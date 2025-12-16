@@ -4,14 +4,35 @@ import ssl
 import time
 import argparse
 
-# Fix path to pylib (parent dir of backend, or sibling?)
-# Struct: root/backend/script.py and root/pylib
-# So pylib is at ../pylib relative to this script
+# DEBUG: Print environment info
+print(f"DEBUG: CWD = {os.getcwd()}")
+print(f"DEBUG: __file__ = {__file__}")
 current_dir = os.path.dirname(os.path.abspath(__file__))
-pylib_path = os.path.join(current_dir, '..', 'pylib')
-sys.path.append(pylib_path)
+print(f"DEBUG: current_dir = {current_dir}")
 
-import openpyxl
+pylib_path = os.path.join(current_dir, '..', 'pylib')
+abs_pylib_path = os.path.abspath(pylib_path)
+print(f"DEBUG: Calculated pylib_path = {abs_pylib_path}")
+
+if os.path.exists(abs_pylib_path):
+    print(f"DEBUG: pylib exists. Contents: {os.listdir(abs_pylib_path)}")
+else:
+    print(f"DEBUG: pylib DOES NOT exist at {abs_pylib_path}")
+    # Try looking around
+    parent_dir = os.path.dirname(current_dir)
+    print(f"DEBUG: Listing parent dir ({parent_dir}): {os.listdir(parent_dir) if os.path.exists(parent_dir) else 'Parent not found'}")
+
+sys.path.append(abs_pylib_path)
+
+try:
+    import openpyxl
+    print("DEBUG: Successfully imported openpyxl")
+except ImportError as e:
+    print(f"DEBUG: Failed to import openpyxl: {e}")
+    print(f"DEBUG: sys.path: {sys.path}")
+    # Do not exit yet, let the original import fail to show traceback or raise
+    raise
+
 import pg8000.native
 
 # Helper functions
