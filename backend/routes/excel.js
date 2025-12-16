@@ -442,4 +442,47 @@ router.post('/reset-sequence', async (req, res) => {
     }
 })
 
+// Register products by row range (spawns Python script)
+router.post('/register-range', async (req, res) => {
+    const { startRow, endRow } = req.body
+
+    if (!startRow || !endRow) {
+        return res.status(400).json({ error: 'Start Row and End Row are required' })
+    }
+
+    try {
+        const { spawn } = await import('child_process')
+        // Path to python script
+        const pythonScript = path.join(__dirname, '..', 'register_range_generic.py')
+
+        // Spawn python process
+        const pythonProcess = spawn('python3', [pythonScript, '--start', String(startRow), '--end', String(endRow)])
+
+        let output = ''
+        let errorOutput = ''
+
+        pythonProcess.stdout.on('data', (data) => {
+            output += data.toString()
+        })
+
+        pythonProcess.stderr.on('data', (data) => {
+            errorOutput += data.toString()
+        })
+
+        pythonProcess.on('close', (code) => {
+            if (code === 0) {
+                res.json({ message: 'Range registration completed', output })
+            } else {
+                console.error(`Python script exited with code ${code}`)
+                console.error(`Error output: ${errorOutput}`)
+                res.status(500).json({ error: 'Range registration failed', details: errorOutput })
+            }
+        })
+
+    } catch (error) {
+        console.error('Register range error:', error)
+        res.status(500).json({ error: 'Failed to initiate range registration' })
+    }
+})
+
 export default router

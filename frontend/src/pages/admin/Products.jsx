@@ -74,6 +74,9 @@ function AdminProducts({ user }) {
     const [downloadTarget, setDownloadTarget] = useState('')
     const [showUploadModal, setShowUploadModal] = useState(false)
     const [uploadMode, setUploadMode] = useState('all') // 'all', 'new', 'update'
+    const [rangeStart, setRangeStart] = useState('')
+    const [rangeEnd, setRangeEnd] = useState('')
+    const [isRangeRegistering, setIsRangeRegistering] = useState(false)
 
     useEffect(() => {
         fetchProducts()
@@ -696,6 +699,42 @@ function AdminProducts({ user }) {
         }
     }
 
+    const handleRegisterRange = async () => {
+        if (!rangeStart || !rangeEnd) {
+            alert('시작 행과 종료 행을 모두 입력해주세요.')
+            return
+        }
+
+        if (isRangeRegistering) return
+        setIsRangeRegistering(true)
+
+        try {
+            const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/excel/register-range', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    startRow: parseInt(rangeStart),
+                    endRow: parseInt(rangeEnd)
+                })
+            })
+
+            const data = await res.json()
+
+            if (res.ok) {
+                alert(`범위 등록 완료\n${data.message}\n\n출력:\n${data.output}`)
+                fetchProducts()
+            } else {
+                alert('범위 등록 실패: ' + (data.error || '알 수 없는 오류') + '\nDetails: ' + (data.details || ''))
+            }
+        } catch (error) {
+            console.error('Range register error:', error)
+            alert('등록 중 오류가 발생했습니다.')
+        } finally {
+            setIsRangeRegistering(false)
+        }
+    }
+
     const downloadTemplate = () => {
         // Create a CSV template
         const headers = ['No.', 'Brand', 'ModelName', 'ModelNo', 'Category', 'Description', 'B2BPrice', 'SupplyPrice', 'ConsumerPrice', 'Stock', 'ImageURL', 'DetailURL', 'Manufacturer', 'Origin', 'ProductSpec', 'ProductOptions', 'IsTaxFree', 'QuantityPerCarton', 'ShippingFeeIndividual', 'ShippingFeeCarton', 'remark']
@@ -894,6 +933,33 @@ function AdminProducts({ user }) {
                             + 카테고리 추가
                         </button>
 
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', padding: '0.5rem', background: '#f8f9fa', borderRadius: '4px', border: '1px solid #dee2e6' }}>
+                        <span style={{ fontWeight: 'bold', fontSize: '0.9rem', color: '#333' }}>서버 엑셀 등록:</span>
+                        <input
+                            type="number"
+                            placeholder="시작"
+                            value={rangeStart}
+                            onChange={(e) => setRangeStart(e.target.value)}
+                            style={{ width: '70px', padding: '0.25rem', border: '1px solid #ced4da', borderRadius: '3px' }}
+                        />
+                        <span>~</span>
+                        <input
+                            type="number"
+                            placeholder="종료"
+                            value={rangeEnd}
+                            onChange={(e) => setRangeEnd(e.target.value)}
+                            style={{ width: '70px', padding: '0.25rem', border: '1px solid #ced4da', borderRadius: '3px' }}
+                        />
+                        <button
+                            onClick={handleRegisterRange}
+                            className="btn btn-primary"
+                            disabled={isRangeRegistering}
+                            style={{ padding: '0.25rem 0.75rem', fontSize: '0.9rem', background: '#007bff', border: 'none', color: 'white', borderRadius: '3px', cursor: isRangeRegistering ? 'not-allowed' : 'pointer' }}
+                        >
+                            {isRangeRegistering ? '등록 중...' : '범위 등록'}
+                        </button>
                     </div>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <button
