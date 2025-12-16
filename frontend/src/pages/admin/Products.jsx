@@ -952,121 +952,130 @@ function AdminProducts({ user }) {
             <Navbar user={user} isAdminMode={true} />
 
             <div className="dashboard-content container" style={{ maxWidth: '100%' }}>
-                <div className="dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div className="dashboard-header" style={{ flexDirection: 'column', alignItems: 'stretch', gap: '1rem' }}>
+
+                    {/* Top Row: Title & Category */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <h1>상품 관리</h1>
-                        <select
-                            value={selectedCategory}
-                            onChange={(e) => setSelectedCategory(e.target.value)}
-                            style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ddd' }}
-                        >
-                            <option value="All">전체 카테고리</option>
-                            {categories.map(cat => (
-                                <option
-                                    key={cat.id}
-                                    value={cat.id}
-                                    style={{
-                                        backgroundColor: getCategoryColor(cat.name),
-                                        color: '#fff'
-                                    }}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <select
+                                value={selectedCategory}
+                                onChange={(e) => setSelectedCategory(e.target.value)}
+                                style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ddd' }}
+                            >
+                                <option value="All">전체 카테고리</option>
+                                {categories.map(cat => (
+                                    <option
+                                        key={cat.id}
+                                        value={cat.id}
+                                        style={{
+                                            backgroundColor: getCategoryColor(cat.name),
+                                            color: '#fff'
+                                        }}
+                                    >
+                                        {cat.name}
+                                    </option>
+                                ))}
+                            </select>
+                            <button onClick={() => setShowCategoryModal(true)} className="btn btn-secondary" style={{ padding: '0.5rem', fontSize: '0.8rem' }}>
+                                + 카테고리 추가
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Bottom Row: Operations Toolbar */}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', alignItems: 'center', justifyContent: 'flex-end' }}>
+
+                        {/* Server Excel Operations Group */}
+                        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.5rem', padding: '0.5rem', background: '#f8f9fa', borderRadius: '4px', border: '1px solid #dee2e6' }}>
+
+                            {/* Update Source File */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <span style={{ fontWeight: 'bold', fontSize: '0.9rem', color: '#c82333' }}>서버 원본 교체:</span>
+                                <input
+                                    type="file"
+                                    accept=".xlsx, .xls"
+                                    onChange={handleMasterFileChange}
+                                    style={{ width: 'auto', padding: '0.25rem', border: '1px solid #ced4da', borderRadius: '3px', fontSize: '0.8rem' }}
+                                />
+                                <button
+                                    onClick={handleUpdateMasterFile}
+                                    className="btn btn-danger"
+                                    disabled={isMasterUpdating || !masterFile}
+                                    style={{ padding: '0.25rem 0.75rem', fontSize: '0.85rem', background: '#dc3545', border: 'none', color: 'white', borderRadius: '3px', cursor: (isMasterUpdating || !masterFile) ? 'not-allowed' : 'pointer' }}
                                 >
-                                    {cat.name}
-                                </option>
-                            ))}
-                        </select>
-                        <button onClick={() => setShowCategoryModal(true)} className="btn btn-secondary" style={{ padding: '0.5rem', fontSize: '0.8rem' }}>
-                            + 카테고리 추가
-                        </button>
+                                    {isMasterUpdating ? '교체 중...' : '파일 교체'}
+                                </button>
+                            </div>
 
-                    </div>
+                            <div style={{ width: '1px', height: '24px', background: '#dee2e6', margin: '0 0.5rem' }}></div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', padding: '0.5rem', background: '#f8f9fa', borderRadius: '4px', border: '1px solid #dee2e6' }}>
-                        <span style={{ fontWeight: 'bold', fontSize: '0.9rem', color: '#333' }}>서버 엑셀 등록:</span>
-                        <input
-                            type="number"
-                            placeholder="시작"
-                            value={rangeStart}
-                            onChange={(e) => setRangeStart(e.target.value)}
-                            style={{ width: '70px', padding: '0.25rem', border: '1px solid #ced4da', borderRadius: '3px' }}
-                        />
-                        <span>~</span>
-                        <input
-                            type="number"
-                            placeholder="종료"
-                            value={rangeEnd}
-                            onChange={(e) => setRangeEnd(e.target.value)}
-                            style={{ width: '70px', padding: '0.25rem', border: '1px solid #ced4da', borderRadius: '3px' }}
-                        />
-                        <button
-                            onClick={handleRegisterRange}
-                            className="btn btn-primary"
-                            disabled={isRangeRegistering}
-                            style={{ padding: '0.25rem 0.75rem', fontSize: '0.9rem', background: '#007bff', border: 'none', color: 'white', borderRadius: '3px', cursor: isRangeRegistering ? 'not-allowed' : 'pointer' }}
-                        >
-                            {isRangeRegistering ? '등록 중...' : '범위 등록'}
-                        </button>
-                    </div>
+                            {/* Range Registration */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <span style={{ fontWeight: 'bold', fontSize: '0.9rem', color: '#333' }}>서버 엑셀 등록:</span>
+                                <input
+                                    type="number"
+                                    placeholder="시작"
+                                    value={rangeStart}
+                                    onChange={(e) => setRangeStart(e.target.value)}
+                                    style={{ width: '60px', padding: '0.25rem', border: '1px solid #ced4da', borderRadius: '3px', fontSize: '0.9rem' }}
+                                />
+                                <span style={{ color: '#666' }}>~</span>
+                                <input
+                                    type="number"
+                                    placeholder="종료"
+                                    value={rangeEnd}
+                                    onChange={(e) => setRangeEnd(e.target.value)}
+                                    style={{ width: '60px', padding: '0.25rem', border: '1px solid #ced4da', borderRadius: '3px', fontSize: '0.9rem' }}
+                                />
+                                <button
+                                    onClick={handleRegisterRange}
+                                    className="btn btn-primary"
+                                    disabled={isRangeRegistering}
+                                    style={{ padding: '0.25rem 0.75rem', fontSize: '0.85rem', background: '#007bff', border: 'none', color: 'white', borderRadius: '3px', cursor: isRangeRegistering ? 'not-allowed' : 'pointer' }}
+                                >
+                                    {isRangeRegistering ? '등록 중...' : '범위 등록'}
+                                </button>
+                            </div>
+                        </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', padding: '0.5rem', background: '#f8f9fa', borderRadius: '4px', border: '1px solid #dee2e6' }}>
-                        <span style={{ fontWeight: 'bold', fontSize: '0.9rem', color: '#333' }}>서버 원본 교체:</span>
-                        <input
-                            type="file"
-                            accept=".xlsx, .xls"
-                            onChange={handleMasterFileChange}
-                            style={{ width: 'auto', padding: '0.25rem', border: '1px solid #ced4da', borderRadius: '3px' }}
-                        />
-                        <button
-                            onClick={handleUpdateMasterFile}
-                            className="btn btn-danger"
-                            disabled={isMasterUpdating || !masterFile}
-                            style={{ padding: '0.25rem 0.75rem', fontSize: '0.9rem', background: '#dc3545', border: 'none', color: 'white', borderRadius: '3px', cursor: (isMasterUpdating || !masterFile) ? 'not-allowed' : 'pointer' }}
-                        >
-                            {isMasterUpdating ? '교체 중...' : '파일 교체'}
-                        </button>
-                    </div>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        <button
-                            onClick={() => {
-                                setDownloadFilterType('all');
-                                setDownloadTarget('');
-                                setShowDownloadModal(true);
-                            }}
-                            className="btn btn-info"
-                            style={{ color: 'white', background: isDownloading ? '#6c757d' : '#138496', border: 'none', cursor: isDownloading ? 'not-allowed' : 'pointer' }}
-                            disabled={isDownloading}
-                        >
-                            {isDownloading ? (
-                                <><i className="fas fa-spinner fa-spin"></i> 다운로드 중...</>
+                        {/* Standard Actions Group */}
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <button
+                                onClick={() => {
+                                    setDownloadFilterType('all');
+                                    setDownloadTarget('');
+                                    setShowDownloadModal(true);
+                                }}
+                                className="btn btn-info"
+                                style={{ color: 'white', background: isDownloading ? '#6c757d' : '#138496', border: 'none', cursor: isDownloading ? 'not-allowed' : 'pointer' }}
+                                disabled={isDownloading}
+                            >
+                                {isDownloading ? <><i className="fas fa-spinner fa-spin"></i> 다운로드 중...</> : <><i className="fas fa-download"></i> 전체 다운로드</>}
+                            </button>
+                            <button onClick={downloadTemplate} className="btn btn-secondary" style={{ background: '#28a745', border: 'none' }}>
+                                <i className="fas fa-download"></i> 양식
+                            </button>
+
+                            <button onClick={handleDeleteRange} className="btn btn-secondary" style={{ background: '#c82333', border: 'none' }}>
+                                <i className="fas fa-eraser"></i> 구간 삭제
+                            </button>
+
+                            {/* Hidden or secondary upload if needed */}
+                            {isExcelUploading ? (
+                                <button className="btn btn-secondary disabled" style={{ background: '#6c757d', border: 'none' }}>
+                                    <i className="fas fa-spinner fa-spin"></i> 업로드 중...
+                                </button>
                             ) : (
-                                <><i className="fas fa-download"></i> 전체 상품 다운로드</>
+                                <button onClick={() => setShowUploadModal(true)} className="btn btn-info" style={{ background: '#17a2b8', border: 'none' }}>
+                                    <i className="fas fa-file-excel"></i> 엑셀 업로드
+                                </button>
                             )}
-                        </button>
-                        <button onClick={downloadTemplate} className="btn btn-secondary" style={{ background: '#28a745', border: 'none' }}>
-                            <i className="fas fa-download"></i> 양식 다운로드
-                        </button>
 
-                        <button onClick={handleDeleteRange} className="btn btn-secondary" style={{ background: '#c82333', border: 'none' }}>
-                            <i className="fas fa-eraser"></i> 구간 삭제
-                        </button>
-                        {isExcelUploading ? (
-                            <button className="btn btn-secondary disabled" style={{ background: '#6c757d', border: 'none', margin: 0, display: 'flex', alignItems: 'center', cursor: 'not-allowed' }}>
-                                <i className="fas fa-spinner fa-spin" style={{ marginRight: '5px' }}></i> 업로드 중...
+                            <button onClick={openAddModal} className="btn btn-primary">
+                                + 신규 등록
                             </button>
-                        ) : (
-                            <button onClick={() => setShowUploadModal(true)} className="btn btn-info" style={{ background: '#17a2b8', border: 'none' }}>
-                                <i className="fas fa-file-excel"></i> 엑셀 업로드
-                            </button>
-                        )}
-                        <input
-                            type="file"
-                            accept=".xlsx, .xls"
-                            onChange={handleExcelUpload}
-                            style={{ display: 'none' }}
-                            id="excel-upload-input"
-                        />
-                        <button onClick={openAddModal} className="btn btn-primary">
-                            + 신규 상품 등록
-                        </button>
+                        </div>
                     </div>
                 </div>
 
