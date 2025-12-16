@@ -208,12 +208,25 @@ def register_range(start_row, end_row):
                            description = COALESCE(:desc, description),
                            detail_url = COALESCE(:detail, detail_url),
                            image_url = COALESCE(:img, image_url),
+                           manufacturer = :manuf,
+                           origin = :origin,
+                           product_spec = :spec,
+                           product_options = :opts,
+                           remarks = :rem,
+                           is_tax_free = :tax,
+                           shipping_fee = :ship,
+                           shipping_fee_individual = :ship_ind,
+                           shipping_fee_carton = :ship_carton,
+                           stock_quantity = :stock,
                            updated_at = CURRENT_TIMESTAMP
                        WHERE id = :id""",
                     m_name=model_name, m_no=model_no, cat_id=cat_id, brand=brand,
                     b2b=b2b_price, consumer=consumer_price, supply=supply_price, 
                     qty=quantity_per_carton, desc=description, detail=detail_url, 
-                    img=image_url, id=target_id
+                    img=image_url, id=target_id,
+                    manuf=manufacturer, origin=origin, spec=product_spec, opts=product_options,
+                    rem=remarks, tax=is_tax_free, ship=shipping_fee, ship_ind=shipping_fee_ind,
+                    ship_carton=shipping_fee_carton, stock=stock_quantity
                 )
                 print(f"Updated Product {target_id} ({model_name})")
                 updated_count += 1
