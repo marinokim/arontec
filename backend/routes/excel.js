@@ -2,6 +2,11 @@ import express from 'express'
 import multer from 'multer'
 import * as XLSX from 'xlsx'
 import pool from '../config/database.js'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const router = express.Router()
 
