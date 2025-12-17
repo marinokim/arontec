@@ -330,6 +330,29 @@ router.post('/categories', requireAdmin, async (req, res) => {
     }
 })
 
+// Update category (Admin)
+router.put('/categories/:id', requireAdmin, async (req, res) => {
+    const { id } = req.params
+    const { name } = req.body
+    try {
+        const slug = name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '')
+
+        const result = await pool.query(
+            'UPDATE categories SET name = $1, slug = $2 WHERE id = $3 RETURNING *',
+            [name, slug, id]
+        )
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Category not found' })
+        }
+
+        res.json(result.rows[0])
+    } catch (error) {
+        console.error('Update category error:', error)
+        res.status(500).json({ error: 'Failed to update category' })
+    }
+})
+
 // Get all unique brands (Public)
 router.get('/brands', async (req, res) => {
     try {

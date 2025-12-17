@@ -23,6 +23,8 @@ function AdminProducts({ user }) {
     const [showModal, setShowModal] = useState(false)
     const [showCategoryModal, setShowCategoryModal] = useState(false)
     const [newCategoryName, setNewCategoryName] = useState('')
+    const [editingCategory, setEditingCategory] = useState(null)
+    const [editingName, setEditingName] = useState('')
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isUploading, setIsUploading] = useState(false)
     const [isExcelUploading, setIsExcelUploading] = useState(false)
@@ -623,13 +625,39 @@ function AdminProducts({ user }) {
             if (res.ok) {
                 alert('카테고리가 추가되었습니다')
                 setNewCategoryName('')
-                setShowCategoryModal(false)
+                // Don't close modal, just refresh list
                 fetchCategories()
             } else {
                 alert('카테고리 추가 실패')
             }
         } catch (error) {
             console.error('Add category error:', error)
+            alert('오류가 발생했습니다')
+        }
+    }
+
+    const handleUpdateCategory = async (id) => {
+        if (!editingName.trim()) return
+
+        try {
+            const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/products/categories/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ name: editingName })
+            })
+
+            if (res.ok) {
+                alert('카테고리가 수정되었습니다')
+                setEditingCategory(null)
+                setEditingName('')
+                fetchCategories()
+                fetchProducts() // Refresh products as their category names might have changed in display
+            } else {
+                alert('카테고리 수정 실패')
+            }
+        } catch (error) {
+            console.error('Update category error:', error)
             alert('오류가 발생했습니다')
         }
     }
@@ -1072,6 +1100,9 @@ function AdminProducts({ user }) {
                                 </button>
                             )}
 
+                            <button onClick={() => setShowCategoryModal(true)} className="btn btn-secondary">
+                                <i className="fas fa-list-alt"></i> 카테고리 관리
+                            </button>
                             <button onClick={openAddModal} className="btn btn-primary">
                                 + 신규 등록
                             </button>
@@ -1620,25 +1651,92 @@ function AdminProducts({ user }) {
                     background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
                 }}>
                     <div className="modal-content" style={{
-                        background: 'white', padding: '2rem', borderRadius: '8px', width: '90%', maxWidth: '400px'
+                        background: 'white', padding: '2rem', borderRadius: '8px', width: '90%', maxWidth: '600px', maxHeight: '80vh', display: 'flex', flexDirection: 'column'
                     }}>
-                        <h3>새 카테고리 추가</h3>
-                        <form onSubmit={handleAddCategory} style={{ marginTop: '1.5rem' }}>
-                            <div className="form-group">
-                                <label>카테고리명</label>
-                                <input
-                                    type="text"
-                                    value={newCategoryName}
-                                    onChange={e => setNewCategoryName(e.target.value)}
-                                    required
-                                    placeholder="예: Audio, Living..."
-                                />
-                            </div>
-                            <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
-                                <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>추가</button>
-                                <button type="button" onClick={() => setShowCategoryModal(false)} className="btn btn-secondary" style={{ flex: 1, background: '#6c757d' }}>취소</button>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                            <h3 style={{ margin: 0 }}>카테고리 관리</h3>
+                            <button onClick={() => setShowCategoryModal(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>&times;</button>
+                        </div>
+
+                        {/* Add New Category Section */}
+                        <form onSubmit={handleAddCategory} style={{ marginBottom: '2rem', padding: '1rem', background: '#f7fafc', borderRadius: '8px' }}>
+                            <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end' }}>
+                                <div className="form-group" style={{ flex: 1, margin: 0 }}>
+                                    <label style={{ fontSize: '0.9rem', marginBottom: '0.5rem', display: 'block' }}>새 카테고리 추가</label>
+                                    <input
+                                        type="text"
+                                        value={newCategoryName}
+                                        onChange={e => setNewCategoryName(e.target.value)}
+                                        placeholder="예: Audio, Living..."
+                                        style={{ width: '100%', padding: '0.5rem', border: '1px solid #e2e8f0', borderRadius: '4px' }}
+                                    />
+                                </div>
+                                <button type="submit" className="btn btn-primary" style={{ padding: '0.5rem 1rem', height: '38px', whiteSpace: 'nowrap' }}>추가</button>
                             </div>
                         </form>
+
+                        {/* List & Edit Categories */}
+                        <div style={{ flex: 1, overflowY: 'auto' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                <thead>
+                                    <tr>
+                                        <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid #e2e8f0', width: '60%' }}>카테고리명</th>
+                                        <th style={{ textAlign: 'center', padding: '0.75rem', borderBottom: '2px solid #e2e8f0', width: '20%' }}>상품 수</th>
+                                        <th style={{ textAlign: 'center', padding: '0.75rem', borderBottom: '2px solid #e2e8f0', width: '20%' }}>관리</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {categories.map(cat => (
+                                        <tr key={cat.id}>
+                                            <td style={{ padding: '0.75rem', borderBottom: '1px solid #edf2f7' }}>
+                                                {editingCategory === cat.id ? (
+                                                    <input
+                                                        type="text"
+                                                        value={editingName}
+                                                        onChange={e => setEditingName(e.target.value)}
+                                                        style={{ width: '100%', padding: '0.25rem', border: '1px solid #cbd5e0', borderRadius: '2px' }}
+                                                        autoFocus
+                                                    />
+                                                ) : (
+                                                    cat.name
+                                                )}
+                                            </td>
+                                            <td style={{ textAlign: 'center', padding: '0.75rem', borderBottom: '1px solid #edf2f7', color: '#718096' }}>
+                                                {cat.product_count || 0}
+                                            </td>
+                                            <td style={{ textAlign: 'center', padding: '0.75rem', borderBottom: '1px solid #edf2f7' }}>
+                                                {editingCategory === cat.id ? (
+                                                    <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+                                                        <button
+                                                            onClick={() => handleUpdateCategory(cat.id)}
+                                                            className="btn btn-primary"
+                                                            style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}
+                                                        >
+                                                            저장
+                                                        </button>
+                                                        <button
+                                                            onClick={() => { setEditingCategory(null); setEditingName(''); }}
+                                                            className="btn btn-secondary"
+                                                            style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem', background: '#a0aec0' }}
+                                                        >
+                                                            취소
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <button
+                                                        onClick={() => { setEditingCategory(cat.id); setEditingName(cat.name); }}
+                                                        className="btn btn-secondary"
+                                                        style={{ padding: '0.25rem 0.75rem', fontSize: '0.8rem' }}
+                                                    >
+                                                        수정
+                                                    </button>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             )}
