@@ -353,6 +353,44 @@ router.put('/categories/:id', requireAdmin, async (req, res) => {
     }
 })
 
+// Delete category (Admin)
+router.delete('/categories/:id', requireAdmin, async (req, res) => {
+    const { id } = req.params
+    const client = await pool.connect()
+
+    try {
+        await client.query('BEGIN')
+
+        // Check if products exist in this category
+        const productCheck = await client.query('SELECT COUNT(*) FROM products WHERE category_id = $1', [id])
+        const productCount = parseInt(productCheck.rows[0].count)
+
+        if (productCount > 0) {
+            await client.query('ROLLBACK')
+            return res.status(400).json({
+                error: 'Cannot delete category containing products',
+                count: productCount
+            })
+        }
+
+        const result = await client.query('DELETE FROM categories WHERE id = $1 RETURNING *', [id])
+
+        if (result.rows.length === 0) {
+            await client.query('ROLLBACK')
+            return res.status(404).json({ error: 'Category not found' })
+        }
+
+        await client.query('COMMIT')
+        res.json({ message: 'Category deleted successfully' })
+    } catch (error) {
+        await client.query('ROLLBACK')
+        console.error('Delete category error:', error)
+        res.status(500).json({ error: 'Failed to delete category' })
+    } finally {
+        client.release()
+    }
+})
+
 // Get all unique brands (Public)
 router.get('/brands', async (req, res) => {
     try {

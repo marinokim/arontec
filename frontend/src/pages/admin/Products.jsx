@@ -662,6 +662,33 @@ function AdminProducts({ user }) {
         }
     }
 
+    const handleDeleteCategory = async (id, count) => {
+        if (count > 0) {
+            alert(`이 카테고리에는 ${count}개의 상품이 있습니다.\n먼저 상품을 삭제하거나 다른 카테고리로 이동해주세요.`)
+            return
+        }
+
+        if (!confirm('정말 이 카테고리를 삭제하시겠습니까?')) return
+
+        try {
+            const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/products/categories/${id}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            })
+
+            if (res.ok) {
+                alert('카테고리가 삭제되었습니다')
+                fetchCategories()
+            } else {
+                const data = await res.json()
+                alert('카테고리 삭제 실패: ' + (data.error || '알 수 없는 오류'))
+            }
+        } catch (error) {
+            console.error('Delete category error:', error)
+            alert('오류가 발생했습니다')
+        }
+    }
+
     const getImageUrl = (url) => {
         if (!url) return ''
         const cleanUrl = url.trim()
@@ -1723,13 +1750,30 @@ function AdminProducts({ user }) {
                                                         </button>
                                                     </div>
                                                 ) : (
-                                                    <button
-                                                        onClick={() => { setEditingCategory(cat.id); setEditingName(cat.name); }}
-                                                        className="btn btn-secondary"
-                                                        style={{ padding: '0.25rem 0.75rem', fontSize: '0.8rem' }}
-                                                    >
-                                                        수정
-                                                    </button>
+                                                    <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+                                                        <button
+                                                            onClick={() => { setEditingCategory(cat.id); setEditingName(cat.name); }}
+                                                            className="btn btn-secondary"
+                                                            style={{ padding: '0.25rem 0.75rem', fontSize: '0.8rem' }}
+                                                        >
+                                                            수정
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDeleteCategory(cat.id, cat.product_count || 0)}
+                                                            className="btn btn-danger"
+                                                            style={{
+                                                                padding: '0.25rem 0.75rem',
+                                                                fontSize: '0.8rem',
+                                                                background: '#e53e3e',
+                                                                color: 'white',
+                                                                border: 'none',
+                                                                opacity: (cat.product_count > 0) ? 0.5 : 1
+                                                            }}
+                                                            title={cat.product_count > 0 ? "상품이 있는 카테고리는 삭제할 수 없습니다" : "삭제"}
+                                                        >
+                                                            삭제
+                                                        </button>
+                                                    </div>
                                                 )}
                                             </td>
                                         </tr>
