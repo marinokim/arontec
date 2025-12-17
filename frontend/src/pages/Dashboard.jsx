@@ -113,7 +113,7 @@ function Dashboard({ user }) {
                             fontWeight: 'bold',
                             boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
                         }}>
-                            전체 상품 보기 &gt;
+                            전체상품 둘러보기 &gt;
                         </Link>
                     </div>
 
@@ -145,23 +145,33 @@ function Dashboard({ user }) {
 
                 <div className="quick-actions" style={{ marginTop: '2rem' }}>
                     <Link to="/catalog" className="btn btn-primary" style={{
-                        padding: '1.2rem 3rem',
-                        fontSize: '1.3rem',
-                        fontWeight: 'bold',
-                        boxShadow: '0 4px 12px rgba(0,123,255,0.3)',
+                        padding: '1.5rem 4rem',
+                        fontSize: '1.5rem',
+                        fontWeight: '800',
+                        background: 'linear-gradient(135deg, #0061f2 0%, #00c6ff 100%)',
+                        boxShadow: '0 10px 20px rgba(0,0,0,0.2)',
+                        border: 'none',
+                        color: 'white',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '10px'
-                    }}>
-                        <span>🔍</span> 상품 둘러보기
+                        gap: '15px',
+                        borderRadius: '50px',
+                        transition: 'transform 0.3s ease'
+                    }}
+                        onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-3px)'}
+                        onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                    >
+                        <span style={{ fontSize: '1.8rem' }}>🔍</span> 전체상품 둘러보기
                     </Link>
                     <Link to="/cart" className="btn btn-secondary" style={{
-                        padding: '1.2rem 3rem',
+                        padding: '1.5rem 3rem',
                         fontSize: '1.3rem',
                         fontWeight: 'bold',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '10px'
+                        gap: '10px',
+                        background: '#6c757d',
+                        borderRadius: '50px'
                     }}>
                         <span>🛒</span> 장바구니 보기
                     </Link>
