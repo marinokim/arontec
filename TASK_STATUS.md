@@ -1,0 +1,38 @@
+# Task Checklist
+
+- [x] Inspect rows 1657-1669 (Done)
+- [x] Create registration script `backend/register_1657_1669.py` (Done)
+- [x] Run registration script (Done)
+- [x] Verify imported products in DB (Done)
+- [x] Inspect rows 1686-1690 (Done)
+- [x] Create registration script `backend/register_1686_1690.py`
+- [x] Register rows 1686-1690 (Living / 리오떼)
+- [x] Verify rows 1686-1690
+- [x] Inspect row 2552 (Done)
+- [x] Create registration script `backend/register_2552.py`
+- [x] Register row 2552 (Audio / 디어쿠스틱)
+- [x] Verify row 2552
+- [x] Backend: Create generic range registration script `backend/register_range_generic.py`
+- [x] Backend: Add API endpoint `POST /register-range` in `backend/routes/excel.js`
+- [x] Frontend: Add Range Import UI in `frontend/src/pages/admin/Products.jsx`
+- [x] Verify generic script functionality (tested with row 2552) (Done)
+- [x] Backend: Add endpoint to update source Excel file (Done)
+- [x] Frontend: Add Master Excel Update UI (Done)
+- [x] Fix Manufacturer import logic (Done)
+- [x] Register rows 2553-2594 (Triggered via API)
+- [x] Fix Image URL extraction logic (Handle <img src=...>)
+- [x] Fix Admin Toolbar Layout
+- [x] Backend: Update `GET /api/products` for price sort
+- [x] Frontend: Add `sortBy` state and UI in `Catalog.jsx`
+- [x] Verify Sorting
+- [x] Backend: Add `PUT /api/products/categories/:id`
+- [x] Frontend: Update Category Modal to Manager (List + Edit)
+- [x] Verify Category Rename Propagates
+- [x] Backend: Add `DELETE /api/products/categories/:id` (Safe Delete)
+- [x] Frontend: Add Delete Button to Category Manager
+- [x] Frontend: Improve Dashboard "Browse All Products" Button Visibility
+- [x] Sort: Change "Default" to "Newest" (Strict Date Sort)
+- [x] Install `node-cron` (User Action Required)
+- [x] Create `backend/services/backupService.js` (Local `pg_dump`)
+- [x] Update `backend/server.js` with Cron Job (01:00 KST)
+- [x] Verify Backup (Manual Run) (User Action Required)
