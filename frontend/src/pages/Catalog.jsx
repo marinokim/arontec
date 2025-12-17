@@ -25,7 +25,7 @@ function Catalog({ user }) {
         return sessionStorage.getItem('catalog_search') || ''
     })
     const [sortBy, setSortBy] = useState(() => {
-        return sessionStorage.getItem('catalog_sortBy') || 'display_order'
+        return sessionStorage.getItem('catalog_sortBy') || 'newest'
     })
 
     const [proposalItems, setProposalItems] = useState([])
@@ -259,7 +259,7 @@ function Catalog({ user }) {
 
                     <div className="sort-controls" style={{ display: 'flex', gap: '5px', marginLeft: 'auto' }}>
                         {[
-                            { id: 'display_order', label: '기본순' },
+                            { id: 'newest', label: '최신순' },
                             { id: 'price_asc', label: '낮은가격순' },
                             { id: 'price_desc', label: '높은가격순' }
                         ].map(opt => (

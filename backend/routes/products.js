@@ -265,7 +265,9 @@ router.get('/', async (req, res) => {
             query += ` AND (p.brand ILIKE $${params.length} OR p.model_name ILIKE $${params.length} OR p.model_no ILIKE $${params.length})`
         }
 
-        if (sort === 'display_order') {
+        if (sort === 'newest' || !sort) {
+            query += ' ORDER BY p.id DESC'
+        } else if (sort === 'display_order') {
             query += ' ORDER BY p.display_order DESC, p.created_at DESC'
         } else if (sort === 'price_asc') {
             query += ' ORDER BY p.b2b_price ASC NULLS LAST'
