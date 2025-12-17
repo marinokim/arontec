@@ -12,6 +12,8 @@ import adminRoutes from './routes/admin.js'
 import uploadRoutes from './routes/upload.js'
 import excelRoutes from './routes/excel.js'
 import proposalRoutes from './routes/proposalRoutes.js'
+import cron from 'node-cron'
+import { performBackup } from './services/backupService.js'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
@@ -19,7 +21,15 @@ dotenv.config()
 
 const app = express()
 app.set('trust proxy', 1) // Trust first proxy (Render/Heroku)
-const PORT = process.env.PORT || 5001
+// Schedule Daily Backup at 13:00 (1 PM) KST
+// '0 13 * * *' runs at 13:00 every day.
+// Note: This relies on system time. If system time is KST, this works.
+cron.schedule('0 13 * * *', () => {
+    console.log('Running daily backup at 13:00...');
+    performBackup();
+});
+
+const PORT = process.env.PORT || 5002
 
 // Middleware
 app.use(cors({
