@@ -24,6 +24,9 @@ function Catalog({ user }) {
     const [search, setSearch] = useState(() => {
         return sessionStorage.getItem('catalog_search') || ''
     })
+    const [sortBy, setSortBy] = useState(() => {
+        return sessionStorage.getItem('catalog_sortBy') || 'display_order'
+    })
 
     const [proposalItems, setProposalItems] = useState([])
     const [showProposalModal, setShowProposalModal] = useState(false)
@@ -45,7 +48,8 @@ function Catalog({ user }) {
         sessionStorage.setItem('catalog_category', selectedCategory)
         sessionStorage.setItem('catalog_showNew', showNewOnly)
         sessionStorage.setItem('catalog_search', search)
-    }, [selectedCategory, showNewOnly, search])
+        sessionStorage.setItem('catalog_sortBy', sortBy)
+    }, [selectedCategory, showNewOnly, search, sortBy])
 
     // Restore scroll position
     useEffect(() => {
@@ -90,7 +94,7 @@ function Catalog({ user }) {
         if (savedProposal) {
             setProposalItems(JSON.parse(savedProposal))
         }
-    }, [selectedCategory, search, showNewOnly])
+    }, [selectedCategory, search, showNewOnly, sortBy])
 
     // Restore scroll position
     useEffect(() => {
@@ -136,7 +140,7 @@ function Catalog({ user }) {
         if (selectedCategory) params.append('category', selectedCategory)
         if (search) params.append('search', search)
         if (showNewOnly) params.append('isNew', 'true')
-        params.append('sort', 'display_order')
+        params.append('sort', sortBy)
 
         const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/products?${params}`, { credentials: 'include' })
         const data = await res.json()
@@ -251,6 +255,32 @@ function Catalog({ user }) {
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="상품명, 브랜드, 모델명으로 검색해보세요"
                         />
+                    </div>
+
+                    <div className="sort-controls" style={{ display: 'flex', gap: '5px', marginLeft: 'auto' }}>
+                        {[
+                            { id: 'display_order', label: '기본순' },
+                            { id: 'price_asc', label: '낮은가격순' },
+                            { id: 'price_desc', label: '높은가격순' }
+                        ].map(opt => (
+                            <button
+                                key={opt.id}
+                                onClick={() => setSortBy(opt.id)}
+                                style={{
+                                    background: sortBy === opt.id ? '#4a5568' : '#fff',
+                                    color: sortBy === opt.id ? '#fff' : '#718096',
+                                    border: `1px solid ${sortBy === opt.id ? '#4a5568' : '#e2e8f0'}`,
+                                    padding: '6px 12px',
+                                    borderRadius: '15px',
+                                    fontSize: '0.85rem',
+                                    cursor: 'pointer',
+                                    fontWeight: sortBy === opt.id ? '600' : '500',
+                                    transition: 'all 0.2s'
+                                }}
+                            >
+                                {opt.label}
+                            </button>
+                        ))}
                     </div>
 
                     <button onClick={() => navigate('/dashboard')} className="btn btn-secondary" style={{ whiteSpace: 'nowrap' }}>← 대시보드</button>

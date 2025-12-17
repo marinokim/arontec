@@ -267,6 +267,10 @@ router.get('/', async (req, res) => {
 
         if (sort === 'display_order') {
             query += ' ORDER BY p.display_order DESC, p.created_at DESC'
+        } else if (sort === 'price_asc') {
+            query += ' ORDER BY p.b2b_price ASC NULLS LAST'
+        } else if (sort === 'price_desc') {
+            query += ' ORDER BY p.b2b_price DESC NULLS LAST'
         } else {
             query += ' ORDER BY p.id DESC'
         }
