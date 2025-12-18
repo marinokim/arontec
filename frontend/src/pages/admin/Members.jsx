@@ -84,9 +84,13 @@ function Members({ user }) {
                                     <td>{new Date(member.created_at).toLocaleDateString()}</td>
                                     <td>
                                         <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                            {!member.is_approved && (
+                                            {!member.is_approved ? (
                                                 <button onClick={() => toggleApproval(member.id, true)} className="btn btn-primary">
                                                     승인
+                                                </button>
+                                            ) : (
+                                                <button onClick={() => toggleApproval(member.id, false)} className="btn btn-warning" style={{ backgroundColor: '#ffc107', color: 'black' }}>
+                                                    사용중지
                                                 </button>
                                             )}
                                             <button onClick={() => handleDelete(member.id)} className="btn btn-danger" style={{ backgroundColor: '#dc3545', color: 'white' }}>
