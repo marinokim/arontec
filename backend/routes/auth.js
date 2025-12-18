@@ -108,7 +108,9 @@ router.post('/login', async (req, res) => {
                 email: user.email,
                 companyName: user.company_name,
                 contactPerson: user.contact_person,
-                isAdmin: user.is_admin
+                isAdmin: user.is_admin,
+                businessNumber: user.business_number,
+                phone: user.phone
             }
         })
     } catch (error) {
