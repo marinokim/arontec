@@ -53,8 +53,8 @@ function Login({ setUser }) {
         if (name === 'businessNumber') {
             setFormData({ ...formData, [name]: formatBusinessNumber(value) })
         } else if (name === 'password') {
-            // Auto-convert Korean to English
-            const converted = convertToEnglish(value)
+            // Auto-convert Korean to English AND handle CapsLock (force lowercase)
+            const converted = convertToEnglish(value).toLowerCase()
             setFormData({ ...formData, [name]: converted })
         } else {
             setFormData({ ...formData, [name]: value })
