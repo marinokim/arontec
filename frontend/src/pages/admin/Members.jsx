@@ -71,7 +71,7 @@ function Members({ user }) {
         <div className="dashboard">
             <Navbar user={user} isAdminMode={true} />
 
-            <div className="dashboard-content container">
+            <div className="dashboard-content container" style={{ maxWidth: '1600px' }}>
                 <h1>회원 관리</h1>
                 <div className="card">
                     <table className="table">
