@@ -78,6 +78,7 @@ function Members({ user }) {
                         <thead>
                             <tr>
                                 <th>회사명</th>
+                                <th>사업자번호</th>
                                 <th>담당자</th>
                                 <th>이메일</th>
                                 <th>승인 상태</th>
@@ -89,6 +90,7 @@ function Members({ user }) {
                             {members.map(member => (
                                 <tr key={member.id}>
                                     <td>{member.company_name}</td>
+                                    <td>{member.business_number}</td>
                                     <td>{member.contact_person}</td>
                                     <td>{member.email}</td>
                                     <td>
