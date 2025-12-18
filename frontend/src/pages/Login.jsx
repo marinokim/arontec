@@ -2,11 +2,43 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import './Login.css'
 
+const KOREAN_KEY_MAP = {
+    'ㅂ': 'q', 'ㅃ': 'Q', 'ㅈ': 'w', 'ㅉ': 'W', 'ㄷ': 'e', 'ㄸ': 'E',
+    'ㄱ': 'r', 'ㄲ': 'R', 'ㅅ': 't', 'ㅆ': 'T', 'ㅛ': 'y',
+    'ㅕ': 'u', 'ㅑ': 'i', 'ㅐ': 'o', 'ㅒ': 'O', 'ㅔ': 'p', 'ㅖ': 'P',
+    'ㅁ': 'a', 'ㄴ': 's', 'ㅇ': 'd', 'ㄹ': 'f', 'ㅎ': 'g',
+    'ㅗ': 'h', 'ㅓ': 'j', 'ㅏ': 'k', 'ㅣ': 'l',
+    'ㅋ': 'z', 'ㅌ': 'x', 'ㅊ': 'c', 'ㅍ': 'v', 'ㅠ': 'b',
+    'ㅜ': 'n', 'ㅡ': 'm'
+}
+
+const convertToEnglish = (text) => {
+    let result = ''
+    // Normalize to NFD to decompose syllables into Jamos
+    const decomposed = text.normalize('NFD')
+
+    for (let i = 0; i < decomposed.length; i++) {
+        const char = decomposed[i]
+        // Filter out combining marks if they aren't mapped (optional, but NFD usually gives Jamos)
+        // Check map
+        if (KOREAN_KEY_MAP[char]) {
+            result += KOREAN_KEY_MAP[char]
+        } else {
+            // Keep original character (English, numbers, symbols)
+            // Note: If NFD produced a combining jamos that is NOT in map, it appends.
+            // This is generally fine.
+            result += char
+        }
+    }
+    return result
+}
+
 function Login({ setUser }) {
     const [formData, setFormData] = useState({ businessNumber: '', password: '' })
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
-    const [passwordWarning, setPasswordWarning] = useState('')
+    // Warning state removed as we auto-correct
+
     const navigate = useNavigate()
 
     const formatBusinessNumber = (value) => {
@@ -21,14 +53,9 @@ function Login({ setUser }) {
         if (name === 'businessNumber') {
             setFormData({ ...formData, [name]: formatBusinessNumber(value) })
         } else if (name === 'password') {
-            // Check for Korean characters
-            const hasKorean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(value)
-            if (hasKorean) {
-                setPasswordWarning('한영키를 전환하여 영문으로 입력해주세요.')
-            } else {
-                setPasswordWarning('')
-            }
-            setFormData({ ...formData, [name]: value })
+            // Auto-convert Korean to English
+            const converted = convertToEnglish(value)
+            setFormData({ ...formData, [name]: converted })
         } else {
             setFormData({ ...formData, [name]: value })
         }
@@ -186,11 +213,6 @@ function Login({ setUser }) {
                             autoComplete="current-password"
                             style={{ imeMode: 'disabled' }}
                         />
-                        {passwordWarning && (
-                            <div style={{ color: '#dc3545', fontSize: '0.8rem', marginTop: '4px' }}>
-                                {passwordWarning}
-                            </div>
-                        )}
                     </div>
 
                     <button type="submit" className="btn btn-primary" disabled={loading}>
