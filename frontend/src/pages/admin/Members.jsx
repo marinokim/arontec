@@ -36,6 +36,21 @@ function Members({ user }) {
         }
     }
 
+    const handleResetPassword = async (id) => {
+        if (!window.confirm('비밀번호를 "user1111"로 초기화하시겠습니까?')) return
+
+        const res = await fetch((import.meta.env.VITE_API_URL || '') + `/api/admin/members/${id}/reset-password`, {
+            method: 'POST',
+            credentials: 'include'
+        })
+
+        if (res.ok) {
+            alert('비밀번호가 "user1111"로 초기화되었습니다.')
+        } else {
+            alert('초기화 실패')
+        }
+    }
+
     const handleDelete = async (id) => {
         if (!window.confirm('정말로 이 회원을 삭제하시겠습니까? 연관된 모든 데이터(견적서 등)가 함께 삭제됩니다.')) return
 
@@ -93,6 +108,9 @@ function Members({ user }) {
                                                     사용중지
                                                 </button>
                                             )}
+                                            <button onClick={() => handleResetPassword(member.id)} className="btn btn-secondary" style={{ backgroundColor: '#6c757d', color: 'white' }}>
+                                                비번초기화
+                                            </button>
                                             <button onClick={() => handleDelete(member.id)} className="btn btn-danger" style={{ backgroundColor: '#dc3545', color: 'white' }}>
                                                 삭제
                                             </button>

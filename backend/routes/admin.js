@@ -1,6 +1,7 @@
 import express from 'express'
 import pool from '../config/database.js'
 import { requireAdmin } from '../middleware/auth.js'
+import bcrypt from 'bcryptjs'
 
 const router = express.Router()
 
@@ -96,6 +97,32 @@ const handleDelete = async (req, res) => {
 // Register both POST and DELETE for deletion (for backward compatibility)
 router.post('/members/:id/delete', requireAdmin, handleDelete)
 router.delete('/members/:id', requireAdmin, handleDelete)
+
+// Reset user password
+router.post('/members/:id/reset-password', requireAdmin, async (req, res) => {
+    try {
+        const userId = req.params.id
+        // Default password: user1111
+        // We need bcrypt here. admin.js imports pool, express, requireAdmin.
+        // We need to import bcrypt. But admin.js doesn't import it yet.
+        // I will add the import at the top in a separate edit or assume I can add it here if I check imports.
+        // Wait, I should verify imports first.
+        // Assuming I will add 'import bcrypt from "bcryptjs"' at the top.
+
+        // For now, I'll write the logic.
+        const hash = await bcrypt.hash('user1111', 10)
+
+        await pool.query(
+            'UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2 AND is_admin = false',
+            [hash, userId]
+        )
+
+        res.json({ message: 'Password reset to user1111' })
+    } catch (error) {
+        console.error('Reset password error:', error)
+        res.status(500).json({ error: 'Failed to reset password' })
+    }
+})
 
 // Get all quotes
 router.get('/quotes', requireAdmin, async (req, res) => {
