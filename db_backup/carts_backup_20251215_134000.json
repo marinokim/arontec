@@ -1,0 +1,26 @@
+[
+  {
+    "id": 2,
+    "user_id": 9,
+    "product_id": 373,
+    "quantity": 1,
+    "created_at": "2025-12-15T03:54:38.145019",
+    "option": ""
+  },
+  {
+    "id": 3,
+    "user_id": 9,
+    "product_id": 372,
+    "quantity": 1,
+    "created_at": "2025-12-15T03:54:45.339292",
+    "option": ""
+  },
+  {
+    "id": 4,
+    "user_id": 9,
+    "product_id": 255,
+    "quantity": 1,
+    "created_at": "2025-12-15T03:56:52.663531",
+    "option": ""
+  }
+]
