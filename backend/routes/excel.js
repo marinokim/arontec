@@ -152,18 +152,12 @@ router.post('/upload', upload.single('file'), async (req, res) => {
                     }
                 }
 
-                // Check if product exists (by model_name or model_no)
-                // Prefer model_no if available, otherwise model_name
+                // Check if product exists (by model_name)
+                // User requirement: model_name is the Unique Key. model_no is a sub-key and can be duplicated.
                 let existingProduct = null
-                if (modelNo) {
-                    const checkRes = await client.query('SELECT id FROM products WHERE model_no = $1', [modelNo])
-                    if (checkRes.rows.length > 0) existingProduct = checkRes.rows[0]
-                }
 
-                if (!existingProduct) {
-                    const checkRes = await client.query('SELECT id FROM products WHERE model_name = $1', [modelName])
-                    if (checkRes.rows.length > 0) existingProduct = checkRes.rows[0]
-                }
+                const checkRes = await client.query('SELECT id FROM products WHERE model_name = $1', [modelName])
+                if (checkRes.rows.length > 0) existingProduct = checkRes.rows[0]
 
                 if (existingProduct) {
                     // Update
