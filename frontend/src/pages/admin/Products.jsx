@@ -1345,11 +1345,11 @@ function AdminProducts({ user }) {
                     background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
                 }}>
                     <div className="modal-content" style={{
-                        background: 'white', padding: '2rem', borderRadius: '8px', width: '90%', maxWidth: '600px',
+                        background: 'white', padding: '2rem', borderRadius: '8px', width: '90%', maxWidth: '1200px',
                         maxHeight: '90vh', overflowY: 'auto'
                     }}>
                         <h2>{editingProduct ? '상품 수정' : '신규 상품 등록'}</h2>
-                        <form onSubmit={handleSubmit} style={{ marginTop: '1.5rem' }}>
+                        <form onSubmit={handleSubmit} style={{ marginTop: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
                             <div className="form-group">
                                 <label>카테고리</label>
                                 <select
@@ -1400,26 +1400,26 @@ function AdminProducts({ user }) {
                                 />
                             </div>
 
-                            <div className="form-group">
+                            <div className="form-group" style={{ gridColumn: 'span 4' }}>
                                 <label>상세 설명</label>
                                 <textarea
                                     value={formData.description}
                                     onChange={e => setFormData({ ...formData, description: e.target.value })}
-                                    rows="3"
+                                    rows="2"
                                 />
                             </div>
 
-                            <div className="form-group">
+                            <div className="form-group" style={{ gridColumn: 'span 4' }}>
                                 <label>제품규격</label>
                                 <textarea
                                     value={formData.productSpec}
                                     onChange={e => setFormData({ ...formData, productSpec: e.target.value })}
-                                    rows="3"
+                                    rows="2"
                                     placeholder="제품 규격을 입력하세요"
                                 />
                             </div>
 
-                            <div className="form-group">
+                            <div className="form-group" style={{ gridColumn: 'span 4' }}>
                                 <label>옵션 (선택사항)</label>
                                 <textarea
                                     value={formData.productOptions}
@@ -1435,76 +1435,6 @@ function AdminProducts({ user }) {
                                     type="number"
                                     value={formData.quantityPerCarton}
                                     onChange={e => setFormData({ ...formData, quantityPerCarton: e.target.value })}
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label>제조사</label>
-                                <input
-                                    type="text"
-                                    list="manufacturer-list"
-                                    value={formData.manufacturer}
-                                    onChange={e => setFormData({ ...formData, manufacturer: e.target.value })}
-                                    placeholder="예: Samsung, LG..."
-                                />
-                                <datalist id="manufacturer-list">
-                                    {manufacturers.map((item, index) => (
-                                        <option key={index} value={item} />
-                                    ))}
-                                </datalist>
-                            </div>
-
-                            <div className="form-group">
-                                <label>원산지</label>
-                                <input
-                                    type="text"
-                                    list="origin-list"
-                                    value={formData.origin}
-                                    onChange={e => setFormData({ ...formData, origin: e.target.value })}
-                                    placeholder="예: Korea, China..."
-                                />
-                                <datalist id="origin-list">
-                                    {origins.map((item, index) => (
-                                        <option key={index} value={item} />
-                                    ))}
-                                </datalist>
-                            </div>
-
-                            <div className="form-group">
-                                <label>소비자가</label>
-                                <input
-                                    type="text"
-                                    value={formData.consumerPrice}
-                                    onChange={e => handlePriceChange('consumerPrice', e.target.value)}
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label>공급가</label>
-                                <input
-                                    type="text"
-                                    value={formData.supplyPrice}
-                                    onChange={e => handlePriceChange('supplyPrice', e.target.value)}
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label>실판매가 (B2B)</label>
-                                <input
-                                    type="text"
-                                    value={formData.b2bPrice}
-                                    onChange={e => handlePriceChange('b2bPrice', e.target.value)}
-                                    required
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label>재고 수량</label>
-                                <input
-                                    type="text"
-                                    value={formData.stockQuantity}
-                                    onChange={e => handlePriceChange('stockQuantity', e.target.value)}
-                                    required
                                 />
                             </div>
 
@@ -1529,6 +1459,32 @@ function AdminProducts({ user }) {
                             </div>
 
                             <div className="form-group">
+                                <label>과세 여부</label>
+                                <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+                                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                                        <input
+                                            type="radio"
+                                            name="taxStatus"
+                                            checked={!formData.isTaxFree}
+                                            onChange={() => setFormData({ ...formData, isTaxFree: false })}
+                                            style={{ width: 'auto', margin: 0 }}
+                                        />
+                                        <span>과세</span>
+                                    </label>
+                                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                                        <input
+                                            type="radio"
+                                            name="taxStatus"
+                                            checked={formData.isTaxFree}
+                                            onChange={() => setFormData({ ...formData, isTaxFree: true })}
+                                            style={{ width: 'auto', margin: 0 }}
+                                        />
+                                        <span>면세</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div className="form-group" style={{ gridColumn: 'span 4' }}>
                                 <label>이미지 URL</label>
                                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                                     <input
@@ -1567,14 +1523,15 @@ function AdminProducts({ user }) {
                                 </div>
                             </div>
 
-                            <div className="form-group">
+                            <div className="form-group" style={{ gridColumn: 'span 4' }}>
                                 <label>상세페이지 URL</label>
                                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                                     <textarea
                                         value={formData.detailUrl}
                                         onChange={e => setFormData({ ...formData, detailUrl: e.target.value })}
                                         placeholder="https://example.com/product/123 or HTML content"
-                                        style={{ flex: 1, minHeight: '100px' }}
+                                        style={{ flex: 1, minHeight: '60px' }}
+                                        rows="2"
                                         onBlur={async (e) => {
                                             const url = e.target.value
                                             console.log('Detail URL Length:', url.length);
@@ -1603,65 +1560,17 @@ function AdminProducts({ user }) {
                                 </div>
                             </div>
 
-                            <div className="form-group">
+                            <div className="form-group" style={{ gridColumn: 'span 4' }}>
                                 <label>비고</label>
                                 <textarea
                                     value={formData.remarks}
                                     onChange={e => setFormData({ ...formData, remarks: e.target.value })}
-                                    rows="2"
+                                    rows="1"
                                     placeholder="비고 사항을 입력하세요"
                                 />
                             </div>
 
-                            <div className="form-group">
-                                <label>노출 순위 (높을수록 상단 노출)</label>
-                                <input
-                                    type="number"
-                                    value={formData.displayOrder}
-                                    onChange={e => setFormData({ ...formData, displayOrder: e.target.value })}
-                                    placeholder="0"
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-                                    <input
-                                        type="checkbox"
-                                        checked={formData.isAvailable}
-                                        onChange={e => setFormData({ ...formData, isAvailable: e.target.checked })}
-                                        style={{ width: 'auto', margin: 0 }}
-                                    />
-                                    <span>판매 가능 여부</span>
-                                </label>
-                            </div>
-
-                            <div className="form-group">
-                                <label>과세 여부</label>
-                                <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
-                                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-                                        <input
-                                            type="radio"
-                                            name="taxStatus"
-                                            checked={!formData.isTaxFree}
-                                            onChange={() => setFormData({ ...formData, isTaxFree: false })}
-                                            style={{ width: 'auto', margin: 0 }}
-                                        />
-                                        <span>과세</span>
-                                    </label>
-                                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-                                        <input
-                                            type="radio"
-                                            name="taxStatus"
-                                            checked={formData.isTaxFree}
-                                            onChange={() => setFormData({ ...formData, isTaxFree: true })}
-                                            style={{ width: 'auto', margin: 0 }}
-                                        />
-                                        <span>면세</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
+                            <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem', gridColumn: 'span 4' }}>
                                 <button type="submit" className="btn btn-primary" style={{ flex: 1 }} disabled={isSubmitting}>
                                     {isSubmitting ? '저장 중...' : '저장'}
                                 </button>
