@@ -221,6 +221,26 @@ export const runMigrations = async () => {
                 );
             `)
 
+            // Add shipping_fee to quote_items
+            await client.query(`
+                DO $$ 
+                BEGIN 
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'quote_items' AND column_name = 'shipping_fee') THEN 
+                        ALTER TABLE quote_items ADD COLUMN shipping_fee INTEGER DEFAULT 0; 
+                    END IF; 
+                END $$;
+            `)
+
+            // Add shipping_total to quotes
+            await client.query(`
+                DO $$ 
+                BEGIN 
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'quotes' AND column_name = 'shipping_total') THEN 
+                        ALTER TABLE quotes ADD COLUMN shipping_total INTEGER DEFAULT 0; 
+                    END IF; 
+                END $$;
+            `)
+
             await client.query('COMMIT')
             console.log('✅ Database migrations completed successfully')
         } catch (error) {

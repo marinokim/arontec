@@ -52,6 +52,7 @@ function QuoteRequest({ user }) {
                             value={formData.deliveryDate}
                             onChange={(e) => setFormData({ ...formData, deliveryDate: e.target.value })}
                             required
+                            style={{ width: '200px', cursor: 'pointer' }}
                         />
                     </div>
 
