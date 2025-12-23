@@ -1,9 +1,11 @@
 /**
  * Compresses an image file to ensure it's below a certain size.
- * Strategy: "Smart Balance"
- * 1. Try reducing quality down to 0.75 to save size without resizing.
- * 2. If that's not enough, resize dimensions slightly (0.9x) and RESET quality to 0.9.
- * This prevents "high resolution but blocky/blurry" images.
+ * Strategy: "Smart Balance" with Pixel Cap
+ * 1. Cap TOTAL PIXELS at 25MP (Cloudinary limit is 25MP).
+ *    - This allows long images (e.g. 1000x25000) without resizing width.
+ * 2. Cap WIDTH at 3000px (to prevent insanely wide images), but allow height to flow.
+ * 3. Then cycle quality (0.9 -> 0.75).
+ * 4. If still too large, resize 0.9x loop.
  * 
  * @param {File} file - The image file to compress.
  * @param {number} maxSizeMB - The maximum file size in MB.
@@ -26,10 +28,20 @@ export const compressImage = async (file, maxSizeMB = 9.5) => {
                 let width = img.width
                 let height = img.height
 
-                // Safety cap: 8000px
-                const SAFETY_MAX = 8000
-                if (width > SAFETY_MAX || height > SAFETY_MAX) {
-                    const ratio = Math.min(SAFETY_MAX / width, SAFETY_MAX / height)
+                // CAP 1: Maximum Width (readability)
+                if (width > 3000) {
+                    const ratio = 3000 / width
+                    width = 3000
+                    height *= ratio
+                }
+
+                // CAP 2: Maximum MegaPixels (Cloudinary limit is ~25MP)
+                // Example: 1000px * 25000px = 25,000,000 pixels (Safe)
+                // Example: 1000px * 40000px = 40,000,000 pixels -> Scale down to 25MP area
+                const MAX_PIXELS = 25000000
+                const currentPixels = width * height
+                if (currentPixels > MAX_PIXELS) {
+                    const ratio = Math.sqrt(MAX_PIXELS / currentPixels)
                     width *= ratio
                     height *= ratio
                 }
@@ -54,9 +66,9 @@ export const compressImage = async (file, maxSizeMB = 9.5) => {
                             return
                         }
 
-                        // Success condition
+                        // Success condition: Size OK or dimensions too small to shrink further
                         if (blob.size <= targetSize || currentWidth < 600) {
-                            console.log(`Compressed: ${file.size} -> ${blob.size} bytes. Resolution: ${Math.round(currentWidth)}x${Math.round(currentHeight)}, Quality: ${currentQuality}`)
+                            // console.log(`Compressed: ${Math.round(currentWidth)}x${Math.round(currentHeight)}, Quality: ${currentQuality}`)
 
                             const newFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".jpg", {
                                 type: 'image/jpeg',
@@ -65,17 +77,15 @@ export const compressImage = async (file, maxSizeMB = 9.5) => {
                             resolve(newFile)
                         } else {
                             // Retry logic
-                            // If quality is high, lower it first
                             if (currentQuality > 0.75) {
                                 currentQuality -= 0.1
                                 attemptCompression()
                             }
-                            // If quality is already getting low (<= 0.75), resize dimensions instead and RESET quality
-                            // This avoids "blocky" artifacts by preferring clean pixels at slightly lower res
                             else {
+                                // If quality is low, shrink dimensions
                                 currentWidth *= 0.9
                                 currentHeight *= 0.9
-                                currentQuality = 0.9 // Reset to high quality
+                                currentQuality = 0.9
                                 attemptCompression()
                             }
                         }
