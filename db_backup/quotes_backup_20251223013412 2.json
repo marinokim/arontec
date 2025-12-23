@@ -1,0 +1,67 @@
+[
+  {
+    "id": 1,
+    "user_id": 9,
+    "quote_number": "Q1766201852678",
+    "delivery_date": "2025-12-23T15:00:00.000Z",
+    "notes": "안녕하세요~~!!\n\n제품별 개별케이스 있으면 꼭 같이 보내주세요...",
+    "status": "approved",
+    "total_amount": "44220.00",
+    "admin_notes": null,
+    "created_at": "2025-12-19T18:37:32.643Z",
+    "updated_at": "2025-12-19T18:37:32.643Z",
+    "shipping_total": 0
+  },
+  {
+    "id": 2,
+    "user_id": 1,
+    "quote_number": "Q1766414239433",
+    "delivery_date": "2025-12-24T15:00:00.000Z",
+    "notes": "",
+    "status": "approved",
+    "total_amount": "18500.00",
+    "admin_notes": null,
+    "created_at": "2025-12-22T05:37:19.385Z",
+    "updated_at": "2025-12-22T05:37:19.385Z",
+    "shipping_total": 0
+  },
+  {
+    "id": 4,
+    "user_id": 22,
+    "quote_number": "Q1766418262356",
+    "delivery_date": "2025-12-30T15:00:00.000Z",
+    "notes": "",
+    "status": "approved",
+    "total_amount": "79450.00",
+    "admin_notes": null,
+    "created_at": "2025-12-22T06:44:22.318Z",
+    "updated_at": "2025-12-22T06:44:22.318Z",
+    "shipping_total": 0
+  },
+  {
+    "id": 3,
+    "user_id": 22,
+    "quote_number": "Q1766417867141",
+    "delivery_date": "2025-12-30T15:00:00.000Z",
+    "notes": "테스트_긴급 요청",
+    "status": "approved",
+    "total_amount": "74850.00",
+    "admin_notes": null,
+    "created_at": "2025-12-22T06:37:47.103Z",
+    "updated_at": "2025-12-22T06:37:47.103Z",
+    "shipping_total": 0
+  },
+  {
+    "id": 5,
+    "user_id": 22,
+    "quote_number": "Q1766451002345",
+    "delivery_date": "2025-12-24T15:00:00.000Z",
+    "notes": "",
+    "status": "pending",
+    "total_amount": "13000.00",
+    "admin_notes": null,
+    "created_at": "2025-12-22T15:50:02.309Z",
+    "updated_at": "2025-12-22T15:50:02.309Z",
+    "shipping_total": 0
+  }
+]
