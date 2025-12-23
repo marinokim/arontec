@@ -1,7 +1,9 @@
 /**
  * Compresses an image file to ensure it's below a certain size.
- * Strategy: Prioritize quality reduction to retain original resolution.
- * Only resize dimensions if quality reduction is insufficient.
+ * Strategy: "Smart Balance"
+ * 1. Try reducing quality down to 0.75 to save size without resizing.
+ * 2. If that's not enough, resize dimensions slightly (0.9x) and RESET quality to 0.9.
+ * This prevents "high resolution but blocky/blurry" images.
  * 
  * @param {File} file - The image file to compress.
  * @param {number} maxSizeMB - The maximum file size in MB.
@@ -24,7 +26,7 @@ export const compressImage = async (file, maxSizeMB = 9.5) => {
                 let width = img.width
                 let height = img.height
 
-                // Safety cap: 8000px is very safe for modern browsers, prevents crashes on massive images
+                // Safety cap: 8000px
                 const SAFETY_MAX = 8000
                 if (width > SAFETY_MAX || height > SAFETY_MAX) {
                     const ratio = Math.min(SAFETY_MAX / width, SAFETY_MAX / height)
@@ -38,6 +40,7 @@ export const compressImage = async (file, maxSizeMB = 9.5) => {
                 let currentWidth = width
                 let currentHeight = height
                 let currentQuality = 0.9
+                const targetSize = maxSizeMB * 1024 * 1024
 
                 // Helper to run compression attempt
                 const attemptCompression = () => {
@@ -51,12 +54,9 @@ export const compressImage = async (file, maxSizeMB = 9.5) => {
                             return
                         }
 
-                        const targetSize = maxSizeMB * 1024 * 1024
-
-                        // Success condition: Size is under limit OR we've hit minimums
-                        // (Min quality 0.5 and min width 1000px as a failsafe to stop infinite loops)
-                        if (blob.size <= targetSize || (currentQuality <= 0.5 && currentWidth < 1000)) {
-                            console.log(`Compressed: ${file.size} -> ${blob.size} bytes. Resolution: ${currentWidth}x${currentHeight}, Quality: ${currentQuality}`)
+                        // Success condition
+                        if (blob.size <= targetSize || currentWidth < 600) {
+                            console.log(`Compressed: ${file.size} -> ${blob.size} bytes. Resolution: ${Math.round(currentWidth)}x${Math.round(currentHeight)}, Quality: ${currentQuality}`)
 
                             const newFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".jpg", {
                                 type: 'image/jpeg',
@@ -65,16 +65,17 @@ export const compressImage = async (file, maxSizeMB = 9.5) => {
                             resolve(newFile)
                         } else {
                             // Retry logic
-                            // 1. Reduce quality first (down to 0.5)
-                            if (currentQuality > 0.55) { // Floating point safety margin
+                            // If quality is high, lower it first
+                            if (currentQuality > 0.75) {
                                 currentQuality -= 0.1
                                 attemptCompression()
                             }
-                            // 2. If quality is already low, reduce dimensions and reset quality slightly
+                            // If quality is already getting low (<= 0.75), resize dimensions instead and RESET quality
+                            // This avoids "blocky" artifacts by preferring clean pixels at slightly lower res
                             else {
-                                currentWidth *= 0.8
-                                currentHeight *= 0.8
-                                currentQuality = 0.8 // Reset quality to try high-qual at smaller size
+                                currentWidth *= 0.9
+                                currentHeight *= 0.9
+                                currentQuality = 0.9 // Reset to high quality
                                 attemptCompression()
                             }
                         }
