@@ -23,17 +23,17 @@ export const compressImage = async (file, maxSizeMB = 9.5) => {
 
                 // Logic for tall images (product details) vs wide images
                 if (width > height) {
-                    // Wide image: Cap width at 2500
-                    const MAX_WIDTH = 2500
+                    // Wide image: Cap width at 4000 (increased from 2500)
+                    const MAX_WIDTH = 4000
                     if (width > MAX_WIDTH) {
                         height *= MAX_WIDTH / width
                         width = MAX_WIDTH
                     }
                 } else {
-                    // Tall image: Cap width at 1500 (sufficient for detail), let height be large
+                    // Tall image: Cap width at 3000 (increased from 1500) for better text readability
                     // But also cap height to prevent canvas errors (e.g. 30000px might crash IOS)
-                    const MAX_WIDTH = 1500
-                    const MAX_HEIGHT = 15000
+                    const MAX_WIDTH = 3000
+                    const MAX_HEIGHT = 45000 // Increased height limit as well
 
                     if (width > MAX_WIDTH) {
                         height *= MAX_WIDTH / width
