@@ -432,6 +432,9 @@ function MyPage({ user }) {
                                                 <span style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#333' }}>{parseInt(selectedQuote.quote.total_amount).toLocaleString()}</span>
                                                 <span style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#333', marginLeft: '0.5rem' }}>원</span>
                                             </div>
+                                            <div style={{ fontSize: '0.9rem', color: '#666', marginTop: '0.5rem' }}>
+                                                (총 상품금액: {(parseInt(selectedQuote.quote.total_amount) - (parseInt(selectedQuote.quote.shipping_total) || 0)).toLocaleString()}원 + 총 배송비: {(parseInt(selectedQuote.quote.shipping_total) || 0).toLocaleString()}원)
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -451,6 +454,7 @@ function MyPage({ user }) {
                                         <th style={{ padding: '10px', textAlign: 'left' }}>모델명</th>
                                         <th style={{ padding: '10px', textAlign: 'right' }}>단가</th>
                                         <th style={{ padding: '10px', textAlign: 'center' }}>수량</th>
+                                        <th style={{ padding: '10px', textAlign: 'right' }}>배송비</th>
                                         <th style={{ padding: '10px', textAlign: 'right' }}>합계</th>
                                     </tr>
                                 </thead>
@@ -461,13 +465,14 @@ function MyPage({ user }) {
                                             <td style={{ padding: '10px' }}>{item.model_name}</td>
                                             <td style={{ padding: '10px', textAlign: 'right' }}>{parseInt(item.unit_price).toLocaleString()}</td>
                                             <td style={{ padding: '10px', textAlign: 'center' }}>{item.quantity}</td>
+                                            <td style={{ padding: '10px', textAlign: 'right' }}>{(parseInt(item.shipping_fee) || 0).toLocaleString()}</td>
                                             <td style={{ padding: '10px', textAlign: 'right' }}>{parseInt(item.subtotal).toLocaleString()}</td>
                                         </tr>
                                     ))}
                                 </tbody>
                                 <tfoot>
                                     <tr style={{ background: '#f8f9fa', borderTop: '2px solid #333' }}>
-                                        <td colSpan="4" style={{ padding: '15px', textAlign: 'center', fontWeight: 'bold' }}>합 계 (VAT포함)</td>
+                                        <td colSpan="5" style={{ padding: '15px', textAlign: 'center', fontWeight: 'bold' }}>합 계 (VAT포함)</td>
                                         <td style={{ padding: '15px', textAlign: 'right', fontWeight: 'bold', fontSize: '1.1rem' }}>
                                             {parseInt(selectedQuote.quote.total_amount).toLocaleString()}원
                                         </td>

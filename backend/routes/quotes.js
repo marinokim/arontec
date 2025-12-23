@@ -18,7 +18,7 @@ router.post('/', requireApproved, async (req, res) => {
 
         // Get cart items
         const cartResult = await client.query(`
-      SELECT c.*, p.b2b_price
+      SELECT c.*, p.b2b_price, p.shipping_fee_individual
       FROM carts c
       JOIN products p ON c.product_id = p.id
       WHERE c.user_id = $1
@@ -28,26 +28,32 @@ router.post('/', requireApproved, async (req, res) => {
             throw new Error('장바구니가 비어있습니다')
         }
 
-        // Calculate total
-        const totalAmount = cartResult.rows.reduce((sum, item) => {
-            return sum + (item.b2b_price * item.quantity)
-        }, 0)
+        // Calculate total amounts
+        let totalProductAmount = 0
+        let totalShippingAmount = 0
+
+        for (const item of cartResult.rows) {
+            totalProductAmount += (item.b2b_price * item.quantity)
+            totalShippingAmount += ((item.shipping_fee_individual || 0) * item.quantity)
+        }
+
+        const totalAmount = totalProductAmount + totalShippingAmount
 
         // Create quote
         const quoteResult = await client.query(`
-      INSERT INTO quotes (user_id, quote_number, delivery_date, notes, total_amount)
-      VALUES ($1, $2, $3, $4, $5)
+      INSERT INTO quotes (user_id, quote_number, delivery_date, notes, total_amount, shipping_total)
+      VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *
-    `, [req.session.userId, quoteNumber, deliveryDate, notes, totalAmount])
+    `, [req.session.userId, quoteNumber, deliveryDate, notes, totalAmount, totalShippingAmount])
 
         const quoteId = quoteResult.rows[0].id
 
         // Create quote items
         for (const item of cartResult.rows) {
             await client.query(`
-        INSERT INTO quote_items (quote_id, product_id, quantity, unit_price, subtotal)
-        VALUES ($1, $2, $3, $4, $5)
-      `, [quoteId, item.product_id, item.quantity, item.b2b_price, item.b2b_price * item.quantity])
+        INSERT INTO quote_items (quote_id, product_id, quantity, unit_price, subtotal, shipping_fee)
+        VALUES ($1, $2, $3, $4, $5, $6)
+      `, [quoteId, item.product_id, item.quantity, item.b2b_price, item.b2b_price * item.quantity, (item.shipping_fee_individual || 0) * item.quantity])
         }
 
         // Clear cart
