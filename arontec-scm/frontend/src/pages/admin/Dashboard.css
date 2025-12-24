@@ -1,0 +1,15 @@
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 0.5rem 0;
+}
+
+.stat-desc {
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.btn-block {
+    width: 100%;
+}

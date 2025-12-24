@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문의하기 - 아론텍코리아</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700&family=Open+Sans:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">ARONTEC KOREA</a>
+                <ul class="nav-links">
+                    <li><a href="index.html">홈</a></li>
+                    <li><a href="about.html">회사소개</a></li>
+                    <li><a href="products.html">제품</a></li>
+                    <li><a href="contact.html" class="active">문의하기</a></li>
+                    <li><a href="https://scm.arontec.co.kr" target="_blank" class="btn-nav"
+                            style="background-color: var(--secondary-color); padding: 5px 15px; border-radius: 20px; color: white;">SCM</a>
+                    </li>
+                </ul>
+                <div class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="section" style="background-color: var(--secondary-color); color: white; padding: 120px 0 60px;">
+        <div class="container" style="text-align: center;">
+            <h1 style="font-size: 3rem;">문의하기 (Contact Us)</h1>
+            <p>제품 공급 및 제휴 관련 문의를 환영합니다.</p>
+        </div>
+    </section>
+
+    <!-- Contact Info & Form -->
+    <section class="section">
+        <div class="container">
+            <div class="grid grid-2">
+                <!-- Contact Info -->
+                <div>
+                    <h2 class="section-title text-left" style="text-align: left;">연락처 안내</h2>
+                    <p style="margin-bottom: 2rem;">아론텍코리아의 제품 및 서비스에 대해 궁금한 점이 있으시면 언제든지 문의해 주세요.</p>
+
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="font-size: 1.2rem; color: var(--primary-color); margin-bottom: 0.5rem;"><i
+                                class="fas fa-map-marker-alt"></i> 주소</h3>
+                        <p>경기도 파주시 회동길 521-1 202호</p>
+                    </div>
+
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="font-size: 1.2rem; color: var(--primary-color); margin-bottom: 0.5rem;"><i
+                                class="fas fa-phone"></i> 전화번호</h3>
+                        <p>031-947-4938</p>
+                    </div>
+
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="font-size: 1.2rem; color: var(--primary-color); margin-bottom: 0.5rem;"><i
+                                class="fas fa-envelope"></i> 이메일</h3>
+                        <p>info@arontec.co.kr</p>
+                    </div>
+                </div>
+
+                <!-- Contact Form -->
+                <div
+                    style="background-color: var(--bg-light); padding: 2rem; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+                    <h3 style="margin-bottom: 1.5rem;">메시지 보내기</h3>
+                    <form id="contactForm">
+                        <div style="margin-bottom: 1rem;">
+                            <label for="name" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">성함 /
+                                회사명</label>
+                            <input type="text" id="name" name="name" required
+                                style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <label for="email"
+                                style="display: block; margin-bottom: 0.5rem; font-weight: 600;">이메일</label>
+                            <input type="email" id="email" name="email" required
+                                style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <label for="subject"
+                                style="display: block; margin-bottom: 0.5rem; font-weight: 600;">제목</label>
+                            <input type="text" id="subject" name="subject" required
+                                style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                        </div>
+                        <div style="margin-bottom: 1.5rem;">
+                            <label for="message"
+                                style="display: block; margin-bottom: 0.5rem; font-weight: 600;">내용</label>
+                            <textarea id="message" name="message" rows="5" required
+                                style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;"></textarea>
+                        </div>
+                        <button type="submit" class="btn" style="width: 100%;">보내기</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map -->
+    <section class="section">
+        <div class="container">
+            <div
+                style="width: 100%; height: 400px; background-color: #eee; display: flex; align-items: center; justify-content: center; border-radius: 10px; overflow: hidden;">
+                <!-- Placeholder for Google Map -->
+                <iframe src="https://www.google.com/maps?q=경기도+파주시+회동길+521-1&output=embed" width="100%" height="100%"
+                    style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-col">
+                    <h4>ARONTEC KOREA</h4>
+                    <p>고객의 삶을 풍요롭게 하는 글로벌 유통 전문 기업<br>아론텍코리아입니다.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">홈</a></li>
+                        <li><a href="about.html">회사소개</a></li>
+                        <li><a href="products.html">제품</a></li>
+                        <li><a href="contact.html">문의하기</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact Info</h4>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> 경기도 파주시 회동길 521-1 202호</li>
+                        <li><i class="fas fa-phone"></i> 031-947-4938</li>
+                        <li><i class="fas fa-envelope"></i> info@arontec.co.kr</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Arontec Korea Co., Ltd. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

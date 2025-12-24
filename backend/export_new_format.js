@@ -89,17 +89,31 @@ async function run() {
             // Logic to format Detail URL
             let detailHtml = '';
             if (p.detail_url) {
-                const url = p.detail_url.trim();
-                if (url.startsWith('<')) {
-                    // Already HTML
-                    detailHtml = url.replace(/(\r\n|\n|\r)/gm, ""); // Remove newlines
-                } else if (url.startsWith('http')) {
-                    // Simple URL, wrap in img tag
-                    // Split by newlines if multiple URLs
-                    const urls = url.split(/[\r\n]+/).filter(u => u.trim());
+                const val = p.detail_url.trim();
+                // Check if it looks like HTML containing images
+                if (val.includes('<img') || val.includes('<div')) {
+                    // Extract all src attributes
+                    const srcRegex = /src=["']([^"']+)["']/g;
+                    let match;
+                    let images = [];
+                    while ((match = srcRegex.exec(val)) !== null) {
+                        images.push(match[1]);
+                    }
+
+                    if (images.length > 0) {
+                        // Rebuild as simple img tags without div wrappers
+                        detailHtml = images.map(u => `<img src="${u.trim()}">`).join('');
+                    } else {
+                        // Fallback: just remove newlines if no img tags found but looks like HTML
+                        detailHtml = val.replace(/(\r\n|\n|\r)/gm, "");
+                    }
+                } else if (val.startsWith('http')) {
+                    // Simple URL (comma or newline separated?)
+                    // Split by newlines or commas just in case
+                    const urls = val.split(/[,\r\n]+/).filter(u => u.trim());
                     detailHtml = urls.map(u => `<img src="${u.trim()}">`).join('');
                 } else {
-                    detailHtml = url;
+                    detailHtml = val;
                 }
             }
 
