@@ -1,0 +1,50 @@
+[
+  {
+    "id": 7,
+    "user_id": 4,
+    "product_id": 1048,
+    "quantity": 1,
+    "created_at": "2025-12-17T21:49:05.228Z",
+    "option": "Walnut"
+  },
+  {
+    "id": 10,
+    "user_id": 8,
+    "product_id": 77,
+    "quantity": 1,
+    "created_at": "2025-12-18T15:16:35.567Z",
+    "option": ""
+  },
+  {
+    "id": 11,
+    "user_id": 8,
+    "product_id": 435,
+    "quantity": 1,
+    "created_at": "2025-12-18T15:24:06.535Z",
+    "option": ""
+  },
+  {
+    "id": 9,
+    "user_id": 8,
+    "product_id": 89,
+    "quantity": 2,
+    "created_at": "2025-12-18T15:16:17.701Z",
+    "option": ""
+  },
+  {
+    "id": 16,
+    "user_id": 15,
+    "product_id": 1300,
+    "quantity": 1,
+    "created_at": "2025-12-18T20:27:55.202Z",
+    "option": ""
+  },
+  {
+    "id": 24,
+    "user_id": 18,
+    "product_id": 19,
+    "quantity": 1,
+    "created_at": "2025-12-21T22:16:59.622Z",
+    "option": ""
+  }
+]

@@ -1149,232 +1149,277 @@ function AdminProducts({ user }) {
                     background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
                 }}>
                     <div className="modal-content" style={{
-                        background: 'white', padding: '2rem', borderRadius: '8px', width: '90%', maxWidth: '1200px',
-                        maxHeight: '90vh', overflowY: 'auto'
+                        background: 'white', borderRadius: '8px', width: '95%', maxWidth: '1400px',
+                        height: '90vh', display: 'flex', flexDirection: 'column', overflow: 'hidden'
                     }}>
-                        <h2>{editingProduct ? '상품 수정' : '신규 상품 등록'}</h2>
-                        <form onSubmit={handleSubmit} style={{ marginTop: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
-                            <div className="form-group">
-                                <label>카테고리</label>
-                                <select
-                                    value={formData.categoryId}
-                                    onChange={e => setFormData({ ...formData, categoryId: e.target.value })}
-                                    required
-                                >
-                                    <option value="">선택하세요</option>
-                                    {categories.map(cat => (
-                                        <option key={cat.id} value={cat.id}>{cat.name}</option>
-                                    ))}
-                                </select>
-                            </div>
+                        <div style={{ padding: '1.5rem 2rem', borderBottom: '1px solid #eee' }}>
+                            <h2 style={{ margin: 0 }}>{editingProduct ? '상품 수정' : '신규 상품 등록'}</h2>
+                        </div>
 
-                            <div className="form-group">
-                                <label>브랜드</label>
-                                <input
-                                    type="text"
-                                    list="brand-list"
-                                    value={formData.brand}
-                                    onChange={e => setFormData({ ...formData, brand: e.target.value })}
-                                    required
-                                    placeholder="브랜드를 선택하거나 직접 입력하세요"
-                                />
-                                <datalist id="brand-list">
-                                    {brands.map((brand, index) => (
-                                        <option key={index} value={brand} />
-                                    ))}
-                                </datalist>
-                            </div>
-
-                            <div className="form-group">
-                                <label>상품명</label>
-                                <input
-                                    type="text"
-                                    value={formData.modelName}
-                                    onChange={e => setFormData({ ...formData, modelName: e.target.value })}
-                                    required
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label>모델명</label>
-                                <input
-                                    type="text"
-                                    value={formData.modelNo}
-                                    onChange={e => setFormData({ ...formData, modelNo: e.target.value })}
-                                />
-                            </div>
-
-                            <div className="form-group" style={{ gridColumn: 'span 4' }}>
-                                <label>상세 설명</label>
-                                <textarea
-                                    value={formData.description}
-                                    onChange={e => setFormData({ ...formData, description: e.target.value })}
-                                    rows="2"
-                                />
-                            </div>
-
-                            <div className="form-group" style={{ gridColumn: 'span 4' }}>
-                                <label>제품규격</label>
-                                <textarea
-                                    value={formData.productSpec}
-                                    onChange={e => setFormData({ ...formData, productSpec: e.target.value })}
-                                    rows="2"
-                                    placeholder="제품 규격을 입력하세요"
-                                />
-                            </div>
-
-                            <div className="form-group" style={{ gridColumn: 'span 4' }}>
-                                <label>옵션 (선택사항)</label>
-                                <textarea
-                                    value={formData.productOptions}
-                                    onChange={e => setFormData({ ...formData, productOptions: e.target.value })}
-                                    rows="2"
-                                    placeholder="예: 블랙, 화이트, 레드 (쉼표로 구분)"
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label>카톤별 수량</label>
-                                <input
-                                    type="number"
-                                    value={formData.quantityPerCarton}
-                                    onChange={e => setFormData({ ...formData, quantityPerCarton: e.target.value })}
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label>배송비 (개별)</label>
-                                <input
-                                    type="text"
-                                    value={formData.shippingFeeIndividual}
-                                    onChange={e => handlePriceChange('shippingFeeIndividual', e.target.value)}
-                                    placeholder="개별 배송비"
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label>배송비 (카톤)</label>
-                                <input
-                                    type="text"
-                                    value={formData.shippingFeeCarton}
-                                    onChange={e => handlePriceChange('shippingFeeCarton', e.target.value)}
-                                    placeholder="카톤 배송비"
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label>과세 여부</label>
-                                <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
-                                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-                                        <input
-                                            type="radio"
-                                            name="taxStatus"
-                                            checked={!formData.isTaxFree}
-                                            onChange={() => setFormData({ ...formData, isTaxFree: false })}
-                                            style={{ width: 'auto', margin: 0 }}
-                                        />
-                                        <span>과세</span>
-                                    </label>
-                                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-                                        <input
-                                            type="radio"
-                                            name="taxStatus"
-                                            checked={formData.isTaxFree}
-                                            onChange={() => setFormData({ ...formData, isTaxFree: true })}
-                                            style={{ width: 'auto', margin: 0 }}
-                                        />
-                                        <span>면세</span>
-                                    </label>
+                        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+                            <div style={{ flex: 1, overflowY: 'auto', padding: '2rem', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', alignContent: 'start' }}>
+                                <div className="form-group">
+                                    <label>카테고리</label>
+                                    <select
+                                        value={formData.categoryId}
+                                        onChange={e => setFormData({ ...formData, categoryId: e.target.value })}
+                                        required
+                                    >
+                                        <option value="">선택하세요</option>
+                                        {categories.map(cat => (
+                                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                        ))}
+                                    </select>
                                 </div>
-                            </div>
 
-                            <div className="form-group" style={{ gridColumn: 'span 4' }}>
-                                <label>이미지 URL</label>
-                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <div className="form-group">
+                                    <label>브랜드</label>
                                     <input
                                         type="text"
-                                        value={formData.imageUrl}
-                                        onChange={e => setFormData({ ...formData, imageUrl: e.target.value })}
-                                        placeholder="https://example.com/image.jpg"
-                                        style={{ flex: 1 }}
-                                        onBlur={async (e) => {
-                                            const url = e.target.value
-                                            // Check for <img src="..."> tag
-                                            const imgTagMatch = url.match(/<img[^>]+src=['"]([^'"]+)['"]/i)
-                                            if (imgTagMatch && imgTagMatch[1]) {
-                                                setFormData(prev => ({ ...prev, imageUrl: imgTagMatch[1] }))
-                                                alert('이미지 태그에서 URL을 추출했습니다.')
-                                                return
-                                            }
-
-                                            const extractedUrl = await extractImageFromHtml(url)
-                                            if (extractedUrl) {
-                                                setFormData(prev => ({ ...prev, imageUrl: extractedUrl }))
-                                                alert('HTML에서 이미지 URL을 추출했습니다.')
-                                            }
-                                        }}
+                                        list="brand-list"
+                                        value={formData.brand}
+                                        onChange={e => setFormData({ ...formData, brand: e.target.value })}
+                                        required
+                                        placeholder="브랜드를 선택하거나 직접 입력하세요"
                                     />
-                                    <label className={`btn btn-secondary ${isUploading ? 'disabled' : ''}`} style={{ cursor: isUploading ? 'not-allowed' : 'pointer', margin: 0, display: 'flex', alignItems: 'center', opacity: isUploading ? 0.6 : 1 }}>
-                                        {isUploading ? '업로드 중...' : '파일 선택'}
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={(e) => handleImageUpload(e, 'imageUrl')}
-                                            style={{ display: 'none' }}
-                                            disabled={isUploading}
-                                        />
-                                    </label>
+                                    <datalist id="brand-list">
+                                        {brands.map((brand, index) => (
+                                            <option key={index} value={brand} />
+                                        ))}
+                                    </datalist>
                                 </div>
-                            </div>
 
-                            <div className="form-group" style={{ gridColumn: 'span 4' }}>
-                                <label>상세페이지 URL</label>
-                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <div className="form-group">
+                                    <label>상품명</label>
+                                    <input
+                                        type="text"
+                                        value={formData.modelName}
+                                        onChange={e => setFormData({ ...formData, modelName: e.target.value })}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>모델명</label>
+                                    <input
+                                        type="text"
+                                        value={formData.modelNo}
+                                        onChange={e => setFormData({ ...formData, modelNo: e.target.value })}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>공급가 (원)</label>
+                                    <input
+                                        type="text"
+                                        value={formData.supplyPrice}
+                                        onChange={e => handlePriceChange('supplyPrice', e.target.value)}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>소비자가 (원)</label>
+                                    <input
+                                        type="text"
+                                        value={formData.consumerPrice}
+                                        onChange={e => handlePriceChange('consumerPrice', e.target.value)}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>B2B 단가 (원)</label>
+                                    <input
+                                        type="text"
+                                        value={formData.b2bPrice}
+                                        onChange={e => handlePriceChange('b2bPrice', e.target.value)}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>재고 수량</label>
+                                    <input
+                                        type="text"
+                                        value={formData.stockQuantity}
+                                        onChange={e => handlePriceChange('stockQuantity', e.target.value)}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="form-group" style={{ gridColumn: 'span 4' }}>
+                                    <label>상세 설명</label>
                                     <textarea
-                                        value={formData.detailUrl}
-                                        onChange={e => setFormData({ ...formData, detailUrl: e.target.value })}
-                                        placeholder="https://example.com/product/123 or HTML content"
-                                        style={{ flex: 1, minHeight: '60px' }}
+                                        value={formData.description}
+                                        onChange={e => setFormData({ ...formData, description: e.target.value })}
                                         rows="2"
-                                        onBlur={async (e) => {
-                                            const url = e.target.value
-                                            console.log('Detail URL Length:', url.length);
-
-                                            // Only try to fetch if it looks like a URL and NOT HTML
-                                            if (url.match(/^https?:\/\//) && !url.match(/<[a-z][\s\S]*>/i)) {
-                                                const extractedHtml = await extractAllImagesFromHtml(url)
-                                                if (extractedHtml) {
-                                                    setFormData(prev => ({ ...prev, detailUrl: extractedHtml }))
-                                                    const count = (extractedHtml.match(/<img/g) || []).length
-                                                    alert(`HTML에서 ${count}장의 이미지를 추출하여 태그로 변환했습니다.`)
-                                                }
-                                            }
-                                        }}
                                     />
-                                    <label className={`btn btn-secondary ${isUploading ? 'disabled' : ''}`} style={{ cursor: isUploading ? 'not-allowed' : 'pointer', margin: 0, display: 'flex', alignItems: 'center', opacity: isUploading ? 0.6 : 1 }}>
-                                        {isUploading ? '업로드 중...' : '파일 선택'}
+                                </div>
+
+                                <div className="form-group" style={{ gridColumn: 'span 4' }}>
+                                    <label>제품규격</label>
+                                    <textarea
+                                        value={formData.productSpec}
+                                        onChange={e => setFormData({ ...formData, productSpec: e.target.value })}
+                                        rows="2"
+                                        placeholder="제품 규격을 입력하세요"
+                                    />
+                                </div>
+
+                                <div className="form-group" style={{ gridColumn: 'span 4' }}>
+                                    <label>옵션 (선택사항)</label>
+                                    <textarea
+                                        value={formData.productOptions}
+                                        onChange={e => setFormData({ ...formData, productOptions: e.target.value })}
+                                        rows="2"
+                                        placeholder="예: 블랙, 화이트, 레드 (쉼표로 구분)"
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>카톤별 수량</label>
+                                    <input
+                                        type="number"
+                                        value={formData.quantityPerCarton}
+                                        onChange={e => setFormData({ ...formData, quantityPerCarton: e.target.value })}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>배송비 (개별)</label>
+                                    <input
+                                        type="text"
+                                        value={formData.shippingFeeIndividual}
+                                        onChange={e => handlePriceChange('shippingFeeIndividual', e.target.value)}
+                                        placeholder="개별 배송비"
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>배송비 (카톤)</label>
+                                    <input
+                                        type="text"
+                                        value={formData.shippingFeeCarton}
+                                        onChange={e => handlePriceChange('shippingFeeCarton', e.target.value)}
+                                        placeholder="카톤 배송비"
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>과세 여부</label>
+                                    <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+                                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                                            <input
+                                                type="radio"
+                                                name="taxStatus"
+                                                checked={!formData.isTaxFree}
+                                                onChange={() => setFormData({ ...formData, isTaxFree: false })}
+                                                style={{ width: 'auto', margin: 0 }}
+                                            />
+                                            <span>과세</span>
+                                        </label>
+                                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                                            <input
+                                                type="radio"
+                                                name="taxStatus"
+                                                checked={formData.isTaxFree}
+                                                onChange={() => setFormData({ ...formData, isTaxFree: true })}
+                                                style={{ width: 'auto', margin: 0 }}
+                                            />
+                                            <span>면세</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div className="form-group" style={{ gridColumn: 'span 4' }}>
+                                    <label>이미지 URL</label>
+                                    <div style={{ display: 'flex', gap: '0.5rem' }}>
                                         <input
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={(e) => handleImageUpload(e, 'detailUrl')}
-                                            style={{ display: 'none' }}
-                                            disabled={isUploading}
+                                            type="text"
+                                            value={formData.imageUrl}
+                                            onChange={e => setFormData({ ...formData, imageUrl: e.target.value })}
+                                            placeholder="https://example.com/image.jpg"
+                                            style={{ flex: 1 }}
+                                            onBlur={async (e) => {
+                                                const url = e.target.value
+                                                // Check for <img src="..."> tag
+                                                const imgTagMatch = url.match(/<img[^>]+src=['"]([^'"]+)['"]/i)
+                                                if (imgTagMatch && imgTagMatch[1]) {
+                                                    setFormData(prev => ({ ...prev, imageUrl: imgTagMatch[1] }))
+                                                    alert('이미지 태그에서 URL을 추출했습니다.')
+                                                    return
+                                                }
+
+                                                const extractedUrl = await extractImageFromHtml(url)
+                                                if (extractedUrl) {
+                                                    setFormData(prev => ({ ...prev, imageUrl: extractedUrl }))
+                                                    alert('HTML에서 이미지 URL을 추출했습니다.')
+                                                }
+                                            }}
                                         />
-                                    </label>
+                                        <label className={`btn btn-secondary ${isUploading ? 'disabled' : ''}`} style={{ cursor: isUploading ? 'not-allowed' : 'pointer', margin: 0, display: 'flex', alignItems: 'center', opacity: isUploading ? 0.6 : 1 }}>
+                                            {isUploading ? '업로드 중...' : '파일 선택'}
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={(e) => handleImageUpload(e, 'imageUrl')}
+                                                style={{ display: 'none' }}
+                                                disabled={isUploading}
+                                            />
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div className="form-group" style={{ gridColumn: 'span 4' }}>
+                                    <label>상세페이지 URL</label>
+                                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                        <textarea
+                                            value={formData.detailUrl}
+                                            onChange={e => setFormData({ ...formData, detailUrl: e.target.value })}
+                                            placeholder="https://example.com/product/123 or HTML content"
+                                            style={{ flex: 1, minHeight: '60px' }}
+                                            rows="2"
+                                            onBlur={async (e) => {
+                                                const url = e.target.value
+                                                console.log('Detail URL Length:', url.length);
+
+                                                // Only try to fetch if it looks like a URL and NOT HTML
+                                                if (url.match(/^https?:\/\//) && !url.match(/<[a-z][\s\S]*>/i)) {
+                                                    const extractedHtml = await extractAllImagesFromHtml(url)
+                                                    if (extractedHtml) {
+                                                        setFormData(prev => ({ ...prev, detailUrl: extractedHtml }))
+                                                        const count = (extractedHtml.match(/<img/g) || []).length
+                                                        alert(`HTML에서 ${count}장의 이미지를 추출하여 태그로 변환했습니다.`)
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                        <label className={`btn btn-secondary ${isUploading ? 'disabled' : ''}`} style={{ cursor: isUploading ? 'not-allowed' : 'pointer', margin: 0, display: 'flex', alignItems: 'center', opacity: isUploading ? 0.6 : 1 }}>
+                                            {isUploading ? '업로드 중...' : '파일 선택'}
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={(e) => handleImageUpload(e, 'detailUrl')}
+                                                style={{ display: 'none' }}
+                                                disabled={isUploading}
+                                            />
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div className="form-group" style={{ gridColumn: 'span 4' }}>
+                                    <label>비고</label>
+                                    <textarea
+                                        value={formData.remarks}
+                                        onChange={e => setFormData({ ...formData, remarks: e.target.value })}
+                                        rows="1"
+                                        placeholder="비고 사항을 입력하세요"
+                                    />
                                 </div>
                             </div>
 
-                            <div className="form-group" style={{ gridColumn: 'span 4' }}>
-                                <label>비고</label>
-                                <textarea
-                                    value={formData.remarks}
-                                    onChange={e => setFormData({ ...formData, remarks: e.target.value })}
-                                    rows="1"
-                                    placeholder="비고 사항을 입력하세요"
-                                />
-                            </div>
-
-                            <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem', gridColumn: 'span 4' }}>
+                            <div style={{ padding: '1.5rem', background: 'white', borderTop: '1px solid #eee', display: 'flex', gap: '1rem' }}>
                                 <button type="submit" className="btn btn-primary" style={{ flex: 1 }} disabled={isSubmitting}>
                                     {isSubmitting ? '저장 중...' : '저장'}
                                 </button>
