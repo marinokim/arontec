@@ -90,6 +90,9 @@ async function run() {
             let detailHtml = '';
             if (p.detail_url) {
                 const val = p.detail_url.trim();
+                // Helper to wrap in centered div
+                const wrapCenter = (html) => `<div style="text-align: center;" align="center">${html}</div>`;
+
                 // Check if it looks like HTML containing images
                 if (val.includes('<img') || val.includes('<div')) {
                     // Extract all src attributes
@@ -102,7 +105,8 @@ async function run() {
 
                     if (images.length > 0) {
                         // Rebuild as simple img tags without div wrappers
-                        detailHtml = images.map(u => `<img src="${u.trim()}">`).join('');
+                        const imgs = images.map(u => `<img src="${u.trim()}">`).join('');
+                        detailHtml = wrapCenter(imgs);
                     } else {
                         // Fallback: just remove newlines if no img tags found but looks like HTML
                         detailHtml = val.replace(/(\r\n|\n|\r)/gm, "");
@@ -111,7 +115,8 @@ async function run() {
                     // Simple URL (comma or newline separated?)
                     // Split by newlines or commas just in case
                     const urls = val.split(/[,\r\n]+/).filter(u => u.trim());
-                    detailHtml = urls.map(u => `<img src="${u.trim()}">`).join('');
+                    const imgs = urls.map(u => `<img src="${u.trim()}">`).join('');
+                    detailHtml = wrapCenter(imgs);
                 } else {
                     detailHtml = val;
                 }
