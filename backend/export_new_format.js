@@ -183,22 +183,29 @@ async function run() {
                 "3차 옵션 타이틀": ""
             };
 
+
+
+            // Price Calculation: Arontec Supply Price * 1.1
+            const baseSupplyPrice = Number(p.supply_price) || 0;
+            const finalSellPrice = Math.floor(baseSupplyPrice * 1.1);
+
+            // Override '판매가' with calculated price
+            mappedItem["판매가"] = finalSellPrice;
+
             // Option Handling
             if (p.product_options && p.product_options.trim()) {
                 const opts = p.product_options.split(',').map(s => s.trim()).filter(s => s);
                 if (opts.length > 0) {
-                    // Option Format: OptionName|SupplyPrice|SellPrice|Stock § ...
-                    // SupplyPrice = 0 (Commission based)
-                    // SellPrice = p.b2b_price || p.supply_price || 0
-                    // Stock = p.stock_quantity || 999
-                    const price = p.b2b_price || p.supply_price || 0;
+                    // Option Format: OptionName|SupplyPrice(0)|SellPrice|Stock
+                    // SellPrice = finalSellPrice
                     const stock = p.stock_quantity || 999;
 
-                    const optionString = opts.map(opt => `${opt}|0|${price}|${stock}`).join('§');
+                    const optionString = opts.map(opt => `${opt}|0|${finalSellPrice}|${stock}`).join('§');
 
                     mappedItem["옵션사용여부(사용안함,1차옵션,2차옵션,3차옵션)"] = "1차옵션";
                     mappedItem["옵션(옵션명|공급가|판매가|재고§옵션명2|공급가2|판매가2|재고2)"] = optionString;
-                    mappedItem["1차 옵션 타이틀"] = "옵션";
+                    mappedItem["1차 옵션 타이틀"] = "색상";
+
                 }
             }
 
