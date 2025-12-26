@@ -185,9 +185,10 @@ async function run() {
 
 
 
-            // Price Calculation: Arontec Supply Price * 1.1
+            // Price Calculation: Arontec Supply Price * 1.1, rounded up to nearest 100
             const baseSupplyPrice = Number(p.supply_price) || 0;
-            const finalSellPrice = Math.floor(baseSupplyPrice * 1.1);
+            const calculatedPrice = baseSupplyPrice * 1.1;
+            const finalSellPrice = Math.ceil(calculatedPrice / 100) * 100;
 
             // Override '판매가' with calculated price
             mappedItem["판매가"] = finalSellPrice;
