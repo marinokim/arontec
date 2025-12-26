@@ -134,7 +134,7 @@ async function run() {
                 shippingType = '무료배송';
             }
 
-            return {
+            const mappedItem = {
                 "상품코드(신규등록시 생략)": "",
                 "대표상품명": p.model_name || p.name,
                 "부가상품명": p.model_no || '',
@@ -182,6 +182,27 @@ async function run() {
                 "2차 옵션 타이틀": "",
                 "3차 옵션 타이틀": ""
             };
+
+            // Option Handling
+            if (p.product_options && p.product_options.trim()) {
+                const opts = p.product_options.split(',').map(s => s.trim()).filter(s => s);
+                if (opts.length > 0) {
+                    // Option Format: OptionName|SupplyPrice|SellPrice|Stock § ...
+                    // SupplyPrice = 0 (Commission based)
+                    // SellPrice = p.b2b_price || p.supply_price || 0
+                    // Stock = p.stock_quantity || 999
+                    const price = p.b2b_price || p.supply_price || 0;
+                    const stock = p.stock_quantity || 999;
+
+                    const optionString = opts.map(opt => `${opt}|0|${price}|${stock}`).join('§');
+
+                    mappedItem["옵션사용여부(사용안함,1차옵션,2차옵션,3차옵션)"] = "1차옵션";
+                    mappedItem["옵션(옵션명|공급가|판매가|재고§옵션명2|공급가2|판매가2|재고2)"] = optionString;
+                    mappedItem["1차 옵션 타이틀"] = "옵션";
+                }
+            }
+
+            return mappedItem;
         });
 
         const newSheet = XLSX.utils.json_to_sheet(exportData, { header: HEADERS });
