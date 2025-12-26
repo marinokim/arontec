@@ -151,8 +151,8 @@ async function run() {
                 "판매종료일(기간판매)": "",
                 "브랜드": p.manufacturer || p.brand || "", // Map Manufacturer to Brand column if Brand is empty
                 "과세여부(과세, 면세)": p.is_tax_free ? "면세" : "과세",
-                "정상가": p.consumer_price || 0,
-                "판매가": p.b2b_price || p.supply_price || 0, // Use B2B Price as Sales Price
+                "정상가": Math.floor(Number(p.consumer_price) || 0),
+                "판매가": Math.floor(Number(p.b2b_price || p.supply_price) || 0), // Use B2B Price as Sales Price
                 "네이버페이 사용유무(사용, 미사용)": "사용",
                 "재고량": p.stock_quantity || 999,
                 "제조사": p.manufacturer || "",
